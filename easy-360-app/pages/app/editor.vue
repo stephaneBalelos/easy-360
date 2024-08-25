@@ -1,12 +1,12 @@
 <template>
-    <UDashboardPanelContent>
+    <UDashboardPanelContent class="p-0">
         <NuxtPage />
     </UDashboardPanelContent>
 </template>
 
 <script setup lang="ts">
     definePageMeta({
-        layout: 'app'
+        layout: 'editor'
     })
 </script>
 

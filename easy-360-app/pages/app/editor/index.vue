@@ -1,11 +1,11 @@
 <template>
     <div>
-        Page content
+        Editor index
     </div>
 </template>
 
 <script setup lang="ts">
-    
+
 </script>
 
 <style scoped>
