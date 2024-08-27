@@ -40,6 +40,9 @@ devDependencies:
   '@types/three':
     specifier: ^0.167.2
     version: 0.167.2
+  '@vueuse/core':
+    specifier: ^11.0.3
+    version: 11.0.3(vue@3.4.38)
   '@vueuse/nuxt':
     specifier: ^11.0.3
     version: 11.0.3(nuxt@3.13.0)(vue@3.4.38)

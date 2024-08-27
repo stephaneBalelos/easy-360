@@ -1,6 +1,6 @@
 <template>
   <UDashboardPage>
-    <UDashboardPanel grow class="p-4">
+    <UDashboardPanel grow class="p-0">
       <template v-if="true">
         <UDashboardNavbar>
           <template #toggle>
@@ -77,7 +77,7 @@
         <UDashboardToolbar>
         <template #left>
           <USelectMenu
-            v-model="selectedBreakpoint"
+            v-model="currentBreakpoint"
             icon="i-heroicons-check-circle"
             placeholder="Status"
             :options="breakpoints"
@@ -108,7 +108,7 @@
       </UDashboardToolbar>
 
         <div class="w-full h-full">
-          <App360Viewport :viewport-size="selectedBreakpoint.value" />
+          <App360Viewport />
         </div>
 
       </template>
@@ -124,6 +124,7 @@
 
 <script setup lang="ts">
 import App360Viewport from '~/components/App360Viewport.vue';
+import { useEditorBreakpoints } from '~/composables/useEditorBreakpoints';
 
 definePageMeta({
   layout: "editor",
@@ -132,15 +133,7 @@ definePageMeta({
 const route = useRoute();
 const id = route.params.id;
 
-const breakpoints = ref([
-  { label: 'Mobile', value: 390 / 844 },
-  { label: 'Tablet', value: 768 / 1024 },
-  { label: 'Desktop', value: 1024 / 768 },
-  { label: 'Widescreen', value: 1440 / 1024 },
-  { label: 'Full HD', value: 1920 / 1080 },
-]);
-
-const selectedBreakpoint = ref(breakpoints.value[2]);
+const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
 
 
 </script>

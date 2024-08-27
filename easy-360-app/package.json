@@ -23,6 +23,7 @@
     "@nuxt/ui": "^2.18.4",
     "@tresjs/nuxt": "^3.0.3",
     "@types/three": "^0.167.2",
+    "@vueuse/core": "^11.0.3",
     "@vueuse/nuxt": "^11.0.3"
   }
 }
