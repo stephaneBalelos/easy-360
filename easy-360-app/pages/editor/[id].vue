@@ -75,25 +75,25 @@
           </template>
         </UDashboardNavbar>
         <UDashboardToolbar>
-        <template #left>
-          <USelectMenu
-            v-model="currentBreakpoint"
-            icon="i-heroicons-check-circle"
-            placeholder="Status"
-            :options="breakpoints"
-            :ui-menu="{ option: { base: 'capitalize' } }"
-          />
-          <!-- <USelectMenu
+          <template #left>
+            <USelectMenu
+              v-model="currentBreakpoint"
+              icon="i-heroicons-check-circle"
+              placeholder="Status"
+              :options="breakpoints"
+              :ui-menu="{ option: { base: 'capitalize' } }"
+            />
+            <!-- <USelectMenu
             v-model="selectedLocations"
             icon="i-heroicons-map-pin"
             placeholder="Location"
             :options="defaultLocations"
             multiple
           /> -->
-        </template>
+          </template>
 
-        <template #right>
-          <!-- <USelectMenu
+          <template #right>
+            <!-- <USelectMenu
             v-model="selectedColumns"
             icon="i-heroicons-adjustments-horizontal-solid"
             :options="defaultColumns"
@@ -104,13 +104,43 @@
               Display
             </template>
           </USelectMenu> -->
-        </template>
-      </UDashboardToolbar>
+          </template>
+        </UDashboardToolbar>
 
-        <div class="w-full h-full">
-          <App360Viewport />
+        <div class="w-full h-full flex">
+          <UDashboardPanel
+            :width="250"
+            :resizable="{ min: 200, max: 300 }"
+            collapsible
+          >
+            <UDashboardSidebar>
+              <template #header>
+                <!-- Place anything you like here -->
+                <UDashboardSearchButton />
+              </template>
+
+              <App360PoisList />
+
+              <UDivider />
+
+              <UDashboardSidebarLinks />
+
+              <template #footer>
+                <!-- Place anything you like here -->
+              </template>
+            </UDashboardSidebar>
+          </UDashboardPanel>
+          <div class="flex-grow w-full h-full p-4">
+            <App360Viewport />
+          </div>
+          <UDashboardPanel
+            :width="250"
+            :resizable="{ min: 200, max: 300 }"
+            collapsible
+          >
+          dsdsd
+          </UDashboardPanel>
         </div>
-
       </template>
       <div v-else class="flex-1 hidden lg:flex items-center justify-center">
         <UIcon
@@ -123,8 +153,9 @@
 </template>
 
 <script setup lang="ts">
-import App360Viewport from '~/components/App360Viewport.vue';
-import { useEditorBreakpoints } from '~/composables/useEditorBreakpoints';
+import App360Viewport from "~/components/App360Viewport.vue";
+import App360PoisList from "~/components/App360/App360PoisList.vue";
+import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
 
 definePageMeta({
   layout: "editor",
@@ -134,8 +165,6 @@ const route = useRoute();
 const id = route.params.id;
 
 const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
-
-
 </script>
 
 <style scoped></style>

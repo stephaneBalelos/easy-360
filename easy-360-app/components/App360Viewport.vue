@@ -14,9 +14,9 @@
       <TresAmbientLight :intensity="1" />
 
       <Sphere
-        v-for="marker in markers"
+        v-for="poi in pois"
         :args="[10, 10, 10]"
-        :position="[marker.position.x, marker.position.y, marker.position.z]"
+        :position="[poi.position.x, poi.position.y, poi.position.z]"
       >
         <TresMeshToonMaterial color="pink" />
       </Sphere>
@@ -36,9 +36,11 @@ import {
   Spherical,
   SRGBColorSpace,
   Vector2,
+  Vector3,
 } from "three";
-import type { POI } from "~/composables/usePOI";
+import { usePOIs, type POI } from "~/composables/usePOIs";
 import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
+import AddPOIModal from "./App360/Modals/AddPOIModal.vue";
 
 type Props = {
   viewportRatio?: number;
@@ -60,12 +62,14 @@ material.map = texture;
 
 const sphere = new Mesh(geometry, material);
 
-const markers = ref<POI[]>([]);
-
 const parentEl = useParentElement();
 const { width, height } = useElementSize(parentEl);
 
 const { currentBreakpoint } = useEditorBreakpoints();
+const modal = useModal()
+
+
+const { addPOI, pois } = usePOIs();
 
 const viewport = computed(() => {
   const size = {
@@ -79,8 +83,7 @@ const viewport = computed(() => {
     size.width = width.value;
     size.height = width.value * ratio;
     if (size.height > height.value) {
-      size.width = size.width - (size.height - height.value) * ratio;
-      size.height = height.value;
+      size.height = size.width / ratio;
     }
   } else {
     size.height = height.value;
@@ -95,17 +98,23 @@ const viewport = computed(() => {
 
 function handleSphereClick(event: Intersection) {
   console.log(event.point, event.distance);
-  const poi: POI = {
-    id: Math.random().toString(36).substring(7),
-    position: event.point,
-    name: "New POI",
-    description: "Description",
-  };
-  addPOI(poi);
+
+    openAddPOIModal(event.point);
 }
 
-function addPOI(poi: POI) {
-  markers.value.push(poi);
+
+
+function openAddPOIModal (pos: Vector3) {
+  modal.open(AddPOIModal, {
+    position: pos,
+    onAddPoi: (paylaod) => {
+      console.log(paylaod);
+      modal.close();
+    },
+    onClose: () => {
+      modal.close();
+    }
+  })
 }
 </script>
 
