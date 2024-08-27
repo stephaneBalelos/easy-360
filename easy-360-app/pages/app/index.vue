@@ -1,7 +1,7 @@
 <template>
-    <div>
-        Page content
-    </div>
+    <UDashboardPanelContent>
+        dsd
+    </UDashboardPanelContent>
 </template>
 
 <script setup lang="ts">

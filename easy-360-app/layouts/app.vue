@@ -129,7 +129,10 @@ const colors = computed(() => defaultColors.value.map(color => ({ ...color, acti
       </UDashboardSidebar>
     </UDashboardPanel>
 
-    <slot />
+    <UDashboardPanel>
+      <slot />
+    </UDashboardPanel>
+
 
     <!-- ~/components/HelpSlideover.vue -->
     <HelpSlideover />
