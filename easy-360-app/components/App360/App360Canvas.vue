@@ -2,15 +2,16 @@
   <TresCanvas>
     <TresPerspectiveCamera
       ref="camera"
-      :position="cameraPosition"
+      :position="sceneControl.camera.position"
       :look-at="[0, 0, 0]"
     />
     <OrbitControls
       @change="onChange"
       ref="orbitsControls"
       :target="new Vector3(0, 0, 0)"
+      :maxDistance="100"
     />
-    <TresAmbientLight :intensity="1" />
+    <TresAmbientLight :intensity="sceneControl.light.intensity" />
     <TresGridHelper />
     <Suspense>
       <AppSphereMesh />
@@ -28,17 +29,18 @@ import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addo
 import { Vector3 } from "three";
 import AppPoiMesh from "./App360CanvasComponents/AppPoiMesh.vue";
 import AppSphereMesh from "./App360CanvasComponents/AppSphereMesh.vue";
+import { useSceneControl } from "~/composables/useSceneControl";
 
 const { pois } = usePOIs();
 
-const cameraPosition = ref([3, 0, 0]);
 
 const camera = shallowRef();
 const orbitsControls = shallowRef();
 
+const sceneControl = useSceneControl();
+
 function onChange($event: OrbitControlsType) {
-  console.log($event.object.position);
-  cameraPosition.value = [
+  sceneControl.camera.position = [
     $event.object.position.x,
     $event.object.position.y,
     $event.object.position.z,

@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { Mesh, MeshBasicMaterial, SphereGeometry, Spherical, SRGBColorSpace, Vector3, type Intersection } from 'three';
 import AddPOIModal from '../Modals/AddPOIModal.vue';
+import { useSceneControl } from '~/composables/useSceneControl';
 
 const geometry = new SphereGeometry(100, 60, 40);
 geometry.scale(-1, 1, 1);
@@ -19,10 +20,12 @@ material.map = texture;
 const sphere = new Mesh(geometry, material);
 const modal = useModal()
 
+const sceneControl = useSceneControl();
+
 
 function handleSphereClick(event: Intersection) {
     openAddPOIModal(event.point);
-    cameraLookAt(event.point);
+    sceneControl.cameraLookAtAnimated(event.point);
 }
 
 
@@ -30,7 +33,7 @@ function handleSphereClick(event: Intersection) {
 function openAddPOIModal (pos: Vector3) {
   modal.open(AddPOIModal, {
     position: pos,
-    onAddPoi: (paylaod) => {
+    onAddPoi: () => {
       modal.close();
     },
     onClose: () => {
@@ -39,16 +42,6 @@ function openAddPOIModal (pos: Vector3) {
   })
 }
 
-const cameraLookAt = (pos: Vector3) => {
-    const spherical = new Spherical();
-
-    spherical.setFromVector3(pos);
-    spherical.radius = 2;
-    const p = new Vector3().setFromSpherical(spherical);
-
-    // cameraPosition.value = [-p.x, -p.y, -p.z];
-
-};
 </script>
 
 <style scoped></style>

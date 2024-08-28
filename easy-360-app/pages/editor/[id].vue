@@ -138,7 +138,9 @@
             :resizable="{ min: 200, max: 300 }"
             collapsible
           >
-          dsdsd
+          x: {{ sceneControl.camera.position[0] }} <br>
+          y: {{ sceneControl.camera.position[1] }} <br>
+          z: {{ sceneControl.camera.position[2] }}
           </UDashboardPanel>
         </div>
       </template>
@@ -156,6 +158,7 @@
 import App360Viewport from "~/components/App360Viewport.vue";
 import App360PoisList from "~/components/App360/App360PoisList.vue";
 import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
+import { useSceneControl } from "~/composables/useSceneControl";
 
 definePageMeta({
   layout: "editor",
@@ -165,6 +168,8 @@ const route = useRoute();
 const id = route.params.id;
 
 const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
+
+const sceneControl = useSceneControl();
 </script>
 
 <style scoped></style>
