@@ -14,6 +14,7 @@
     "@tresjs/cientos": "^4.0.0",
     "@tresjs/core": "^4.2.7",
     "@tresjs/post-processing": "^0.7.1",
+    "gsap": "^3.12.5",
     "nuxt": "^3.13.0",
     "three": "^0.167.1",
     "vue": "latest",

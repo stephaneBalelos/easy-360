@@ -1,0 +1,1 @@
+export type ViewportMode = 'editor' | 'preview'

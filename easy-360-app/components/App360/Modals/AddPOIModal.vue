@@ -2,7 +2,7 @@
   <UModal>
     <UForm :schema="schema" :state="state" @submit="onSubmit">
       <UCard :ui="{ body: { base: 'space-y-4' } }">
-        <template #header> Add Point of Interest </template>
+        <template #header> Add Point of Interest (x: {{ Math.round(props.position.x) }}, y: {{ Math.round(props.position.y)}}, z: {{ Math.round(props.position.z) }}) </template>
 
         <UFormGroup label="Name" name="name">
           <UInput v-model="state.name" placeholder="Name" />
