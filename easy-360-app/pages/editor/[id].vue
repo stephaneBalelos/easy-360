@@ -134,13 +134,11 @@
             <App360Viewport />
           </div>
           <UDashboardPanel
-            :width="250"
-            :resizable="{ min: 200, max: 300 }"
+            :width="300"
             collapsible
+            class="border-l border-gray-200 dark:border-gray-700 px-4 py-4"
           >
-          x: {{ sceneControl.camera.position[0] }} <br>
-          y: {{ sceneControl.camera.position[1] }} <br>
-          z: {{ sceneControl.camera.position[2] }}
+            <App360PoiEditor />
           </UDashboardPanel>
         </div>
       </template>
@@ -159,6 +157,7 @@ import App360Viewport from "~/components/App360Viewport.vue";
 import App360PoisList from "~/components/App360/App360PoisList.vue";
 import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
 import { useSceneControl } from "~/composables/useSceneControl";
+import App360PoiEditor from "~/components/App360/App360PoiEditor.vue";
 
 definePageMeta({
   layout: "editor",

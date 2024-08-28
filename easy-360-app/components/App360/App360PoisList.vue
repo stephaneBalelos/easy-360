@@ -5,13 +5,17 @@
 <script setup lang="ts">
 import { usePOIs } from "~/composables/usePOIs";
 
-const { pois } = usePOIs();
+const { selectedPOI, pois } = usePOIs();
 
 const items = computed(() => {
   return pois.value.map((poi) => {
     return {
       label: poi.name,
       chip: "green",
+      active: selectedPOI.value === poi,
+      click: () => {
+        selectedPOI.value = poi;
+      },
     };
   });
 });
