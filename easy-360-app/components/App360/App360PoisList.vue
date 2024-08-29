@@ -3,18 +3,21 @@
 </template>
 
 <script setup lang="ts">
+import { useEditorState } from "~/composables/useEditorState";
 import { usePOIs } from "~/composables/usePOIs";
 
-const { selectedPOI, pois } = usePOIs();
+const { selectedPOIId } = useEditorState();
+const { pois } = usePOIs();
 
 const items = computed(() => {
+  if (!pois.value) return [];
   return pois.value.map((poi) => {
     return {
       label: poi.name,
       chip: "green",
-      active: selectedPOI.value === poi,
+      active: selectedPOIId.value === poi.id,
       click: () => {
-        selectedPOI.value = poi;
+        selectedPOIId.value = poi.id;
       },
     };
   });

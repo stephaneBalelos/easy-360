@@ -10,6 +10,7 @@
           </template>
 
           <template #left>
+            <ProjectDropdown />
             <UTooltip text="Archive">
               <UButton
                 icon="i-heroicons-archive-box"
@@ -41,7 +42,7 @@
               </template>
 
               <template #panel="{ close }">
-                <DatePicker @close="close" />
+                <!-- <DatePicker @close="close" /> -->
               </template>
             </UPopover>
           </template>
@@ -119,6 +120,7 @@
                 <UDashboardSearchButton />
               </template>
 
+              <App360SceneList />
               <App360PoisList />
 
               <UDivider />
@@ -158,6 +160,9 @@ import App360PoisList from "~/components/App360/App360PoisList.vue";
 import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
 import { useSceneControl } from "~/composables/useSceneControl";
 import App360PoiEditor from "~/components/App360/App360PoiEditor.vue";
+import App360SceneList from "~/components/App360/App360SceneList.vue";
+import { useEditorState } from "~/composables/useEditorState";
+import ProjectDropdown from "~/components/App360/Navbar/ProjectDropdown.vue";
 
 definePageMeta({
   layout: "editor",
@@ -165,6 +170,10 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id;
+const { selectedProjectId } = useEditorState()
+
+selectedProjectId.value = id as string;
+
 
 const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
 

@@ -8,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
-import type { POI } from '~/composables/usePOIs';
+import type { POIBase } from '~/composables/usePOIs';
 
-    const props = defineProps<POI>();
+    const props = defineProps<POIBase>();
 </script>
 
 <style scoped>

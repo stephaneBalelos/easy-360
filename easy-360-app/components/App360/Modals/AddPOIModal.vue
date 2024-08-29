@@ -2,7 +2,7 @@
   <UModal>
     <UForm :schema="schema" :state="state" @submit="onSubmit">
       <UCard :ui="{ body: { base: 'space-y-4' } }">
-        <template #header> Add Point of Interest (x: {{ Math.round(props.position.x) }}, y: {{ Math.round(props.position.y)}}, z: {{ Math.round(props.position.z) }}) </template>
+        <template #header> {{ selectedSceneId }} </template>
 
         <UFormGroup label="Name" name="name">
           <UInput v-model="state.name" placeholder="Name" />
@@ -32,6 +32,7 @@ import type { Vector3 } from "three";
 import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 import { usePOIs } from "~/composables/usePOIs";
+import { useEditorState } from "~/composables/useEditorState";
 
 type Props = {
   position: Vector3;
@@ -42,7 +43,8 @@ type Payload = {
 };
 
 const props = defineProps<Props>();
-const { addPOI } = usePOIs();
+const { createPOI } = usePOIs();
+const { selectedSceneId } = useEditorState();
 
 const emit = defineEmits<{
   addPoi: [paylaod?: Payload];
@@ -62,6 +64,7 @@ const state = reactive<Schema>({
 });
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
+  if(!selectedSceneId.value) return;
   // Do something with data
   const poi: POI = {
     id: Math.random().toString(36).substring(7),
@@ -70,7 +73,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     position: props.position,
   };
 
-  addPOI(poi);
+  const res = await createPOI(selectedSceneId.value, poi);
+
 
   emit("addPoi", { payload: poi });
 }

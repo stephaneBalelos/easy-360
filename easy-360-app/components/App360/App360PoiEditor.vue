@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <UTabs v-if="selectedPOI" :items="tabs" @change="onChange">
+    <UTabs v-if="selectedPOIId" :items="tabs" @change="onChange">
       <template #default="{ item, index, selected }">
         <span
           class="truncate"
@@ -51,8 +51,9 @@ import PoiEditorContent from "./App360PoiEditorComponents/PoiEditorContent.vue";
 import PoiEditorDesign from "./App360PoiEditorComponents/PoiEditorDesign.vue";
 import PoiEditorSettings from "./App360PoiEditorComponents/PoiEditorSettings.vue";
 import PoiEditorDefault from "./App360PoiEditorComponents/PoiEditorDefault.vue";
+import { useEditorState } from "~/composables/useEditorState";
 
-const { selectedPOI } = usePOIs();
+const { selectedPOIId } = useEditorState();
 
 const tabs = [
   {

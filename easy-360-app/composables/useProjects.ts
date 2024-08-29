@@ -8,6 +8,7 @@ export type ProjectBase = {
 
 export const useProjects = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
+
     const { data:projects, error, status, refresh} = useAsyncData(`app_projects`, async () => {
         const {data, error }= await client.from('projects').select('*')
         if (error) {

@@ -17,7 +17,7 @@
       <AppSphereMesh />
     </Suspense>
     <Suspense>
-      <AppPoiMesh v-for="poi in pois" v-bind="poi" :key="poi.id" />
+      <AppPoiMesh v-for="poi in pois" :name="poi.name" :description="poi.description" :position="poi.design_data.position" :key="poi.id" />
     </Suspense>
   </TresCanvas>
 </template>
