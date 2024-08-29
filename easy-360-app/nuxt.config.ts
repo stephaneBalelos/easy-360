@@ -8,5 +8,16 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/content',
     '@vueuse/nuxt',
-  ]
+    '@nuxtjs/supabase'
+  ],
+  supabase: {
+    redirect: false,
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      include: undefined,
+      exclude: [],
+      cookieRedirect: false,
+    }
+  }
 })
