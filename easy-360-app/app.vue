@@ -8,5 +8,6 @@
 
     <UNotifications />
     <UModals />
+    <USlideovers />
   </div>
 </template>

@@ -11,12 +11,13 @@
 
           <template #left>
             <ProjectDropdown />
-            <UTooltip text="Archive">
+            <UTooltip text="Settings">
               <UButton
-                icon="i-heroicons-archive-box"
+                icon="i-heroicons-cog"
                 color="gray"
                 variant="ghost"
-              />
+                @click="openProjectSettings"
+              >Project Settings</UButton>
             </UTooltip>
 
             <UTooltip text="Move to junk">
@@ -163,6 +164,7 @@ import App360PoiEditor from "~/components/App360/App360PoiEditor.vue";
 import App360SceneList from "~/components/App360/App360SceneList.vue";
 import { useEditorState } from "~/composables/useEditorState";
 import ProjectDropdown from "~/components/App360/Navbar/ProjectDropdown.vue";
+import ProjectEdit from "~/components/App360/Slideovers/ProjectEdit.vue";
 
 definePageMeta({
   layout: "editor",
@@ -178,6 +180,16 @@ selectedProjectId.value = id as string;
 const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
 
 const sceneControl = useSceneControl();
+
+const slideover = useSlideover()
+function openProjectSettings () {
+  if (!selectedProjectId.value) {
+    return
+  }
+  slideover.open(ProjectEdit, {
+    project_id: selectedProjectId.value
+  })
+}
 </script>
 
 <style scoped></style>

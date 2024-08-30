@@ -1,5 +1,6 @@
 import type { AppProject } from "~/types/app.types"
 import type { Database } from "~/types/database.types"
+import { useEditorState } from "./useEditorState";
 
 export type ProjectBase = {
     name: string;
@@ -8,6 +9,7 @@ export type ProjectBase = {
 
 export const useProjects = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
+    const { refreshProject } = useEditorState()
 
     const { data:projects, error, status, refresh} = useAsyncData(`app_projects`, async () => {
         const {data, error }= await client.from('projects').select('*')
@@ -32,6 +34,7 @@ export const useProjects = createGlobalState(() => {
             throw error
         }
         refresh()
+        refreshProject()
         return data
     }
 

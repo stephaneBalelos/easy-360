@@ -11,11 +11,11 @@
       :class="[open && 'bg-gray-50 dark:bg-gray-800']"
       class="w-full"
     >
-      <UAvatar size="2xs" />
+      <UAvatar size="2xs" :alt="editorState.selectedProject.value?.name" />
 
       <span class="truncate text-gray-900 dark:text-white font-semibold">{{
         editorState.selectedProject.value?.name
-      }}</span> dsadlsa
+      }}</span>
     </UButton>
   </UDropdown>
 </template>

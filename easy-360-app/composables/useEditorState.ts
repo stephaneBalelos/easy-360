@@ -8,7 +8,7 @@ export const useEditorState = createGlobalState(() => {
     const selectedSceneId = ref<string | null>(null)
     const selectedPOIId = ref<string | null>(null)
 
-    const {data:selectedProject, error, status} = useAsyncData(async () => {
+    const {data:selectedProject, error, status, refresh} = useAsyncData(async () => {
         if (!selectedProjectId.value) {
             return null
         }
@@ -35,7 +35,8 @@ export const useEditorState = createGlobalState(() => {
         selectedProjectId,
         selectedProject,
         selectedSceneId,
-        selectedPOIId
+        selectedPOIId,
+        refreshProject: refresh
     }
     
 })
