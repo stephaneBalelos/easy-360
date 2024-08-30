@@ -1,42 +1,63 @@
-import type { AppProject } from "~/types/app.types"
-import type { Database } from "~/types/database.types"
+import type { AppProject } from "~/types/app.types";
+import type { Database } from "~/types/database.types";
+type EditPanelState = "none" | "scene" | "poi";
 
 export const useEditorState = createGlobalState(() => {
-    const selectedProjectId = ref<string | null>(null)
-    const client = useSupabaseClient<Database>()
+  const selectedProjectId = ref<string | null>(null);
+  const client = useSupabaseClient<Database>();
 
-    const selectedSceneId = ref<string | null>(null)
-    const selectedPOIId = ref<string | null>(null)
+  const selectedSceneId = ref<string | null>(null);
+  const selectedPOIId = ref<string | null>(null);
 
-    const {data:selectedProject, error, status, refresh} = useAsyncData(async () => {
-        if (!selectedProjectId.value) {
-            return null
-        }
-        const {data, error} = await client.from('projects').select('*').eq('id', selectedProjectId.value).single()
-        if (error) {
-            throw error
-        }
-        return data
-    }, {
-        watch: [selectedProjectId]
-    })
+  const editPanelState = ref<EditPanelState>("none");
 
-    watch(selectedProjectId, () => {
-        selectedSceneId.value = null
-        selectedPOIId.value = null
-    })
-
-    watch(selectedSceneId, () => {
-        selectedPOIId.value = null
-    })
-
-
-    return {
-        selectedProjectId,
-        selectedProject,
-        selectedSceneId,
-        selectedPOIId,
-        refreshProject: refresh
+  const {
+    data: selectedProject,
+    error,
+    status,
+    refresh,
+  } = useAsyncData(
+    async () => {
+      if (!selectedProjectId.value) {
+        return null;
+      }
+      const { data, error } = await client
+        .from("projects")
+        .select("*")
+        .eq("id", selectedProjectId.value)
+        .single();
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+    {
+      watch: [selectedProjectId],
     }
-    
-})
+  );
+
+
+  watch(selectedProjectId, () => {
+    selectedSceneId.value = null;
+    selectedPOIId.value = null;
+    editPanelState.value = "none";
+  });
+
+  watch(selectedSceneId, () => {
+    selectedPOIId.value = null;
+    editPanelState.value = "scene";
+  }, { immediate: true});
+
+    watch(selectedPOIId, (value) => {
+        editPanelState.value = value ? "poi" : "scene";
+    }, { immediate: true });
+
+  return {
+    selectedProjectId,
+    selectedProject,
+    selectedSceneId,
+    selectedPOIId,
+    refreshProject: refresh,
+    editPanelState,
+  };
+});

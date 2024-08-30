@@ -134,14 +134,18 @@
             </UDashboardSidebar>
           </UDashboardPanel>
           <div class="flex-grow w-full h-full p-4">
+            {{ editPanelState}}
             <App360Viewport />
           </div>
           <UDashboardPanel
-            :width="300"
+            :width="250"
             collapsible
             class="border-l border-gray-200 dark:border-gray-700 px-4 py-4"
           >
-            <App360PoiEditor />
+          <div v-show="editPanelState != 'none'">
+            <App360SceneEditor v-if="editPanelState == 'scene'" />
+            <App360PoiEditor v-if="editPanelState == 'poi'" />
+          </div>
           </UDashboardPanel>
         </div>
       </template>
@@ -159,7 +163,6 @@
 import App360Viewport from "~/components/App360Viewport.vue";
 import App360PoisList from "~/components/App360/App360PoisList.vue";
 import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
-import { useSceneControl } from "~/composables/useSceneControl";
 import App360PoiEditor from "~/components/App360/App360PoiEditor.vue";
 import App360SceneList from "~/components/App360/App360SceneList.vue";
 import { useEditorState } from "~/composables/useEditorState";
@@ -172,14 +175,13 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id;
-const { selectedProjectId } = useEditorState()
+const { selectedProjectId, selectedSceneId, selectedPOIId, editPanelState } = useEditorState()
 
 selectedProjectId.value = id as string;
 
 
 const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
 
-const sceneControl = useSceneControl();
 
 const slideover = useSlideover()
 function openProjectSettings () {

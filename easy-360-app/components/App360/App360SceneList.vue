@@ -13,12 +13,16 @@ import { useScenes } from "~/composables/useScenes";
   const items = computed(() => {
     if (!scenes.value) return [];
     return scenes.value.map((scene) => {
+      const isCurrentScene = editorState.selectedSceneId.value === scene.id;
       return {
         label: scene.name,
         chip: "green",
-        active: editorState.selectedSceneId.value === scene.id,
+        active: isCurrentScene,
         click: () => {
             editorState.selectedSceneId.value = scene.id;
+            if (isCurrentScene) {
+              editorState.selectedPOIId.value = null;
+            }
         },
       };
     });

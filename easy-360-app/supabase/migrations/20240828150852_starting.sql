@@ -69,5 +69,11 @@ after insert on public.projects
 for each row execute function public.handle_new_project();
 
 
+insert into storage.buckets
+  (id, name, public)
+values
+  ('projects_scenes', 'Projects Scenes', true);
+
+
 
 
