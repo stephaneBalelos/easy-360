@@ -10,6 +10,11 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/supabase'
   ],
+  runtimeConfig: {
+    public: {
+      supabaseStorageEndpoint: process.env.SUPABASE_STORAGE_URL || '' 
+    }
+  },
   supabase: {
     redirect: false,
     redirectOptions: {

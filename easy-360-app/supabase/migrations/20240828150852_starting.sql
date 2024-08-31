@@ -72,7 +72,7 @@ for each row execute function public.handle_new_project();
 insert into storage.buckets
   (id, name, public)
 values
-  ('projects_scenes', 'Projects Scenes', true);
+  ('projects_scenes_files', 'Projects Scenes Files', true);
 
 
 

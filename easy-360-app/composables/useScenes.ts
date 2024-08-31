@@ -62,6 +62,10 @@ export const useScenes = createGlobalState(() => {
         return data
     }
 
+    const getSceneFilePath = (bucket_id: string, scene_id: string) => {
+        return `projects/${bucket_id}/scenes/${scene_id}/panorama.jpg`
+    }
+
 
 
     return {
@@ -70,5 +74,6 @@ export const useScenes = createGlobalState(() => {
         createScene,
         updateScene,
         deleteScene,
+        getSceneFilePath
     }
 })
