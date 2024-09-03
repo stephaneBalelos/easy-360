@@ -82,6 +82,7 @@ export type Database = {
           id: string
           last_updated: string
           name: string
+          owner: string
           published: boolean
         }
         Insert: {
@@ -90,6 +91,7 @@ export type Database = {
           id?: string
           last_updated?: string
           name: string
+          owner: string
           published?: boolean
         }
         Update: {
@@ -98,9 +100,18 @@ export type Database = {
           id?: string
           last_updated?: string
           name?: string
+          owner?: string
           published?: boolean
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_owner_fkey"
+            columns: ["owner"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scenes: {
         Row: {
@@ -143,12 +154,42 @@ export type Database = {
           },
         ]
       }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          role?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          role?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      authorize: {
+        Args: {
+          user_id: string
+          project_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

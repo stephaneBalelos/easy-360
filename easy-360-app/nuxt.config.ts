@@ -16,13 +16,18 @@ export default defineNuxtConfig({
     }
   },
   supabase: {
-    redirect: false,
+    redirect: true,
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
       include: undefined,
-      exclude: [],
-      cookieRedirect: false,
+      exclude: ['index', '/confirm', '/signup', '/forgot-password', 'reset-password'],
+      cookieRedirect: true,
+    },
+    cookieOptions: {
+      maxAge: 60 * 60 * 8,
+      sameSite: 'lax',
+      secure: true
     }
   }
 })
