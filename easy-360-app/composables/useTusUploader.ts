@@ -18,8 +18,6 @@ export const useTusUplaoder = (
 
   const tusEndpoint = `${supabaseStorageEndpoint}/upload/resumable`;
 
-  console.log(session.value);
-
   const uppy = new Uppy({
     restrictions: {
       maxNumberOfFiles: props?.maxNumberOfFiles ?? 1,
@@ -30,6 +28,7 @@ export const useTusUplaoder = (
     headers: {
       authorization: `Bearer ${session.value.access_token}`,
       apikey: supabase.key,
+      'x-upsert': 'true',
     },
     uploadDataDuringCreation: true,
     chunkSize: 6 * 1024 * 1024,
@@ -58,6 +57,7 @@ export const useTusUplaoder = (
   });
 
   uppy.on("file-added", (file) => {
+    console.log(path)
     const supabaseMetadata = {
       bucketName: bucket_id,
       objectName: path,

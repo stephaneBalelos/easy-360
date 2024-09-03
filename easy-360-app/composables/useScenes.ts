@@ -1,6 +1,7 @@
 import type { Database } from "~/types/database.types"
 import { useEditorState } from "./useEditorState";
 import type { AppScene } from "~/types/app.types";
+import { projectFilesBucketId } from "~/constants";
 
 export type SceneBase = {
     name: string;
@@ -62,8 +63,15 @@ export const useScenes = createGlobalState(() => {
         return data
     }
 
-    const getSceneFilePath = (bucket_id: string, scene_id: string) => {
-        return `projects/${bucket_id}/scenes/${scene_id}/panorama.jpg`
+    const getSceneFilePath = (project_id: string, scene_id: string) => {
+        return `projects/${project_id}/scenes/${scene_id}/panorama.jpg`
+    }
+
+    const getSceneFileUrl = (project_id: string, scene_id: string) => {
+        const path = getSceneFilePath(project_id, scene_id)
+        return client.storage.from(projectFilesBucketId).createSignedUrl(path, 60, {
+            download: true
+        })
     }
 
 
@@ -74,6 +82,7 @@ export const useScenes = createGlobalState(() => {
         createScene,
         updateScene,
         deleteScene,
-        getSceneFilePath
+        getSceneFilePath,
+        getSceneFileUrl
     }
 })

@@ -113,8 +113,9 @@ insert into storage.buckets
   (id, name, public)
 values
   ('projects_scenes_files', 'Projects Scenes Files', true);
+create policy "Everyone can read files" on storage.objects for select using (true);
 create policy "Project Owner can add a file" on storage.objects for insert to authenticated with check (public.authorize((select auth.uid()), ((storage.foldername(name))[2])::uuid));
-create policy "Project Owner can update a file" on storage.objects for update to authenticated using (public.authorize((select auth.uid()), ((storage.foldername(name))[2])::uuid)) with check (public.authorize((select auth.uid()), ((storage.foldername(name))[1])::uuid));
+create policy "Project Owner can update a file" on storage.objects for update to authenticated using (public.authorize((select auth.uid()), ((storage.foldername(name))[2])::uuid)) with check (public.authorize((select auth.uid()), ((storage.foldername(name))[2])::uuid));
 create policy "Project Owner can delete a file" on storage.objects for delete to authenticated using (public.authorize((select auth.uid()), ((storage.foldername(name))[2])::uuid));
 
 

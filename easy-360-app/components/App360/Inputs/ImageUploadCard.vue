@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import { useTusUplaoder } from "~/composables/useTusUploader";
+import type { Database } from "~/types/database.types";
 
 type ImageUploadCardProps = {
     bucketId: string;
@@ -35,6 +36,8 @@ type ImageUploadCardProps = {
 };
 
 const props = defineProps<ImageUploadCardProps>();
+const { getSceneFileUrl } = useScenes();
+const client = useSupabaseClient<Database>();
 
 const uploadState = ref<"idle" | "uploading">("idle");
 
@@ -42,6 +45,21 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const progressValue = ref(0);
 
 const file = ref<string | null>(null);
+
+const {data:url, error, status } = await useAsyncData(`${props.bucketId}_${props.path}`, async () => {
+  const {data:url, error} = await client.storage.from(props.bucketId).createSignedUrl(props.path, 60); 
+  if (error) {
+    console.error('Error getting scene file url', error);
+    return;
+  }
+  return url;
+}, { immediate: true });
+
+onMounted(() => {
+  if (url.value) {
+    file.value = url.value.signedUrl;
+  }
+});
 
 const { uppy } = useTusUplaoder(props.bucketId, props.path, {
   maxNumberOfFiles: 1,

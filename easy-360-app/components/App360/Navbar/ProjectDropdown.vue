@@ -51,6 +51,7 @@ const actions = [
   {
     label: "Überblick",
     icon: "i-heroicons-cog-8-tooth",
+    to: "/app",
   },
 ];
 
