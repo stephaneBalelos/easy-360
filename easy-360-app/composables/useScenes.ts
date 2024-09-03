@@ -67,11 +67,21 @@ export const useScenes = createGlobalState(() => {
         return `projects/${project_id}/scenes/${scene_id}/panorama.jpg`
     }
 
-    const getSceneFileUrl = (project_id: string, scene_id: string) => {
+    const getSceneFileUrl = async (project_id: string, scene_id: string) => {
         const path = getSceneFilePath(project_id, scene_id)
-        return client.storage.from(projectFilesBucketId).createSignedUrl(path, 60, {
-            download: true
-        })
+        try {
+            const res = await client.storage.from(projectFilesBucketId).createSignedUrl(path, 60, {
+                download: true
+            })
+            if (res.error) {
+                throw res.error
+            }
+            return res.data.signedUrl
+        } catch (error) {
+            console.log('Error getting signed url', error)
+            return null
+        }
+
     }
 
 

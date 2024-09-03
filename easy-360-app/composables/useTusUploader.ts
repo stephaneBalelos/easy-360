@@ -49,15 +49,15 @@ export const useTusUplaoder = (
         var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
         console.log(bytesUploaded, bytesTotal, percentage + "%");
       },
-    onSuccess:
-      props?.onSuccess ??
-      function () {
+    onSuccess: function () {
+        if (props?.onSuccess) {
+            props.onSuccess();
+        }
         console.log("Successful upload!");
       },
   });
 
   uppy.on("file-added", (file) => {
-    console.log(path)
     const supabaseMetadata = {
       bucketName: bucket_id,
       objectName: path,

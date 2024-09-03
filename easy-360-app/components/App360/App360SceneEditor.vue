@@ -39,6 +39,10 @@ import SceneEditorSetting from "./App360SceneEditorComponents/SceneEditorSetting
 
 const { selectedSceneId } = useEditorState();
 
+watch(() => selectedSceneId.value, (newVal) => {
+  console.log('selectedSceneId', newVal);
+}, { immediate: true });
+
 
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <primitive :object="sphere" @context-menu="handleSphereClick" />
+  <primitive ref="sphereRef" :object="sphere" @context-menu="handleSphereClick" />
 </template>
 
 <script setup lang="ts">
@@ -7,49 +7,49 @@ import { Mesh, MeshBasicMaterial, SphereGeometry, Spherical, SRGBColorSpace, Vec
 import AddPOIModal from '../Modals/AddPOIModal.vue';
 import { useSceneControl } from '~/composables/useSceneControl';
 import { projectFilesBucketId } from '~/constants';
+import type { ShallowRef } from 'vue';
+import type { TresInstance } from '@tresjs/core';
 
 const modal = useModal()
 const sceneControl = useSceneControl();
 const { selectedProjectId, selectedSceneId } = useEditorState();
 const { getSceneFileUrl } = useScenes();
 
-
-
-
 const geometry = new SphereGeometry(100, 60, 40);
 geometry.scale(-1, 1, 1);
 const material = new MeshBasicMaterial();
 
-
-
 const sphere = new Mesh(geometry, material);
 
+const sphereRef: ShallowRef<TresInstance | null> = shallowRef(null);
 
-watch([selectedProjectId, selectedSceneId], async (newVal) => {
 
-  if (!newVal) return;
+watch(() => selectedSceneId.value, async (newVal) => {
+
+  console.log('dsajdhaosc');
 
   if (!selectedProjectId.value || !selectedSceneId.value) {
     return;
   }
 
-  const {data:url, error} = await getSceneFileUrl(selectedProjectId.value, selectedSceneId.value)
+  const url = await getSceneFileUrl(selectedProjectId.value, selectedSceneId.value)
 
-  if (error) {
-    console.error('Error getting scene file url', error);
+  if (!url) {
     return;
   }
 
 
-
-  const texture = await useTexture([`${url.signedUrl}`]);
+  const texture = await useTexture([url]);
   texture.colorSpace = SRGBColorSpace;
   // texture.mapping = EquirectangularReflectionMapping
   const material = new MeshBasicMaterial({ map: texture });
 
   material.map = texture;
 
-  sphere.material = material;
+  if (sphereRef.value) {
+    console.log('sphereRef', sphereRef.value);
+    sphereRef.value.material = material;
+  }
   
 }, { immediate: true });
 
