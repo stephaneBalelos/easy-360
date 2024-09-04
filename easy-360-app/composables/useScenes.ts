@@ -22,7 +22,7 @@ export const useScenes = createGlobalState(() => {
         if (error) {
             throw error
         }
-        if(data) {
+        if(data && !editorState.selectedSceneId.value) {
             editorState.selectedSceneId.value = data[0].id  
         }
         return data

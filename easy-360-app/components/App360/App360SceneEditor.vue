@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <UTabs v-if="selectedSceneId" :items="tabs" @change="onChange" :ui="{
+    <UTabs v-if="editorState.selectedSceneId" :items="tabs" @change="onChange" :ui="{
       list: {
         rounded: '',
       }
@@ -31,7 +31,7 @@ import { useEditorState } from "~/composables/useEditorState";
 import SceneEditorContent from "./App360SceneEditorComponents/SceneEditorContent.vue";
 import SceneEditorSettings from "./App360SceneEditorComponents/SceneEditorSettings.vue";
 
-const { selectedSceneId } = useEditorState();
+const editorState = useEditorState();
 
 const tabs = [
   {
@@ -46,7 +46,7 @@ const tabs = [
   },
 ];
 
-watch(() => selectedSceneId.value, (newVal) => {
+watch(() => editorState.selectedSceneId.value, (newVal) => {
   console.log('selectedSceneId', newVal);
 }, { immediate: true });
 
