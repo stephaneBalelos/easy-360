@@ -123,9 +123,10 @@
               </template>
 
               <App360SceneList />
-              <UButton color="white" variant="solid" block @click="AddNewScene"
+              <UButton size="xs" variant="ghost" block @click="AddNewScene"
                 >Add New Scene</UButton
               >
+              <UDivider />
 
               <App360PoisList />
 
@@ -141,10 +142,12 @@
           <div class="flex-grow w-full h-full p-4">
             <App360Viewport />
           </div>
+
+
           <UDashboardPanel
             :width="250"
             collapsible
-            class="border-l border-gray-200 dark:border-gray-700 px-4 py-4"
+            class="border-l border-gray-200 dark:border-gray-700"
           >
             <div v-show="editPanelState != 'none'">
               <App360SceneEditor v-if="editPanelState == 'scene'" />
