@@ -12,7 +12,7 @@ import type { TresInstance } from '@tresjs/core';
 
 const modal = useModal()
 const sceneControl = useSceneControl();
-const { selectedProjectId, selectedSceneId } = useEditorState();
+const { selectedProjectId, selectedSceneId, isSceneLoading } = useEditorState();
 const { getSceneFileUrl } = useScenes();
 
 const geometry = new SphereGeometry(100, 60, 40);
@@ -26,7 +26,7 @@ const sphereRef: ShallowRef<TresInstance | null> = shallowRef(null);
 
 watch(() => selectedSceneId.value, async (newVal) => {
 
-  console.log('dsajdhaosc');
+
 
   if (!selectedProjectId.value || !selectedSceneId.value) {
     return;
@@ -38,6 +38,8 @@ watch(() => selectedSceneId.value, async (newVal) => {
     return;
   }
 
+  isSceneLoading.value = true;
+
 
   const texture = await useTexture([url]);
   texture.colorSpace = SRGBColorSpace;
@@ -47,9 +49,12 @@ watch(() => selectedSceneId.value, async (newVal) => {
   material.map = texture;
 
   if (sphereRef.value) {
-    console.log('sphereRef', sphereRef.value);
     sphereRef.value.material = material;
+  } else {
+    console.error('sphereRef is null');
   }
+
+  isSceneLoading.value = false;
   
 }, { immediate: true });
 

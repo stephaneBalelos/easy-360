@@ -11,6 +11,8 @@ export const useEditorState = createGlobalState(() => {
 
   const editPanelState = ref<EditPanelState>("none");
 
+  const isSceneLoading = ref(false);
+
   const {
     data: selectedProject,
     error,
@@ -59,5 +61,6 @@ export const useEditorState = createGlobalState(() => {
     selectedPOIId,
     refreshProject: refresh,
     editPanelState,
+    isSceneLoading
   };
 });
