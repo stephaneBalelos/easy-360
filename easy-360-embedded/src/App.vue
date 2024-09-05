@@ -9,7 +9,7 @@ import Easy360ViewCe from './components/Easy360View.ce.vue';
   </header>
 
   <main>
-    <Easy360ViewCe url="https://www.google.com" />
+    <Easy360ViewCe pid="https://www.google.com" />
   </main>
 </template>
 

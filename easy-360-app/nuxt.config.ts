@@ -21,7 +21,7 @@ export default defineNuxtConfig({
       login: '/login',
       callback: '/confirm',
       include: undefined,
-      exclude: ['index', '/confirm', '/signup', '/forgot-password', 'reset-password'],
+      exclude: ['index', '/confirm', '/signup', '/forgot-password', 'reset-password', 'preview/*'],
       cookieRedirect: true,
     },
     cookieOptions: {
