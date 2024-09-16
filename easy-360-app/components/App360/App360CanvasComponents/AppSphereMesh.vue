@@ -1,5 +1,5 @@
 <template>
-  <primitive ref="sphereRef" :object="sphere" @context-menu="handleSphereClick" />
+  <primitive ref="sphereRef" :object="sphere" @context-menu="handleSphereClick" @pointer-move="handlePointerMove" />
 </template>
 
 <script setup lang="ts">
@@ -12,7 +12,7 @@ import type { TresInstance } from '@tresjs/core';
 
 const modal = useModal()
 const sceneControl = useSceneControl();
-const { selectedProjectId, selectedSceneId, isSceneLoading } = useEditorState();
+const { selectedProjectId, selectedSceneId, isSceneLoading, pointerIntersectionWithSphere } = useEditorState();
 const { getSceneFileUrl } = useScenes();
 
 const geometry = new SphereGeometry(100, 60, 40);
@@ -75,6 +75,10 @@ function openAddPOIModal (pos: Vector3) {
       modal.close();
     }
   })
+}
+
+function handlePointerMove ($event: Intersection) {
+  pointerIntersectionWithSphere.value = $event
 }
 
 </script>

@@ -2,7 +2,7 @@
   <TresCanvas>
     <TresPerspectiveCamera
       ref="camera"
-      :position="sceneControl.camera.position"
+      :position="[sceneControl.camera.position[0], sceneControl.camera.position[1], sceneControl.camera.position[2]]"
       :look-at="[0, 0, 0]"
     />
     <OrbitControls
@@ -17,7 +17,7 @@
       <AppSphereMesh />
     </Suspense>
     <Suspense>
-      <AppPoiMesh v-for="poi in pois" :name="poi.name" :description="poi.description" :position="poi.design_data.position" :key="poi.id" />
+      <AppPoiMesh v-for="poi in pois" v-bind="poi" :key="poi.id" />
     </Suspense>
   </TresCanvas>
 </template>

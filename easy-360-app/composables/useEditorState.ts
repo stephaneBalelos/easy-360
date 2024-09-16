@@ -1,3 +1,4 @@
+import type { Intersection } from "three";
 import type { AppProject } from "~/types/app.types";
 import type { Database } from "~/types/database.types";
 type EditPanelState = "none" | "scene" | "poi";
@@ -12,6 +13,8 @@ export const useEditorState = createGlobalState(() => {
   const editPanelState = ref<EditPanelState>("none");
 
   const isSceneLoading = ref(false);
+
+  const pointerIntersectionWithSphere = ref<Intersection>()
 
   const {
     data: selectedProject,
@@ -61,6 +64,7 @@ export const useEditorState = createGlobalState(() => {
     selectedPOIId,
     refreshProject: refresh,
     editPanelState,
-    isSceneLoading
+    isSceneLoading,
+    pointerIntersectionWithSphere
   };
 });
