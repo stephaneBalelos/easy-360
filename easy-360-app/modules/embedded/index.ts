@@ -7,11 +7,16 @@ export default defineNuxtModule({
     },
     setup (options, nuxt) {
       const { resolve } = createResolver(import.meta.url)
+
+      nuxt.hook("nitro:build:public-assets", (nitro) => {
+        
+      })
   
         addComponent({
             name: "Easy360Embedded",
             filePath: resolve("./runtime/Easy360Embedded.ce.vue"),
-            mode: "client"
+            mode: "client",
+            chunkName: "easy-360-embedded"
         })
     }
   })

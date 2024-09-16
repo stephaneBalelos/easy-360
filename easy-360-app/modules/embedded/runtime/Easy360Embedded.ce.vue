@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { TresCanvas } from "@tresjs/core";
 import { OrbitControls } from "@tresjs/cientos";
+import { onMounted } from "vue";
+
+
+onMounted(() => {
+  console.log('mounted')
+})
 </script>
 
 <template>
