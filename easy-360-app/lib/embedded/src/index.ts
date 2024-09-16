@@ -5,6 +5,6 @@ import Easy360EmbeddedCe from './../../../modules/embedded/runtime/Easy360Embedd
 export { Easy360EmbeddedCe }
 
 // register
-export const registerEmbedddedElement = () => {
+export const registerEmbeddedElement = () => {
     customElements.define('easy-360-viewer', defineCustomElement(Easy360EmbeddedCe))
 }

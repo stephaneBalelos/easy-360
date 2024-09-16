@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { TresCanvas } from "@tresjs/core";
-import { OrbitControls } from "@tresjs/cientos";
-import { onMounted } from "vue";
-
-
-onMounted(() => {
-  console.log('mounted')
-})
-</script>
-
 <template>
   <TresCanvas window-size clear-color="#82DBC5">
     <TresPerspectiveCamera :position="[9, 9, 9]" />
@@ -28,6 +17,17 @@ onMounted(() => {
     <TresDirectionalLight :position="[0, 2, 4]" :intensity="1.2" cast-shadow />
   </TresCanvas>
 </template>
+
+<script setup lang="ts">
+import { TresCanvas } from "@tresjs/core";
+import { OrbitControls } from "@tresjs/cientos";
+import { onMounted } from "vue";
+
+
+onMounted(() => {
+  console.log('mounted')
+})
+</script>
 
 <style>
 html,
