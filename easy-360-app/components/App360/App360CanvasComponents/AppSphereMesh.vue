@@ -12,7 +12,7 @@ import type { TresInstance } from '@tresjs/core';
 
 const modal = useModal()
 const sceneControl = useSceneControl();
-const { selectedProjectId, selectedSceneId, isSceneLoading, pointerIntersectionWithSphere } = useEditorState();
+const { selectedProjectId, selectedSceneId, isSceneLoading, pointerIntersectionWithSphere, tresCameraContext } = useEditorState();
 const { getSceneFileUrl } = useScenes();
 
 const geometry = new SphereGeometry(100, 60, 40);
@@ -23,9 +23,10 @@ const sphere = new Mesh(geometry, material);
 
 const sphereRef: ShallowRef<TresInstance | null> = shallowRef(null);
 
+tresCameraContext.value = useTresContext().camera.value
+
 
 watch(() => selectedSceneId.value, async (newVal) => {
-
 
 
   if (!selectedProjectId.value || !selectedSceneId.value) {

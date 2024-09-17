@@ -1,4 +1,5 @@
-import type { Intersection } from "three";
+import type { TresContext } from "@tresjs/core";
+import type { Camera, Intersection } from "three";
 import type { AppProject } from "~/types/app.types";
 import type { Database } from "~/types/database.types";
 type EditPanelState = "none" | "scene" | "poi";
@@ -15,6 +16,8 @@ export const useEditorState = createGlobalState(() => {
   const isSceneLoading = ref(false);
 
   const pointerIntersectionWithSphere = ref<Intersection>()
+
+  const tresCameraContext = ref<Camera>()
 
   const {
     data: selectedProject,
@@ -58,6 +61,7 @@ export const useEditorState = createGlobalState(() => {
     }, { immediate: true });
 
   return {
+    tresCameraContext,
     selectedProjectId,
     selectedProject,
     selectedSceneId,

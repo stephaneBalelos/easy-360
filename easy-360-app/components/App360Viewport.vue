@@ -4,12 +4,10 @@
     class="canvas-viewport"
     :style="`--v-width: ${viewport.width}px; --v-height: ${viewport.height}px;`"
   >
+  {{ sceneControl.camera.position[0] }} {{ sceneControl.camera.position[1] }} {{ sceneControl.camera.position[2] }}
     <!-- <div class="w-full h-full bg-red-800"></div> -->
     <App360Canvas></App360Canvas>
 
-    <div v-if="editorState.isSceneLoading.value" class="viewport-loading-indicator absolute inset-0 grid place-items-center bg-primary/25">
-      <UIcon name="i-heroicons-arrow-path" class="loading-icon w-10 h-10" />
-    </div>
   </div>
 </template>
 
@@ -31,6 +29,7 @@ const parentEl = useParentElement();
 const { width, height } = useElementSize(parentEl);
 
 const { currentBreakpoint } = useEditorBreakpoints();
+const sceneControl = useSceneControl();
 
 const editorState = useEditorState();
 
@@ -83,8 +82,4 @@ const viewport = computed(() => {
   }
 }
 
-#canvas {
-  width: 100%;
-  height: 100%;
-}
 </style>
