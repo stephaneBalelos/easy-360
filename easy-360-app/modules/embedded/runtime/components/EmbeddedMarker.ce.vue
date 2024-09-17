@@ -4,7 +4,7 @@
     v-if="cameraContext && show && screenCoords && !isLoading"
     :style="`--left: ${screenCoords.x}; --top: ${screenCoords.y};`"
   >
-    <button class="marker-btn">
+    <button @click="() => handleMarkerClick()" class="marker-btn">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="32"
@@ -30,9 +30,11 @@ import { defineProps, onMounted, ref, watch } from "vue";
 import { usePreviewState } from "../composables/usePreviewState";
 import { Vector3 } from "three";
 import { mapRange } from "./../helpers";
+import { usePreviewControls } from "../composables/usePreviewControls";
 
 const props = defineProps<AppPOI>();
-const { cameraContext, cameraPosition, isLoading } = usePreviewState();
+const { cameraContext, cameraPosition, isLoading, selectedPoiId, selectedPoi } = usePreviewState();
+const { cameraLookAt } = usePreviewControls()
 const show = ref(false);
 const screenCoords = ref<{ x: number; y: number }>();
 
@@ -76,6 +78,19 @@ function getMarkerScreenPosition() {
   } else {
     show.value = true;
     screenCoords.value = screenPos;
+  }
+}
+
+function handleMarkerClick() {
+  selectedPoiId.value = props.id
+  if (selectedPoi.value) {
+    console.log('clickc ')
+    const position = selectedPoi.value.design_data.position
+    cameraLookAt(new Vector3(
+      position.x,
+      position.y,
+      position.z
+    ))
   }
 }
 

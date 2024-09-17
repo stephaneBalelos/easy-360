@@ -1,7 +1,7 @@
 <template>
   <div class="canvas-container" :style="`--width: ${size.width}; --height: ${size.height}; --screen-ratio: ${screenRatio};`">
     <TresCanvas clear-color="#82DBC5" v-if="selectedScene">
-      <TresPerspectiveCamera :position="[3, 0, 0]" :look-at="[0, 0, 0]" />
+      <TresPerspectiveCamera :position="[cameraPosition.x, cameraPosition.y, cameraPosition.z]" :look-at="[0, 0, 0]" />
       <OrbitControls
         @change="onCameraPositionChange"
         ref="orbitsControls"

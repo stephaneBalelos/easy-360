@@ -31,7 +31,7 @@ export const usePreviewState = createGlobalState(() => {
 
     const selectedPoi = computed(() => {
         if(!selectedScene.value) return null
-        return selectedScene.value.points_of_interest.filter((poi) => poi.id === selectedPoiId.value)
+        return selectedScene.value.points_of_interest.filter((poi) => poi.id === selectedPoiId.value)[0]
     })
 
     watch(previewData, (value) => {
@@ -43,5 +43,5 @@ export const usePreviewState = createGlobalState(() => {
     }, { immediate: true})
 
   
-  return { isLoading, previewData, cameraContext, cameraPosition, selectedScene, selectedPoi };
+  return { isLoading, previewData, cameraContext, cameraPosition, selectedScene, selectedSceneId, selectedPoi, selectedPoiId };
 });
