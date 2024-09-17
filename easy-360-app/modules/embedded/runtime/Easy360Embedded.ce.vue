@@ -1,10 +1,12 @@
 <template>
   <div class="canvas-container" :style="`--width: ${size.width}; --height: ${size.height};`">
-    <TresCanvas clear-color="#82DBC5">
-      <TresPerspectiveCamera :position="[9, 9, 9]" />
+    <TresCanvas clear-color="#82DBC5" v-if="data">
+      <TresPerspectiveCamera :position="[3, 0, 0]" />
       <OrbitControls />
-      <primitive ref="sphereRef" :object="sphere" />
-      <Box :args="[1, 1, 1]" color="orange" />
+      
+      <Suspense>
+        <EmbeddedSphere :url="data.scenes[1].url" ></EmbeddedSphere>
+      </Suspense>
 
       <TresDirectionalLight
         :position="[0, 2, 4]"
@@ -13,6 +15,7 @@
       />
     </TresCanvas>
     <EmbeddedLoading v-if="isLoading" />
+    
   </div>
 </template>
 
@@ -25,6 +28,8 @@ import { useFetch } from '@vueuse/core'
 import EmbeddedLoading from './components/EmbeddedLoading.vue';
 import { Box } from "@tresjs/cientos";
 import type { PreviewResponse } from "./types";
+import EmbeddedSphere from "./components/EmbeddedSphere.vue";
+import { Suspense } from "vue";
 
 
 type Props = {
@@ -36,11 +41,6 @@ type Props = {
 const isLoading = ref(true);
 
 const props = defineProps<Props>();
-const geometry = new SphereGeometry(100, 60, 40);
-geometry.scale(-1, 1, 1);
-const material = new MeshBasicMaterial();
-
-const sphere = new Mesh(geometry, material);
 
 const size = computed(() => {
   return {
@@ -56,18 +56,13 @@ const { isFetching, error, data } = useFetch<PreviewResponse>("http://localhost:
 
     return ctx
   },
-}).get().json();
+}).get().json<PreviewResponse>();
 
 if (error.value) {
   console.error(error.value);
 }
 
 
-
-
-onMounted(() => {
-  console.log(data.value);
-});
 </script>
 
 <style scoped>
