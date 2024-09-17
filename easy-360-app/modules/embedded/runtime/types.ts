@@ -2,7 +2,7 @@ import type { AppPOI, AppProject, AppScene } from "~/types/app.types";
 
 
 export type SceneResponse = AppScene & {
-    pois: AppPOI[]
+    points_of_interest: AppPOI[]
     url: string
 }
 

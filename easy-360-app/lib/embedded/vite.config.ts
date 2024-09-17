@@ -8,7 +8,10 @@ import { templateCompilerOptions } from "@tresjs/core";
 export default defineConfig({
     root: resolve(__dirname, "src"),
     plugins: [vue({
-        ...templateCompilerOptions
+        ...templateCompilerOptions,
+        features: {
+          customElement: /\.ce\.vue$/
+        }
     })],
     
     build: {

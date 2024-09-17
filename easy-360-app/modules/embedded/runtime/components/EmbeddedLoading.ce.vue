@@ -1,6 +1,5 @@
 <template>
-<div class="loading-layer ">
-  dsadas
+<div class="loading-layer">
   <div class="sk-chase">
     <div class="sk-chase-dot"></div>
     <div class="sk-chase-dot"></div>
@@ -21,7 +20,8 @@
   position: absolute;
   inset: 0;
   background-color: rgba(94, 189, 219, 0.5);
-  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
 }
 .loading-layer .sk-chase {
   width: 40px;

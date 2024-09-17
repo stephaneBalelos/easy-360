@@ -4,7 +4,10 @@
 
 <script setup lang="ts">
 import { Mesh, MeshBasicMaterial, SphereGeometry, SRGBColorSpace } from 'three';
-import { useTexture } from '@tresjs/core'
+import { useTexture, useTresContext } from '@tresjs/core'
+import { useImage } from '@vueuse/core';
+import { usePreviewState } from '../composables/usePreviewState';
+import { watch } from 'vue';
 
 
 type Props = {
@@ -12,6 +15,16 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+const { isLoading, cameraContext } = usePreviewState()
+
+cameraContext.value = useTresContext().camera.value
+
+const { isLoading:image_loading } = useImage({ src: props.url })
+
+watch(image_loading, (value) => {
+  isLoading.value = value
+})
+
 
 const geometry = new SphereGeometry(100, 60, 40);
 geometry.scale(-1, 1, 1);
