@@ -28,6 +28,7 @@ tresCameraContext.value = useTresContext().camera.value
 
 watch(() => selectedSceneId.value, async (newVal) => {
 
+  isSceneLoading.value = true;
 
   if (!selectedProjectId.value || !selectedSceneId.value) {
     return;
@@ -38,8 +39,6 @@ watch(() => selectedSceneId.value, async (newVal) => {
   if (!url) {
     return;
   }
-
-  isSceneLoading.value = true;
 
 
   const texture = await useTexture([url]);

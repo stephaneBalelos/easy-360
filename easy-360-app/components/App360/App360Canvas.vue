@@ -25,16 +25,15 @@
         <AppPoiMesh v-for="poi in pois" v-bind="poi" :key="poi.id" />
       </Suspense>
     </TresCanvas>
+
+    <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in pois" v-bind="poi" :key="poi.id" />
+
     <div
       v-if="editorState.isSceneLoading.value"
       class="viewport-loading-indicator absolute inset-0 grid place-items-center bg-primary/25"
     >
       <UIcon name="i-heroicons-arrow-path" class="loading-icon w-10 h-10" />
     </div>
-
-    <AppPoiMarker v-if="editorState.tresCameraContext" v-for="poi in pois" v-bind="poi" :key="poi.id" />
-
-    
   </div>
 </template>
 
@@ -69,5 +68,19 @@ function onChange($event: OrbitControlsType) {
 .app-360-canvas {
   width: 100%;
   height: 100%;
+  position: relative;
+}
+
+.app-360-canvas .viewport-loading-indicator .loading-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

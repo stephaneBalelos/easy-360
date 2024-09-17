@@ -69,17 +69,4 @@ const viewport = computed(() => {
   position: relative;
 }
 
-.canvas-viewport .viewport-loading-indicator .loading-icon {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 </style>
