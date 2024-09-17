@@ -21,7 +21,7 @@ export default defineNuxtConfig({
       login: '/login',
       callback: '/confirm',
       include: undefined,
-      exclude: ['index', '/confirm', '/signup', '/forgot-password', 'reset-password', 'preview/*'],
+      exclude: ['index', '/confirm', '/signup', '/forgot-password', '/reset-password', '/preview/*', '/api/*'],
       cookieRedirect: true,
     },
     cookieOptions: {
@@ -29,5 +29,8 @@ export default defineNuxtConfig({
       sameSite: 'lax',
       secure: true
     }
+  },
+  routeRules: {
+    '/api/**': { cors: true },
   }
 })
