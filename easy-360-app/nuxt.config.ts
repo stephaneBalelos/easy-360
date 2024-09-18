@@ -1,3 +1,6 @@
+import * as pjson from './package.json'
+
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
@@ -12,8 +15,12 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      supabaseStorageEndpoint: process.env.SUPABASE_STORAGE_URL || '' 
+      supabaseStorageEndpoint: process.env.SUPABASE_STORAGE_URL || '',
+      app_version: pjson.version
     }
+  },
+  nitro: {
+    preset: 'vercel-edge',
   },
   supabase: {
     redirect: true,

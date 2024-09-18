@@ -1,8 +1,11 @@
 <template>
   <UDashboardLayout>
     <UDashboardPanel grow>
-      <UDashboardNavbar title="Easy 360" badge="alpha">
-        <template #center> center </template>
+      <UDashboardNavbar title="Easy 360">
+        <!-- <template #center> center </template> -->
+         <template #badge>
+          <PartialsAppVersionBadge />
+         </template>
         <template #right>
           <UserDropdown />
         </template>

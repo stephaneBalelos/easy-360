@@ -10,6 +10,7 @@
           </template>
 
           <template #left>
+            <PartialsAppVersionBadge />
             <ProjectDropdown />
             <UTooltip text="Settings">
               <UButton
@@ -131,8 +132,6 @@
               <App360PoisList />
 
               <UDivider />
-
-              <UDashboardSidebarLinks />
 
               <template #footer>
                 <!-- Place anything you like here -->

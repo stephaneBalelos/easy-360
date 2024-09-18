@@ -1,11 +1,7 @@
 <template>
   <UHeader :links="links">
     <template #logo>
-      Easy 360 <UBadge
-        label="alpha"
-        variant="subtle"
-        class="mb-0.5"
-      />
+      Easy 360 <PartialsAppVersionBadge />
     </template>
 
     <template #right>
