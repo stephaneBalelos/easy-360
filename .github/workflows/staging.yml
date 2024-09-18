@@ -14,6 +14,7 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
       SUPABASE_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
+      APP_DIR: ./easy-360-app
 
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +23,18 @@ jobs:
         with:
           version: latest
 
-      - run: supabase start
-      - run: supabase link --project-ref $SUPABASE_PROJECT_ID
-      - run: supabase db push
-      - run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+      - name: Start Supabase
+        working-directory: ${{ env.APP_DIR }}
+        run: supabase start
+
+      - name: Link Supabase Project
+        working-directory: ${{ env.APP_DIR }}
+        run: supabase link --project-ref $SUPABASE_PROJECT_ID
+
+      - name: Push DB To Supabase
+        working-directory: ${{ env.APP_DIR }}
+        run: supabase db push
+        
+      - name: Deploy Functions to Supabase
+        working-directory: ${{ env.APP_DIR }}
+        run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
