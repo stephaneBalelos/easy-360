@@ -18,9 +18,6 @@ export default defineNuxtConfig({
       collections: ['heroicons'] // <!--- this
     }
   },
-  nitro: {
-    preset: 'vercel_edge'
-  },
   runtimeConfig: {
     public: {
       supabaseStorageEndpoint: process.env.SUPABASE_STORAGE_URL || '',
