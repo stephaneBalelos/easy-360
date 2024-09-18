@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { FormError } from "#ui/types";
+import type { Database } from "~/types/database.types";
 
 definePageMeta({
   layout: "auth",
 });
 
 const client = useSupabaseClient();
+const toast = useToast();
+const { origin } = useRequestURL();
 
 const loading = ref(false);
 
@@ -64,6 +67,7 @@ const providers = [
 ];
 
 async function onSubmit(d: FormState) {
+  console.log(origin);
   loading.value = true;
   try {
     const { data, error } = await client.auth.signUp({
@@ -73,12 +77,23 @@ async function onSubmit(d: FormState) {
         data: {
           name: d.name,
         },
+        emailRedirectTo: origin + "/app",
       },
     });
     if (error) {
+      toast.add({
+        title: "Error while signing you up",
+        description: error.message,
+        color: "red",
+      });
       throw error;
     }
-    navigateTo("/app");
+    toast.add({
+      title: "Check Your Mailbox!",
+      description: "Confirmation Email has been sent to your email",
+      timeout: 15000,
+    });
+    navigateTo("/login");
   } catch (error) {
     console.error("Error signing up", error);
   } finally {

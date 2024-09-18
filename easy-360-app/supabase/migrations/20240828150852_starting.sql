@@ -1,5 +1,5 @@
 create table public.users (
-    id            uuid default uuid_generate_v4() primary key,
+    id            uuid references auth.users on delete cascade not null primary key,
     name          text not null,
     email         text not null unique,
     role          text not null default 'user',

@@ -30,7 +30,7 @@ export default defineNuxtConfig({
       login: '/login',
       callback: '/confirm',
       include: undefined,
-      exclude: ['index', '/confirm', '/signup', '/forgot-password', '/reset-password', '/preview/*', '/api/*'],
+      exclude: ['/', '/confirm', '/signup', '/forgot-password', '/reset-password', '/preview/*', '/api/*'],
       cookieRedirect: true,
     },
     cookieOptions: {
