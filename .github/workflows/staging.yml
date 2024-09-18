@@ -35,6 +35,6 @@ jobs:
         working-directory: ${{ env.APP_DIR }}
         run: supabase db push
 
-      - name: Deploy Functions to Supabase
-        working-directory: ${{ env.APP_DIR }}
-        run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+      # - name: Deploy Functions to Supabase
+      #   working-directory: ${{ env.APP_DIR }}
+      #   run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
