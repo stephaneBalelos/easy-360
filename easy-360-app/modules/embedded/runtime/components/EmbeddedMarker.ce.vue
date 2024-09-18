@@ -21,14 +21,17 @@
         </g>
       </svg>
     </button>
+    <div v-if="showMarkerLabel" class="marker-label">
+      {{ props.name }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { AppPOI } from "~/types/app.types";
-import { defineProps, onMounted, ref, watch } from "vue";
+import { defineProps, onMounted, ref, watch, computed } from "vue";
 import { usePreviewState } from "../composables/usePreviewState";
-import { Vector3 } from "three";
+import { Vector2, Vector3 } from "three";
 import { mapRange } from "./../helpers";
 import { usePreviewControls } from "../composables/usePreviewControls";
 
@@ -81,6 +84,18 @@ function getMarkerScreenPosition() {
   }
 }
 
+const showMarkerLabel = computed(() => {
+  if(!screenCoords.value) return
+  const pos = new Vector2(screenCoords.value.x, screenCoords.value.y)
+  const center = new Vector2(50, 50)
+
+  const mag = center.distanceTo(pos)
+
+  return mag < 40
+
+
+})
+
 function handleMarkerClick() {
   selectedPoiId.value = props.id
   if (selectedPoi.value) {
@@ -97,12 +112,24 @@ function handleMarkerClick() {
 // console.log(props)
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .marker {
   position: absolute;
   top: calc(var(--top) * 1%);
   left: calc(var(--left) * 1%);
   transform: translate(-50%, -50%);
+  
+  .marker-label {
+    min-width: 200px;
+    max-width: 250px;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: aqua;
+  }
+
 }
 
 .marker:hover {
