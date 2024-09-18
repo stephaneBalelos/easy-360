@@ -13,14 +13,19 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/supabase'
   ],
+  icon: {
+    serverBundle: {
+      collections: ['heroicons'] // <!--- this
+    }
+  },
+  nitro: {
+    preset: 'vercel_edge'
+  },
   runtimeConfig: {
     public: {
       supabaseStorageEndpoint: process.env.SUPABASE_STORAGE_URL || '',
       app_version: pjson.version
     }
-  },
-  nitro: {
-    preset: 'vercel-edge',
   },
   supabase: {
     redirect: true,

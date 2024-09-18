@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@iconify-json/heroicons':
+    specifier: ^1.2.0
+    version: 1.2.0
   '@nuxt/image':
     specifier: ^1.8.0
     version: 1.8.0
