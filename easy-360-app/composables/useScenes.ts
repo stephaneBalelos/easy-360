@@ -1,6 +1,7 @@
 import type { Database } from "~/types/database.types"
 import { useEditorState } from "./useEditorState";
 import type { AppScene } from "~/types/app.types";
+import { projectFilesBucketId } from "~/constants";
 
 export type SceneBase = {
     name: string;
@@ -21,7 +22,7 @@ export const useScenes = createGlobalState(() => {
         if (error) {
             throw error
         }
-        if(data) {
+        if(data && !editorState.selectedSceneId.value) {
             editorState.selectedSceneId.value = data[0].id  
         }
         return data
@@ -62,8 +63,25 @@ export const useScenes = createGlobalState(() => {
         return data
     }
 
-    const getSceneFilePath = (bucket_id: string, scene_id: string) => {
-        return `projects/${bucket_id}/scenes/${scene_id}/panorama.jpg`
+    const getSceneFilePath = (project_id: string, scene_id: string) => {
+        return `projects/${project_id}/scenes/${scene_id}/panorama.jpg`
+    }
+
+    const getSceneFileUrl = async (project_id: string, scene_id: string) => {
+        const path = getSceneFilePath(project_id, scene_id)
+        try {
+            const res = await client.storage.from(projectFilesBucketId).createSignedUrl(path, 60, {
+                download: true
+            })
+            if (res.error) {
+                throw res.error
+            }
+            return res.data.signedUrl
+        } catch (error) {
+            console.log('Error getting signed url', error)
+            return null
+        }
+
     }
 
 
@@ -74,6 +92,7 @@ export const useScenes = createGlobalState(() => {
         createScene,
         updateScene,
         deleteScene,
-        getSceneFilePath
+        getSceneFilePath,
+        getSceneFileUrl
     }
 })

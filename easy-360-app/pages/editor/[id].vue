@@ -10,6 +10,7 @@
           </template>
 
           <template #left>
+            <PartialsAppVersionBadge />
             <ProjectDropdown />
             <UTooltip text="Settings">
               <UButton
@@ -17,7 +18,8 @@
                 color="gray"
                 variant="ghost"
                 @click="openProjectSettings"
-              >Project Settings</UButton>
+                >Project Settings</UButton
+              >
             </UTooltip>
 
             <UTooltip text="Move to junk">
@@ -122,11 +124,14 @@
               </template>
 
               <App360SceneList />
+              <UButton size="xs" variant="ghost" block @click="AddNewScene"
+                >Add New Scene</UButton
+              >
+              <UDivider />
+
               <App360PoisList />
 
               <UDivider />
-
-              <UDashboardSidebarLinks />
 
               <template #footer>
                 <!-- Place anything you like here -->
@@ -134,18 +139,19 @@
             </UDashboardSidebar>
           </UDashboardPanel>
           <div class="flex-grow w-full h-full p-4">
-            {{ editPanelState}}
             <App360Viewport />
           </div>
+
+
           <UDashboardPanel
             :width="250"
             collapsible
-            class="border-l border-gray-200 dark:border-gray-700 px-4 py-4"
+            class="border-l border-gray-200 dark:border-gray-700"
           >
-          <div v-show="editPanelState != 'none'">
-            <App360SceneEditor v-if="editPanelState == 'scene'" />
-            <App360PoiEditor v-if="editPanelState == 'poi'" />
-          </div>
+            <div v-show="editPanelState != 'none'">
+              <App360SceneEditor v-if="editPanelState == 'scene'" />
+              <App360PoiEditor v-if="editPanelState == 'poi'" />
+            </div>
           </UDashboardPanel>
         </div>
       </template>
@@ -175,22 +181,36 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id;
-const { selectedProjectId, selectedSceneId, selectedPOIId, editPanelState } = useEditorState()
+const { selectedProjectId, selectedSceneId, selectedPOIId, editPanelState } =
+  useEditorState();
 
 selectedProjectId.value = id as string;
 
-
 const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
 
+const { createScene } = useScenes();
 
-const slideover = useSlideover()
-function openProjectSettings () {
+const slideover = useSlideover();
+function openProjectSettings() {
   if (!selectedProjectId.value) {
-    return
+    return;
   }
   slideover.open(ProjectEdit, {
-    project_id: selectedProjectId.value
-  })
+    project_id: selectedProjectId.value,
+  });
+}
+
+async function AddNewScene() {
+  console.log("Add new scene");
+  try {
+    const res = await createScene({
+      name: "New Scene",
+      description: "New Scene Description",
+    });
+    console.log("New Scene", res);
+  } catch (error) {
+    console.log("Error creating scene", error);
+  }
 }
 </script>
 

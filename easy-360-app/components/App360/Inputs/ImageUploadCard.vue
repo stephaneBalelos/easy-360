@@ -1,7 +1,7 @@
 <template>
   <UDashboardCard
     title="Panorama Image"
-    description="Upload a 360 image to be used as the background of the scene."
+    description="Upload a panorama image for the scene"
   >
     <div @click="fileInput?.click()" class="w-full h-40 mb-4 cursor-pointer">
       <input
@@ -11,7 +11,7 @@
         accept="image/jpeg, image/png"
         @change="onFileChange"
       />
-      <div v-if="file">
+      <div class="w-full h-full" v-if="file">
         <img :src="file" class="w-full h-full object-cover" />
       </div>
       <div
@@ -21,20 +21,25 @@
         <UIcon name="i-heroicons-photo" class="w-5 h-5" />
       </div>
     </div>
-    {{ uppy.getFiles().length }}
     <UProgress v-if="uploadState == 'uploading'" :value="progressValue" />
   </UDashboardCard>
 </template>
 
 <script setup lang="ts">
 import { useTusUplaoder } from "~/composables/useTusUploader";
+import type { Database } from "~/types/database.types";
 
 type ImageUploadCardProps = {
     bucketId: string;
     path: string;
+    fileUrl?: string | null;
 };
 
+
+
 const props = defineProps<ImageUploadCardProps>();
+const $emits = defineEmits(['file-uploaded']);
+const client = useSupabaseClient<Database>();
 
 const uploadState = ref<"idle" | "uploading">("idle");
 
@@ -42,6 +47,10 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const progressValue = ref(0);
 
 const file = ref<string | null>(null);
+
+watch(() => props.fileUrl, (newVal) => {
+  file.value = newVal ?? null;
+}, { immediate: true });
 
 const { uppy } = useTusUplaoder(props.bucketId, props.path, {
   maxNumberOfFiles: 1,
@@ -52,14 +61,20 @@ const { uppy } = useTusUplaoder(props.bucketId, props.path, {
   onProgress: (bytesUploaded, bytesTotal) => {
     uploadState.value = "uploading";
     progressValue.value = Math.round((bytesUploaded / bytesTotal) * 100);
-    console.log("progress");
   },
 
   onSuccess: () => {
     uploadState.value = "idle";
-    console.log("success");
+    $emits("file-uploaded");
   },
 });
+
+onMounted(() => {
+  console.log('props.fileUrl', props.fileUrl);
+  if(props.fileUrl) {
+    file.value = props.fileUrl;
+  }
+})
 
 function onFileChange($event: Event) {
   if (!$event.target) {

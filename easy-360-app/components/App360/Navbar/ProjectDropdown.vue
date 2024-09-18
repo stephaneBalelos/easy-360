@@ -47,10 +47,12 @@ const actions = [
   {
     label: "New project",
     icon: "i-heroicons-plus-circle",
+    to: "/editor",
   },
   {
     label: "Überblick",
     icon: "i-heroicons-cog-8-tooth",
+    to: "/app",
   },
 ];
 

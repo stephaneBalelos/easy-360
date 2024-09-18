@@ -4,8 +4,10 @@
     class="canvas-viewport"
     :style="`--v-width: ${viewport.width}px; --v-height: ${viewport.height}px;`"
   >
+  {{ sceneControl.camera.position[0] }} {{ sceneControl.camera.position[1] }} {{ sceneControl.camera.position[2] }}
     <!-- <div class="w-full h-full bg-red-800"></div> -->
     <App360Canvas></App360Canvas>
+
   </div>
 </template>
 
@@ -27,6 +29,11 @@ const parentEl = useParentElement();
 const { width, height } = useElementSize(parentEl);
 
 const { currentBreakpoint } = useEditorBreakpoints();
+const sceneControl = useSceneControl();
+
+const editorState = useEditorState();
+
+
 
 const viewport = computed(() => {
   const size = {
@@ -62,8 +69,4 @@ const viewport = computed(() => {
   position: relative;
 }
 
-#canvas {
-  width: 100%;
-  height: 100%;
-}
 </style>

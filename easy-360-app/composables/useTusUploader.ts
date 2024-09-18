@@ -8,7 +8,6 @@ export type TusUploaderProps = {
   onSuccess?: () => void;
 };
 
-
 export const useTusUplaoder = (
   bucket_id: string,
   path: string,
@@ -19,18 +18,17 @@ export const useTusUplaoder = (
 
   const tusEndpoint = `${supabaseStorageEndpoint}/upload/resumable`;
 
-  console.log(session.value);
-
   const uppy = new Uppy({
     restrictions: {
       maxNumberOfFiles: props?.maxNumberOfFiles ?? 1,
-    }
+    },
   });
   uppy.use(Tus, {
     endpoint: tusEndpoint,
     headers: {
-      //   authorization: `Bearer ${session.value.access_token}`,
+      authorization: `Bearer ${session.value.access_token}`,
       apikey: supabase.key,
+      'x-upsert': 'true',
     },
     uploadDataDuringCreation: true,
     chunkSize: 6 * 1024 * 1024,
@@ -51,9 +49,10 @@ export const useTusUplaoder = (
         var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
         console.log(bytesUploaded, bytesTotal, percentage + "%");
       },
-    onSuccess:
-      props?.onSuccess ??
-      function () {
+    onSuccess: function () {
+        if (props?.onSuccess) {
+            props.onSuccess();
+        }
         console.log("Successful upload!");
       },
   });

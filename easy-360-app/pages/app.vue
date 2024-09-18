@@ -1,8 +1,8 @@
 <template>
   <ClientOnly>
-    <UDashboardPanel>
+    <UContainer class="w-full">
       <NuxtPage />
-    </UDashboardPanel>
+    </UContainer>
   </ClientOnly>
 </template>
 

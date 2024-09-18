@@ -8,7 +8,7 @@ import { useEditorState } from "./useEditorState";
 export type POIBase = {
     name: string;
     description: string;
-    position: {
+    position?: {
         x: number;
         y: number;
         z: number;
@@ -53,6 +53,16 @@ export const usePOIs = createGlobalState(() => {
         }
     })
 
+    const getPOI = async (poi_id: string) => {
+        const local = pois.value?.filter((poi) => poi.id === poi_id)[0]
+        if (local) return local
+        const { data:poi, error } = await client.from('points_of_interest').select('*').eq('id', poi_id).single()
+        if (error) {
+            throw error
+        }
+        return poi
+    }
+
     const createPOI = async (scene_id: string, p: POIBase) => {
         const {data, error} = await client.from('points_of_interest').insert({
             scene_id,
@@ -73,14 +83,21 @@ export const usePOIs = createGlobalState(() => {
         const {data, error} = await client.from('points_of_interest').update({
             name: p.name,
             description: p.description,
-            design_data: {
-                position: p.position
-            }
         }).eq('id', id)
         if (error) {
             throw error
         }
         refresh()
+        return data
+    }
+
+    const updatePOIDesignProps = async (id:string, props: DesignProps) => {
+        const {data, error} = await client.from('points_of_interest').update({
+            design_data: props
+        }).eq('id', id)
+        if (error) {
+            throw error
+        }
         return data
     }
 
@@ -112,8 +129,10 @@ export const usePOIs = createGlobalState(() => {
 
     return {
         pois,
+        getPOI,
         createPOI,
         updatePOI,
+        updatePOIDesignProps,
         deletePOI
     }
 })

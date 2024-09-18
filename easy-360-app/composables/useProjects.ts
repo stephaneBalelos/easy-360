@@ -10,9 +10,13 @@ export type ProjectBase = {
 export const useProjects = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
     const { refreshProject } = useEditorState()
+    const user = useSupabaseUser()
 
     const { data:projects, error, status, refresh} = useAsyncData(`app_projects`, async () => {
-        const {data, error }= await client.from('projects').select('*')
+        if (user.value === null) {
+            throw new Error('User not logged in')
+        }
+        const {data, error }= await client.from('projects').select('*').eq('owner', user.value.id)
         if (error) {
             throw error
         }
@@ -20,7 +24,13 @@ export const useProjects = createGlobalState(() => {
     })
 
     const createProject = async (p: ProjectBase) => {
-        const {data, error} = await client.from('projects').insert(p).select('id')
+        if (user.value === null) {
+            throw new Error('User not logged in')
+        }
+        const {data, error} = await client.from('projects').insert({
+            ...p,
+            owner: user.value.id
+        }).select('id')
         if (error) {
             throw error
         }

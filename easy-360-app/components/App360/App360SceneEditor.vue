@@ -1,7 +1,10 @@
 <template>
   <div class="flex flex-col h-full">
-    <SceneEditorSetting v-if="selectedSceneId"></SceneEditorSetting>
-    <!-- <UTabs v-if="selectedSceneId" :items="tabs" @change="onChange">
+    <UTabs v-if="editorState.selectedSceneId" :items="tabs" @change="onChange" :ui="{
+      list: {
+        rounded: '',
+      }
+    }">
         <template #default="{ item, index, selected }">
           <span
             class="truncate"
@@ -10,34 +13,46 @@
           >
         </template>
         <template #item="{ item }">
-          <UCard>
-             <template #header>
-            <p class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              {{ item.label }}
-            </p>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {{ item.description }}
-            </p>
-          </template>
-  
-          <SceneEditorSetting></SceneEditorSetting>
-  
-             <template #footer>
-            <UButton type="submit" color="black">
-              Save {{ item.key === 'account' ? 'account' : 'password' }}
-            </UButton>
-          </template>
-          </UCard>
+          <div class="flex flex-col px-4">
+            <div v-if="item.key === 'content-tab'" class="space-y-3">
+              <SceneEditorContent />
+            </div>
+            <div v-else-if="item.key === 'settings-tab'" class="space-y-3">
+              <SceneEditorSettings />
+            </div>
+          </div>
         </template>
-      </UTabs> -->
+      </UTabs>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useEditorState } from "~/composables/useEditorState";
-import SceneEditorSetting from "./App360SceneEditorComponents/SceneEditorSetting.vue";
+import SceneEditorContent from "./App360SceneEditorComponents/SceneEditorContent.vue";
+import SceneEditorSettings from "./App360SceneEditorComponents/SceneEditorSettings.vue";
 
-const { selectedSceneId } = useEditorState();
+const editorState = useEditorState();
+
+const tabs = [
+  {
+    key: "content-tab",
+    label: "Content",
+    icon: "i-heroicons-arrow-down-tray",
+  },
+  {
+    key: "settings-tab",
+    label: "Settings",
+    icon: "i-heroicons-eye-dropper",
+  },
+];
+
+watch(() => editorState.selectedSceneId.value, (newVal) => {
+  console.log('selectedSceneId', newVal);
+}, { immediate: true });
+
+function onChange(key: string) {
+  console.log(key);
+}
 
 
 </script>
