@@ -31,6 +31,9 @@ export default defineNuxtConfig({
     }
   },
   routeRules: {
+    '/': { prerender: true },
+    '/app/**': { ssr: false },
+    '/editor/**': { ssr: false },
     '/api/**': { cors: true },
   }
 })
