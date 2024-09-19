@@ -8,7 +8,7 @@
       class="px-4 mt-6"
     >
     <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-4 mt-4">
-        <UDashboardCard v-for="project in projects" :key="project.id" :title="project.name" :description="project.description">
+        <UDashboardCard v-for="project in projects" :key="project.id" :title="project.name" :description="project.description ?? ''">
             <template #links>
                 <UButton
                     label="open in editor"
