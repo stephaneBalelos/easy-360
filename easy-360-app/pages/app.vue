@@ -1,8 +1,6 @@
 <template>
   <ClientOnly>
-    <UContainer class="w-full">
-      <NuxtPage />
-    </UContainer>
+    <NuxtPage />
   </ClientOnly>
 </template>
 

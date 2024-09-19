@@ -15,9 +15,9 @@ const items = computed(() => [
     label: '',
     disabled: true
   }], [{
-    label: 'Settings',
-    icon: 'i-heroicons-cog-8-tooth',
-    to: '/app/settings'
+    label: 'Account',
+    icon: 'i-heroicons-user',
+    to: '/app/account'
   }, {
     label: 'Help & Support',
     icon: 'i-heroicons-question-mark-circle',
@@ -51,6 +51,7 @@ async function signOut() {
 
 <template>
   <UDropdown
+    v-if="user"
     mode="hover"
     :items="items"
     :ui="{ item: { disabled: 'cursor-text select-text' } }"
@@ -81,7 +82,7 @@ async function signOut() {
           Signed in as
         </p>
         <p class="truncate font-medium text-gray-900 dark:text-white">
-          {{ user?.email }}
+          {{ user.email }}
         </p>
       </div>
     </template>
