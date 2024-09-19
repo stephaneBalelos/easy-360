@@ -119,7 +119,7 @@ async function onSubmit(d: FormState) {
     >
       <template #description>
         Already have an account?
-        <NuxtLink to="/" class="text-primary font-medium">Login</NuxtLink>.
+        <NuxtLink to="/login" class="text-primary font-medium">Login</NuxtLink>.
       </template>
 
       <!-- <template #validation>
