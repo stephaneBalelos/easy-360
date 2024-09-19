@@ -62,6 +62,12 @@ const providers = [
     color: "white" as const,
     click: () => {
       console.log("Redirect to Google");
+      toast.add({
+        title: "Google login is not available",
+        description: "Please try again later",
+        color: "red",
+        timeout: 5000,
+      });
     },
   },
 ];
@@ -77,7 +83,7 @@ async function onSubmit(d: FormState) {
         data: {
           name: d.name,
         },
-        emailRedirectTo: origin + "/app",
+        emailRedirectTo: origin + "/confirm",
       },
     });
     if (error) {

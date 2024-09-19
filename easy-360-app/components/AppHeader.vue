@@ -40,12 +40,12 @@ const user = useSupabaseUser()
 
 const links = [{
   label: 'Docs',
-  to: '/docs'
+  to: '/'
 }, {
   label: 'Pricing',
-  to: '/pricing'
+  to: '/'
 }, {
   label: 'Blog',
-  to: '/blog'
+  to: '/'
 }]
 </script>

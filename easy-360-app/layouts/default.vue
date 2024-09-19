@@ -6,7 +6,7 @@
       <slot />
     </UMain>
 
-    <AppFooter />
+    <!-- <AppFooter /> -->
 
     <ClientOnly>
       <!-- <LazyUContentSearch
