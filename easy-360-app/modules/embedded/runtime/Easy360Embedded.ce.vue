@@ -22,6 +22,10 @@
 
     <EmbeddedMarker v-if="selectedScene" v-for="poi in selectedScene.points_of_interest" v-bind="poi" :key="poi.id" />
 
+    <EmbeddedScenesListCe></EmbeddedScenesListCe>
+
+    <EmbeddedSceneInfos v-if="selectedScene" />
+
     <EmbeddedLoading v-if="isLoading" />
 
   </div>
@@ -34,12 +38,14 @@ import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addo
 import { onMounted, ref, computed } from "vue";
 import { useFetch, useWindowSize } from '@vueuse/core'
 import EmbeddedLoading from './components/EmbeddedLoading.ce.vue';
+import EmbeddedSceneInfos from "./components/EmbeddedSceneInfos.ce.vue";
 import type { PreviewResponse } from "./types";
 import EmbeddedSphere from "./components/EmbeddedSphere.ce.vue";
 import { Suspense } from "vue";
 import EmbeddedMarker from "./components/EmbeddedMarker.ce.vue";
 import { usePreviewState } from "./composables/usePreviewState";
 import { Vector3 } from "three";
+import EmbeddedScenesListCe from "./components/EmbeddedScenesList.ce.vue";
 
 
 
@@ -92,5 +98,13 @@ const onCameraPositionChange = ($event: OrbitControlsType) => {
   width: var(--width);
   aspect-ratio: var(--screen-ratio);
   position: relative;
+  
+
+  --color-primary: 34 197 94;
+  --color-secondary: 17 24 39;
+  --color-body: 229 231 235;
+  --container-padding: 2rem;
+
+  color: var(--color-body);
 }
 </style>
