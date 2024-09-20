@@ -19,6 +19,8 @@ export const useEditorState = createGlobalState(() => {
 
   const tresCameraContext = ref<Camera>()
 
+  const sceneError = ref<string | null>(null);
+
   const {
     data: selectedProject,
     error,
@@ -54,11 +56,22 @@ export const useEditorState = createGlobalState(() => {
   watch(selectedSceneId, () => {
     selectedPOIId.value = null;
     editPanelState.value = "scene";
-  }, { immediate: true});
+  }, { immediate: true });
 
-    watch(selectedPOIId, (value) => {
-        editPanelState.value = value ? "poi" : "scene";
-    }, { immediate: true });
+  watch(selectedPOIId, (value) => {
+    editPanelState.value = value ? "poi" : "scene";
+  }, { immediate: true });
+
+
+  const reloadSelectedScene = async () => {
+    const sceneId = selectedSceneId.value;
+    if (!sceneId) {
+      return;
+    }
+    selectedSceneId.value = null;
+    await nextTick();
+    selectedSceneId.value = sceneId
+  }
 
   return {
     tresCameraContext,
@@ -69,6 +82,8 @@ export const useEditorState = createGlobalState(() => {
     refreshProject: refresh,
     editPanelState,
     isSceneLoading,
-    pointerIntersectionWithSphere
+    pointerIntersectionWithSphere,
+    reloadSelectedScene,
+    sceneError
   };
 });

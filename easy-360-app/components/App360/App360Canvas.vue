@@ -28,6 +28,8 @@
 
     <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in pois" v-bind="poi" :key="poi.id" />
 
+    <SceneErrorCard v-if="editorState.sceneError.value" />
+
     <div
       v-if="editorState.isSceneLoading.value"
       class="viewport-loading-indicator absolute inset-0 grid place-items-center bg-primary/25"
@@ -45,6 +47,7 @@ import { Vector3 } from "three";
 import AppPoiMesh from "./App360CanvasComponents/AppPoiMesh.vue";
 import AppSphereMesh from "./App360CanvasComponents/AppSphereMesh.vue";
 import AppPoiMarker from "./App360CanvasComponents/AppPoiMarker.vue";
+import SceneErrorCard from "./App360CanvasComponents/SceneErrorCard.vue";
 import { useSceneControl } from "~/composables/useSceneControl";
 
 const { pois } = usePOIs();

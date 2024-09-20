@@ -12,7 +12,7 @@ import type { TresInstance } from '@tresjs/core';
 
 const modal = useModal()
 const sceneControl = useSceneControl();
-const { selectedProjectId, selectedSceneId, isSceneLoading, pointerIntersectionWithSphere, tresCameraContext } = useEditorState();
+const { selectedProjectId, selectedSceneId, isSceneLoading, pointerIntersectionWithSphere, tresCameraContext, sceneError } = useEditorState();
 const { getSceneFileUrl } = useScenes();
 
 const geometry = new SphereGeometry(100, 60, 40);
@@ -26,9 +26,8 @@ const sphereRef: ShallowRef<TresInstance | null> = shallowRef(null);
 tresCameraContext.value = useTresContext().camera.value
 
 
-watch(() => selectedSceneId.value, async (newVal) => {
 
-  isSceneLoading.value = true;
+watch(() => selectedSceneId.value, async (newVal) => {
 
   if (!selectedProjectId.value || !selectedSceneId.value) {
     return;
@@ -37,16 +36,13 @@ watch(() => selectedSceneId.value, async (newVal) => {
   const url = await getSceneFileUrl(selectedProjectId.value, selectedSceneId.value)
 
   if (!url) {
+    sceneError.value = 'Scene file not found';
+    await loadDefaultMaterial()
     return;
   }
 
 
-  const texture = await useTexture([url]);
-  texture.colorSpace = SRGBColorSpace;
-  // texture.mapping = EquirectangularReflectionMapping
-  const material = new MeshBasicMaterial({ map: texture });
-
-  material.map = texture;
+  const material = await loadTextureMaterial(url);
 
   if (sphereRef.value) {
     sphereRef.value.material = material;
@@ -79,6 +75,26 @@ function openAddPOIModal (pos: Vector3) {
 
 function handlePointerMove ($event: Intersection) {
   pointerIntersectionWithSphere.value = $event
+}
+
+async function loadTextureMaterial(url: string) {
+  const texture = await useTexture([url]);
+  texture.colorSpace = SRGBColorSpace;
+  // texture.mapping = EquirectangularReflectionMapping
+  const material = new MeshBasicMaterial({ map: texture });
+
+  material.map = texture;
+
+  return material;
+}
+
+async function loadDefaultMaterial() {
+  const material = await loadTextureMaterial('/textures/TCom_JapanParkingGarageB_4K_hdri_sphere_tone.jpg');
+  if (sphereRef.value) {
+    sphereRef.value.material = material;
+  } else {
+    console.error('sphereRef is null');
+  }
 }
 
 </script>

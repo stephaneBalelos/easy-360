@@ -8,7 +8,7 @@
 import ImageUploadCard from '@/components/App360/Inputs/ImageUploadCard.vue'
 import { panoramaImagePath, projectFilesBucketId } from "~/constants";
 
-const { selectedProjectId, selectedSceneId } = useEditorState();
+const { selectedProjectId, selectedSceneId, reloadSelectedScene } = useEditorState();
 const { getSceneFilePath, getSceneFileUrl } = useScenes();
 
 
@@ -30,11 +30,7 @@ const { data:url, error, status } = await useAsyncData(async () => {
 function onUploaded() {
     console.log('uploaded');
     // Todo: update scene image
-    const sceneId = selectedSceneId.value;
-    selectedSceneId.value = null;
-    console.log('selectedSceneId', selectedSceneId.value);
-    console.log('sceneId', sceneId);
-    selectedSceneId.value = sceneId;
+    reloadSelectedScene();
 
 }
 
