@@ -29,7 +29,7 @@ export const usePOIs = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
     const editorState = useEditorState()
 
-    const {data:pois, error, status, refresh} = useAsyncData(async () => {
+    const {data:pois, error, status, refresh} = useAsyncData('', async () => {
         if (!editorState.selectedSceneId.value) {
             return []
         }
@@ -37,7 +37,7 @@ export const usePOIs = createGlobalState(() => {
         if (error) {
             throw error
         }
-        return data
+        return data as AppPOI[]
         
     }, {
         watch: [editorState.selectedSceneId],

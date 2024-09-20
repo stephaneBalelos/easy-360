@@ -18,7 +18,7 @@ create table public.projects (
 
 create table public.scenes (
     id            uuid default uuid_generate_v4() primary key,
-    project_id    uuid not null references public.projects(id),
+    project_id    uuid not null references public.projects(id) on delete cascade,
     name          text not null,
     description   text not null,
     is_main_scene boolean not null default false,
@@ -31,12 +31,13 @@ comment on table public.scenes is 'SCENE DATA';
 
 create table public.points_of_interest (
     id            uuid default uuid_generate_v4() primary key,
-    scene_id      uuid not null references public.scenes(id),
+    scene_id      uuid not null references public.scenes(id) on delete cascade,
     name          text not null,
     description   text not null,
     design_data   jsonb not null,
     created_at    timestamp with time zone default now() not null,
     last_updated  timestamp with time zone default now() not null,
+    linked_scene_id  uuid references public.scenes(id) on delete set null,
     visible       boolean not null default true
 );
 

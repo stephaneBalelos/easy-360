@@ -41,6 +41,7 @@ export type Database = {
           design_data: Json
           id: string
           last_updated: string
+          linked_scene_id: string | null
           name: string
           scene_id: string
           visible: boolean
@@ -51,6 +52,7 @@ export type Database = {
           design_data: Json
           id?: string
           last_updated?: string
+          linked_scene_id?: string | null
           name: string
           scene_id: string
           visible?: boolean
@@ -61,11 +63,19 @@ export type Database = {
           design_data?: Json
           id?: string
           last_updated?: string
+          linked_scene_id?: string | null
           name?: string
           scene_id?: string
           visible?: boolean
         }
         Relationships: [
+          {
+            foreignKeyName: "points_of_interest_linked_scene_id_fkey"
+            columns: ["linked_scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "points_of_interest_scene_id_fkey"
             columns: ["scene_id"]
@@ -165,7 +175,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
-          id?: string
+          id: string
           name: string
           role?: string
         }
@@ -176,7 +186,15 @@ export type Database = {
           name?: string
           role?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
