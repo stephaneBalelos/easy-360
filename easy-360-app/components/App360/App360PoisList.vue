@@ -15,6 +15,7 @@ const items = computed(() => {
     return {
       label: poi.name,
       chip: "green",
+      badge: poi.linked_scene_id ? "Linked" : "",
       active: selectedPOIId.value === poi.id,
       click: () => {
         selectedPOIId.value = poi.id;

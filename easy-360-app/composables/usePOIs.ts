@@ -5,9 +5,7 @@ import { useScenes } from "./useScenes";
 import type { AppPOI } from "~/types/app.types";
 import { useEditorState } from "./useEditorState";
 
-export type POIBase = {
-    name: string;
-    description: string;
+export type POIBase = Pick<AppPOI, "name" | "description" | "linked_scene_id"> & {
     position?: {
         x: number;
         y: number;
@@ -83,6 +81,7 @@ export const usePOIs = createGlobalState(() => {
         const {data, error} = await client.from('points_of_interest').update({
             name: p.name,
             description: p.description,
+            linked_scene_id: p.linked_scene_id
         }).eq('id', id)
         if (error) {
             throw error

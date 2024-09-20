@@ -1,31 +1,54 @@
 <template>
   <div v-if="selectedPOIId" class="space-y-2">
-    <UForm v-if="status === 'success'"
-  ref="form"
-    :state="state"
-    :schema="schema"
-    @change="onChange"
-    :validate-on="['change', 'blur']"
-    class="flex flex-col"
-  >
-    <UFormGroup label="Name">
-      <template #description>
-        Name of the POI
-        <UIcon name="i-heroicons-information-circle" />
-      </template>
-      <template #default>
-        <UInput v-model="state.name" placeholder="Title.." />
-      </template>
-    </UFormGroup>
-    <UFormGroup label="Description">
-      <template #description>
-        Description of the POI
-        <UIcon name="i-heroicons-information-circle" />
-      </template>
-      <template #default>
-        <UTextarea v-model="state.description" placeholder="Description" />
-      </template>
-    </UFormGroup>
+    <UForm
+      v-if="status === 'success'"
+      ref="form"
+      :state="state"
+      :schema="schema"
+      @change="onChange"
+      :validate-on="['change', 'blur']"
+      class="flex flex-col space-y-4"
+    >
+      <UFormGroup label="Name">
+        <template #description>
+          Name of the POI
+          <UIcon name="i-heroicons-information-circle" />
+        </template>
+        <template #default>
+          <UInput v-model="state.name" placeholder="Title.." />
+        </template>
+      </UFormGroup>
+      <UFormGroup label="Description">
+        <template #description>
+          Description of the POI
+          <UIcon name="i-heroicons-information-circle" />
+        </template>
+        <template #default>
+          <UTextarea v-model="state.description" placeholder="Description" />
+        </template>
+      </UFormGroup>
+      <UFormGroup label="Linked Scene" v-if="scenesOptions.length > 0">
+        <template #description>
+          Scene linked to the POI
+          <UIcon name="i-heroicons-information-circle" />
+        </template>
+
+        <template #hint>
+          <UButton v-if="state.linked_scene_id" size="2xs" color="gray" variant="link" @click="clearLink">Clear</UButton>
+        </template>
+        <template #default>
+          <USelectMenu
+            searchable
+            searchable-placeholder="Search for a Scene"
+            class="w-full lg:w-48"
+            placeholder="Select a Scene"
+            :options="scenesOptions"
+            :valueAttribute="'value'"
+            v-model="state.linked_scene_id"
+            @change="onChange"
+          />
+        </template>
+      </UFormGroup>
     </UForm>
   </div>
 </template>
@@ -35,17 +58,27 @@ import { z } from "zod";
 import type { Database } from "~/types/database.types";
 import type { FormSubmitEvent } from "#ui/types";
 
-
-const { selectedPOIId } = useEditorState();
+const { selectedPOIId, selectedSceneId } = useEditorState();
 const { pois, updatePOI } = usePOIs();
+const { scenes } = useScenes();
 const client = useSupabaseClient<Database>();
 
-
 const form = ref();
+
+const scenesOptions = computed(() => {
+  if (!scenes.value) {
+    return [];
+  }
+  return scenes.value.filter((scene) => scene.id !== selectedSceneId.value).map((scene) => ({
+    label: scene.name,
+    value: scene.id,
+  }));
+});
 
 const schema = z.object({
   name: z.string().min(3).max(255),
   description: z.string(),
+  linked_scene_id: z.string().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -53,37 +86,71 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
   name: "",
   description: "",
+  linked_scene_id: "",
 });
 
-const {data:poi, error, status } = await useAsyncData(async() => {
+const {
+  data: poi,
+  error,
+  status,
+} = await useAsyncData(
+  async () => {
     if (!selectedPOIId.value) {
       throw new Error("No POI selected");
     }
-  const {data, error} = await client.from("points_of_interest").select().eq("id", selectedPOIId.value).single();
+    const { data, error } = await client
+      .from("points_of_interest")
+      .select()
+      .eq("id", selectedPOIId.value)
+      .single();
 
-  if (error) {
-    console.log(error)
-    throw error;
-  }
-  state.name = data.name;
-  state.description = data.description;
+    if (error) {
+      console.log(error);
+      throw error;
+    }
+    state.name = data.name;
+    state.description = data.description;
     return data;
-}, {immediate: true, watch: [selectedPOIId]});
+  },
+  { immediate: true, watch: [selectedPOIId] }
+);
+
+async function saveChanges(state: POIBase) {
+  if (!selectedPOIId.value) {
+    return;
+  }
+  try {
+    schema.parse(state);
+    state.linked_scene_id = state.linked_scene_id || null;
+    await updatePOI(selectedPOIId.value, state);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function onChange($event: FormSubmitEvent<Schema>) {
   console.log($event);
 
   const data: POIBase = {
     name: state.name,
-    description: state.description
-  }
+    description: state.description,
+    linked_scene_id: state.linked_scene_id ?? "",
+  };
 
+  await saveChanges(data);
+
+}
+
+async function clearLink() {
+  state.linked_scene_id = "";
   if (selectedPOIId.value) {
-      const res = await updatePOI(selectedPOIId.value, data)
+    const data: POIBase = {
+      name: state.name,
+      description: state.description,
+      linked_scene_id: "",
+    };
+    await saveChanges(data)
   }
-
-
-
 }
 </script>
 
