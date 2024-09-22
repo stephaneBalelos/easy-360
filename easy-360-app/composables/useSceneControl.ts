@@ -87,7 +87,6 @@ export const useSceneControl = createGlobalState(() => {
 
         const tl = gsap.timeline({
             onUpdate: () => {
-                console.log(props);
                 cameraProps.fov = props.fov;
                 sphereBlur.vertical = props.vBlur / 100;
                 sphereBlur.horizontal = props.hBlur / 100;
