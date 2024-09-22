@@ -1,28 +1,77 @@
 <template>
-  <UPopover mode="click" v-model:open="open" class="absolute -translate-x-2/4 -translate-y-2/4" v-if="show" :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%;`"> 
-    <UButton variant="soft" icon="i-heroicons-eye-20-solid"
-    size="lg"
-    square :ui="{ rounded: 'rounded-full' }" />
+  <UPopover
+    mode="click"
+    :open="open"
+    class="absolute -translate-x-2/4 -translate-y-2/4"
+    v-if="show"
+    :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%;`"
+  >
+    <UButton
+      variant="soft"
+      icon="i-heroicons-eye-20-solid"
+      size="lg"
+      square
+      :ui="{ rounded: 'rounded-full' }"
+    />
 
     <template #panel>
-      <div class="p-4">
-        {{ props.name }}
+      <UCard class="min-w-96">
+        <template #header>
+          <div class="flex justify-between">
+            <div>{{ props.name }}</div>
+            <UButton
+              v-if="props.linked_scene_id"
+              icon="i-heroicons-arrow-right"
+              size="sm"
+              color="primary"
+              variant="solid"
+              label="To Scene"
+              trailing
+              @click="goToScene"
+            />
+          </div>
+        </template>
+
         {{ props.description }}
-      </div>
+
+        <template #footer>
+          <UButton
+            size="sm"
+            color="red"
+            variant="soft"
+            label="Button"
+            trailing
+          />
+        </template>
+      </UCard>
     </template>
   </UPopover>
 </template>
 
 <script setup lang="ts">
-import { Camera, Vector3 } from 'three';
-import { mapRange } from '~/helpers';
-import type { AppPOI } from '~/types/app.types';
+import { Camera, Vector3 } from "three";
+import { mapRange } from "~/helpers";
+import type { AppPOI } from "~/types/app.types";
 
+type Props = {
+  id: string;
+  name: string;
+  description: string;
+  linked_scene_id: string | null;
+  design_data: {
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
+};
 
-const props = defineProps<AppPOI>();
+const props = defineProps<Props>();
 const { tresCameraContext } = useEditorState();
 const sceneControl = useSceneControl();
 const { selectedPOIId } = useEditorState();
+const { pois } = usePOIs();
 
 const show = ref(false);
 
@@ -34,29 +83,31 @@ const open = computed(() => {
 });
 
 onMounted(() => {
-  console.log('mounted');
 
   if (!props.design_data.position) {
-    console.error('No position data');
+    console.error("No position data");
     return;
   }
 
   if (!tresCameraContext.value) {
-    console.error('No camera');
+    console.error("No camera");
     return;
   }
-})
+});
 
-watch(sceneControl.camera, (newVal) => {
-    if(tresCameraContext.value) {
-        setMarkerPosition(tresCameraContext.value);
+watch(
+  sceneControl.camera,
+  (newVal) => {
+    if (tresCameraContext.value) {
+      setMarkerPosition(tresCameraContext.value);
     }
-}, { immediate: true, deep: true });
-
+  },
+  { immediate: true, deep: true }
+);
 
 function setMarkerPosition(camera: Camera) {
   if (!props.design_data.position) {
-    console.error('No position data');
+    console.error("No position data");
     return;
   }
 
@@ -71,9 +122,8 @@ function setMarkerPosition(camera: Camera) {
   projectionCoords.value = {
     x: position.x,
     y: position.y,
-    z: position.z
+    z: position.z,
   };
-
 
   const screenPos = {
     x: mapRange(position.x, -1, 1, 0, 100),
@@ -81,7 +131,13 @@ function setMarkerPosition(camera: Camera) {
   };
 
   // TODO: Position "z" is not accurate, need to find a way to hide the marker when it's not visible
-  if (screenPos.x < 0 || screenPos.x > 100 || screenPos.y < 0 || screenPos.y > 100 || position.z > 1) {
+  if (
+    screenPos.x < 0 ||
+    screenPos.x > 100 ||
+    screenPos.y < 0 ||
+    screenPos.y > 100 ||
+    position.z > 1
+  ) {
     show.value = false;
     return;
   } else {
@@ -89,12 +145,16 @@ function setMarkerPosition(camera: Camera) {
     screenCoords.value = screenPos;
   }
 
-
   return position;
 }
 
+function goToScene() {
+  if (!props.linked_scene_id) {
+    return;
+  }
+
+  sceneControl.goToScene(props.linked_scene_id);
+}
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

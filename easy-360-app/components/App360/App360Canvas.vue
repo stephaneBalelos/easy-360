@@ -52,6 +52,7 @@ import { useSceneControl } from "~/composables/useSceneControl";
 
 const { pois } = usePOIs();
 
+
 const camera = shallowRef();
 const orbitsControls = shallowRef();
 

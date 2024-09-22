@@ -110,6 +110,7 @@ const {
     }
     state.name = data.name;
     state.description = data.description;
+    state.linked_scene_id = data.linked_scene_id || "";
     return data;
   },
   { immediate: true, watch: [selectedPOIId] }
@@ -129,7 +130,6 @@ async function saveChanges(state: POIBase) {
 }
 
 async function onChange($event: FormSubmitEvent<Schema>) {
-  console.log($event);
 
   const data: POIBase = {
     name: state.name,

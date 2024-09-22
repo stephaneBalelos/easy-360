@@ -112,7 +112,6 @@ export const usePOIs = createGlobalState(() => {
 
 
     watch(() => editorState.selectedPOIId.value, (value) => {
-        console.log('cameraLookAtAnimated', value)
         if (!value) {
             return
         }
