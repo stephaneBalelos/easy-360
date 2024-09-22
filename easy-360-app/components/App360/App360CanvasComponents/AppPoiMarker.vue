@@ -1,8 +1,8 @@
 <template>
   <UPopover
     mode="click"
-    :open="open && !sceneControl.isTransitioning.value"
-    class="absolute -translate-x-2/4 -translate-y-2/4"
+    :open="open"
+    :class="`absolute -translate-x-2/4 -translate-y-2/4 ${open ? 'z-50' : 'z-0'}`"
     v-if="show && !sceneControl.isTransitioning.value"
     :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%;`"
   >
@@ -12,6 +12,7 @@
       size="lg"
       square
       :ui="{ rounded: 'rounded-full' }"
+      @click="handleMarkerClick"
     />
 
     <template #panel>
@@ -68,9 +69,8 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const { tresCameraContext } = useEditorState();
+const { tresCameraContext, selectedPOIId } = useEditorState();
 const sceneControl = useSceneControl();
-const { selectedPOIId } = useEditorState();
 const { pois } = usePOIs();
 
 const show = ref(false);
@@ -156,6 +156,17 @@ function goToScene() {
 
   sceneControl.goToScene(
     props.linked_scene_id,
+    new Vector3(
+      props.design_data.position.x,
+      props.design_data.position.y,
+      props.design_data.position.z
+    )
+  );
+}
+
+function handleMarkerClick() {
+  selectedPOIId.value = props.id;
+  sceneControl.cameraLookAtAnimated(
     new Vector3(
       props.design_data.position.x,
       props.design_data.position.y,
