@@ -1,15 +1,7 @@
 <template>
   <div class="app-360-canvas">
     <TresCanvas>
-      <TresPerspectiveCamera
-        ref="camera"
-        :position="[
-          sceneControl.camera.position[0],
-          sceneControl.camera.position[1],
-          sceneControl.camera.position[2],
-        ]"
-        :look-at="[0, 0, 0]"
-      />
+      <AppSceneCamera ref="camera" />
       <OrbitControls
         @change="onChange"
         ref="orbitsControls"
@@ -43,17 +35,18 @@
 import { usePOIs } from "~/composables/usePOIs";
 import { OrbitControls } from "@tresjs/cientos";
 import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
-import { Vector3 } from "three";
+import { Camera, Vector3 } from "three";
 import AppPoiMesh from "./App360CanvasComponents/AppPoiMesh.vue";
 import AppSphereMesh from "./App360CanvasComponents/AppSphereMesh.vue";
 import AppPoiMarker from "./App360CanvasComponents/AppPoiMarker.vue";
 import SceneErrorCard from "./App360CanvasComponents/SceneErrorCard.vue";
 import { useSceneControl } from "~/composables/useSceneControl";
+import AppSceneCamera from "./App360CanvasComponents/AppSceneCamera.vue";
 
 const { pois } = usePOIs();
 
 
-const camera = shallowRef();
+const camera = shallowRef<Camera | null>(null);
 const orbitsControls = shallowRef();
 
 const sceneControl = useSceneControl();
@@ -66,6 +59,7 @@ function onChange($event: OrbitControlsType) {
     $event.object.position.z,
   ];
 }
+
 </script>
 
 <style scoped>

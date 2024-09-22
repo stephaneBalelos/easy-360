@@ -1,9 +1,9 @@
 <template>
   <UPopover
     mode="click"
-    :open="open"
+    :open="open && !sceneControl.isTransitioning.value"
     class="absolute -translate-x-2/4 -translate-y-2/4"
-    v-if="show"
+    v-if="show && !sceneControl.isTransitioning.value"
     :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%;`"
   >
     <UButton
@@ -83,7 +83,6 @@ const open = computed(() => {
 });
 
 onMounted(() => {
-
   if (!props.design_data.position) {
     console.error("No position data");
     return;
@@ -93,10 +92,12 @@ onMounted(() => {
     console.error("No camera");
     return;
   }
+
+  setMarkerPosition(tresCameraContext.value);
 });
 
 watch(
-  sceneControl.camera,
+  () => [sceneControl.camera, sceneControl.cameraProps.fov],
   (newVal) => {
     if (tresCameraContext.value) {
       setMarkerPosition(tresCameraContext.value);
@@ -153,7 +154,14 @@ function goToScene() {
     return;
   }
 
-  sceneControl.goToScene(props.linked_scene_id);
+  sceneControl.goToScene(
+    props.linked_scene_id,
+    new Vector3(
+      props.design_data.position.x,
+      props.design_data.position.y,
+      props.design_data.position.z
+    )
+  );
 }
 </script>
 

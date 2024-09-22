@@ -1,6 +1,6 @@
 <template>
   <Sphere
-    v-if="!isSceneLoading && position"
+    v-if="!isSceneLoading && position && show"
     @click="toggleDrag"
     @pointer-move="handleMouseMove"
     :args="[10, 10, 10]"
@@ -26,6 +26,7 @@ const { isSceneLoading, pointerIntersectionWithSphere, selectedPOIId } = useEdit
 const { getPOI, updatePOIDesignProps } = usePOIs();
 
 const isDragging = ref(false);
+const show = ref(false);
 
 const poi_design = computed(() => {
   return props.design_data as DesignProps;

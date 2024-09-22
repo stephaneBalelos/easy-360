@@ -4,7 +4,9 @@
     class="canvas-viewport"
     :style="`--v-width: ${viewport.width}px; --v-height: ${viewport.height}px;`"
   >
-  {{ sceneControl.camera.position[0] }} {{ sceneControl.camera.position[1] }} {{ sceneControl.camera.position[2] }}
+  <UDashboardToolbar class="py-0 px-1.5 overflow-x-auto">
+    {{ viewport.width }} x {{ viewport.height }}
+  </UDashboardToolbar>
     <!-- <div class="w-full h-full bg-red-800"></div> -->
     <App360Canvas></App360Canvas>
 
@@ -28,7 +30,7 @@ const canvasViewport = ref<HTMLDivElement | null>(null);
 const parentEl = useParentElement();
 const { width, height } = useElementSize(parentEl);
 
-const { currentBreakpoint } = useEditorBreakpoints();
+const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
 const sceneControl = useSceneControl();
 
 const editorState = useEditorState();
@@ -58,6 +60,10 @@ const viewport = computed(() => {
     width: Math.round(size.width),
     height: Math.round(size.height),
   };
+});
+
+watch(viewport, (value) => {
+  viewportSize.value = value;
 });
 </script>
 

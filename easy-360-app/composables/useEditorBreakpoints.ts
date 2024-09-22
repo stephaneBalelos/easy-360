@@ -14,6 +14,8 @@ export const useEditorBreakpoints = createGlobalState(() => {
         { label: 'Large Desktop', width: 1920, height: 1080 },
     ])
     const currentBreakpoint = ref<Breakpoint>(breakpoints.value[2])
+
+    const viewportSize = ref({ width: 1, height: 1 });
     
     function setCurrentBreakpoint(index: number) {
         currentBreakpoint.value = breakpoints.value[index] ? breakpoints.value[index] : breakpoints.value[2]
@@ -21,6 +23,7 @@ export const useEditorBreakpoints = createGlobalState(() => {
 
     return {
         breakpoints,
+        viewportSize,
         currentBreakpoint,
         setCurrentBreakpoint
     }

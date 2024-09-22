@@ -9,10 +9,20 @@ export const useSceneControl = createGlobalState(() => {
     const camera = reactive({
         position: [3, 0, 0],
     })
+    const cameraProps = reactive({
+        fov: 75,
+    })
 
     const light = reactive({
         intensity: 1,
     })
+
+    const sphereBlur = reactive({
+        vertical: 0,
+        horizontal: 0,
+    })
+
+    const isTransitioning = ref(false);
 
     const cameraLookAt = (pos: Vector3) => {
         const spherical = new Spherical();
@@ -27,7 +37,8 @@ export const useSceneControl = createGlobalState(() => {
 
     };
 
-    const cameraLookAtAnimated = (pos: Vector3) => {
+    const cameraLookAtAnimated = (pos: Vector3, cb?: () => void) => {
+
         const spherical = new Spherical();
 
         spherical.setFromVector3(pos);
@@ -47,22 +58,68 @@ export const useSceneControl = createGlobalState(() => {
             duration: 1,
             onUpdate: () => {
                 camera.position = [position.x, position.y, position.z];
+            },
+            onComplete: () => {
+                cb && cb();
             }
         });
     }
 
-    const goToScene = (sceneId: string) => {
+    const goToScene = (sceneId: string, from: Vector3) => {
         if (!scenes.value) return;
         const scene = scenes.value.filter(scene => scene.id === sceneId)[0];
 
         if (!scene) return;
 
-        console.log(scene);
+
+        cameraLookAtAnimated(from);
+        sceneTransition(sceneId)
+
+    }
+
+    const sceneTransition = (sceneId: string) => {
+        isTransitioning.value = true;
+        const props = {
+            fov: cameraProps.fov,
+            vBlur: sphereBlur.vertical * 100,
+            hBlur: sphereBlur.horizontal * 100,
+        }
+
+        const tl = gsap.timeline({
+            onUpdate: () => {
+                console.log(props);
+                cameraProps.fov = props.fov;
+                sphereBlur.vertical = props.vBlur / 100;
+                sphereBlur.horizontal = props.hBlur / 100;
+            },
+            onComplete: () => {
+                isTransitioning.value = false;
+            }
+        });
+
+        tl.to(props, {
+            fov: 50,
+            vBlur: 100,
+            hBlur: 100,
+            duration: 1,
+            onComplete: () => {
+                editorState.selectedSceneId.value = sceneId;
+            }
+        })
+        tl.to(props, {
+            fov: 75,
+            duration: 1,
+            vBlur: 0,
+            hBlur: 0,
+        })
     }
 
     return {
         camera,
+        cameraProps,
         light,
+        sphereBlur,
+        isTransitioning,
         cameraLookAt,
         cameraLookAtAnimated,
         goToScene,
