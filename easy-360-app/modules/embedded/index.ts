@@ -14,7 +14,7 @@ export default defineNuxtModule({
   
         addComponent({
             name: "Easy360Embedded",
-            filePath: resolve("./runtime/Easy360Embedded.ce.vue"),
+            filePath: resolve("./runtime/Easy360Embedded.vue"),
             mode: "client",
             chunkName: "easy-360-embedded"
         })

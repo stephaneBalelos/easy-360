@@ -19,14 +19,14 @@
         cast-shadow
       />
     </TresCanvas>
-
+<!-- 
     <EmbeddedMarker v-if="selectedScene" v-for="poi in selectedScene.points_of_interest" v-bind="poi" :key="poi.id" />
 
     <EmbeddedScenesListCe></EmbeddedScenesListCe>
 
     <EmbeddedSceneInfos v-if="selectedScene" />
 
-    <EmbeddedLoading v-if="isLoading" />
+    <EmbeddedLoading v-if="isLoading" /> -->
 
   </div>
 </template>
@@ -93,7 +93,7 @@ const onCameraPositionChange = ($event: OrbitControlsType) => {
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .canvas-container {
   width: var(--width);
   aspect-ratio: var(--screen-ratio);

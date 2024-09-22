@@ -1,5 +1,5 @@
 import { defineCustomElement } from 'vue'
-import Easy360EmbeddedCe from './../../../modules/embedded/runtime/Easy360Embedded.ce.vue'
+import Easy360EmbeddedCe from '../../../modules/embedded/runtime/Easy360Embedded.vue'
 
 
 export { Easy360EmbeddedCe }

@@ -1,14 +1,14 @@
 <template>
   <div
     ref="canvasViewport"
-    class="canvas-viewport"
-    :style="`--v-width: ${viewport.width}px; --v-height: ${viewport.height}px;`"
+    class="canvas-viewport h-full w-full"
   >
   <UDashboardToolbar class="py-0 px-1.5 overflow-x-auto">
     {{ viewport.width }} x {{ viewport.height }}
   </UDashboardToolbar>
-    <!-- <div class="w-full h-full bg-red-800"></div> -->
-    <App360Canvas></App360Canvas>
+    <div class="w-full flex-1">
+      <Easy360Embedded v-if="editorState.selectedProjectId.value" :id="editorState.selectedProjectId.value" ></Easy360Embedded>
+    </div>
 
   </div>
 </template>
@@ -69,10 +69,10 @@ watch(viewport, (value) => {
 
 <style scoped>
 .canvas-viewport {
-  width: var(--v-width);
-  height: var(--v-height);
   margin: 0 auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 </style>

@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
 
   const { data, error } = await client
     .from("projects")
-    .select("*, scenes(*, points_of_interest(*))")
+    .select("*, scenes(*)")
     .eq("id", id)
     .single();
 

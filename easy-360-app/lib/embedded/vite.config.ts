@@ -10,7 +10,7 @@ export default defineConfig({
     plugins: [vue({
         ...templateCompilerOptions,
         features: {
-          customElement: /\.ce\.vue$/
+          customElement: true
         }
     })],
     
