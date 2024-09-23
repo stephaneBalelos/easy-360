@@ -1,5 +1,5 @@
 <template>
-  <div class="app-360-canvas">
+  <div class="app-360-canvas" :style="`--width: ${size.width}; --height: ${size.height}; --screen-ratio: ${screenRatio};`">
     <TresCanvas>
       <AppSceneCamera ref="camera" />
       <OrbitControls
@@ -45,6 +45,26 @@ import AppSceneCamera from "./App360CanvasComponents/AppSceneCamera.vue";
 
 const { pois } = usePOIs();
 
+type Props = {
+  width?: number;
+  height?: number;
+}
+
+const props = defineProps<Props>();
+
+const size = computed(() => {
+  return {
+    width: props.width ? `${props.width}px` : '100%',
+    height: props.height ? `${props.height}px` : '100%',
+  };
+});
+
+const { width, height } = useWindowSize()
+const screenRatio = computed(() => {
+  return width.value / height.value
+})
+
+
 
 const camera = shallowRef<Camera | null>(null);
 const orbitsControls = shallowRef();
@@ -64,8 +84,9 @@ function onChange($event: OrbitControlsType) {
 
 <style scoped>
 .app-360-canvas {
-  width: 100%;
-  height: 100%;
+  width: var(--width);
+  aspect-ratio: var(--screen-ratio);
+  margin: 0 auto;
   position: relative;
 }
 

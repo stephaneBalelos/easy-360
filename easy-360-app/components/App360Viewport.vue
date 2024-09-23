@@ -7,7 +7,7 @@
     {{ viewport.width }} x {{ viewport.height }}
   </UDashboardToolbar>
     <div class="w-full flex-1">
-      <Easy360Embedded v-if="editorState.selectedProjectId.value" :id="editorState.selectedProjectId.value" ></Easy360Embedded>
+      <App360Canvas :width="viewport.width" :height="viewport.height" ></App360Canvas>
     </div>
 
   </div>
