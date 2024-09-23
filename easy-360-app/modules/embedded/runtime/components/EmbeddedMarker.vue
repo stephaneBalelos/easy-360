@@ -1,6 +1,6 @@
 <template>
   <div
-    class="marker pointer-events-auto"
+    class="marker"
     v-if="cameraContext && show && screenCoords && !isLoading"
     :style="`--left: ${screenCoords.x}; --top: ${screenCoords.y};`"
   >
@@ -113,24 +113,46 @@ function handleMarkerClick() {
 <style lang="scss" scoped>
 .marker {
   position: absolute;
+  pointer-events: auto;
   top: calc(var(--top) * 1%);
   left: calc(var(--left) * 1%);
   transform: translate(-50%, -50%);
+  cursor: auto;
+
+  .marker-btn {
+    padding: .5rem;
+    background-color: rgba(var(--color-primary) / .75);
+    color: rgba(var(--color-body) / 1);
+    border-radius: 100%;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .3s;
+
+    &:hover {
+      background-color: rgba(var(--color-primary) / 1);
+    }
+  }
   
   .marker-label {
     min-width: 200px;
-    max-width: 250px;
+    max-width: 300px;
     width: 100%;
     position: absolute;
-    top: 100%;
+    top: calc(100% + 1rem);
     left: 50%;
     transform: translateX(-50%);
-    background-color: aqua;
+    background-color: white;
+    color: rgba(var(--color-body) / 1);
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding: .25rem;
   }
 
-}
-
-.marker:hover {
-  cursor: pointer;
 }
 </style>

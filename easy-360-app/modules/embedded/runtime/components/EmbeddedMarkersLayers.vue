@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute inset-0 pointer-events-none">
+    <div class="markers-layer">
         <EmbeddedMarker v-for="poi in pois" v-bind="poi" :key="poi.id"></EmbeddedMarker>
     </div>
 </template>
@@ -11,6 +11,11 @@ import { usePreviewState } from "../composables/usePreviewState";
 const { pois } = usePreviewState();
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.markers-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
 </style>

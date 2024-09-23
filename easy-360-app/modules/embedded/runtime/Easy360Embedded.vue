@@ -99,7 +99,7 @@ onMounted(() => {
 
   --color-primary: 34 197 94;
   --color-secondary: 17 24 39;
-  --color-body: 229 231 235;
+  --color-body: 17 24 39;
   --container-padding: 2rem;
 
   color: var(--color-body);
