@@ -1,7 +1,7 @@
 <template>
   <div class="canvas-container" :style="`--width: ${size.width}; --height: ${size.height}; --screen-ratio: ${screenRatio};`">
-    <TresCanvas clear-color="#82DBC5" v-if="selectedScene">
-      <TresPerspectiveCamera :position="[cameraPosition.x, cameraPosition.y, cameraPosition.z]" :look-at="[0, 0, 0]" />
+    <TresCanvas v-if="selectedScene">
+      <EmbeddedCamera />
       <OrbitControls
         @change="onCameraPositionChange"
         ref="orbitsControls"
@@ -19,14 +19,14 @@
         cast-shadow
       />
     </TresCanvas>
-<!-- 
-    <EmbeddedMarker v-if="selectedScene" v-for="poi in selectedScene.points_of_interest" v-bind="poi" :key="poi.id" />
 
-    <EmbeddedScenesListCe></EmbeddedScenesListCe>
+    <!-- <EmbeddedMarker v-if="selectedScene" v-for="poi in selectedScene.points_of_interest" v-bind="poi" :key="poi.id" /> -->
 
-    <EmbeddedSceneInfos v-if="selectedScene" />
+    <!-- <EmbeddedScenesListCe></EmbeddedScenesListCe>
 
-    <EmbeddedLoading v-if="isLoading" /> -->
+    <EmbeddedSceneInfos v-if="selectedScene" /> -->
+
+    <!-- <EmbeddedLoading v-if="isLoading" /> -->
 
   </div>
 </template>
@@ -36,17 +36,13 @@ import { TresCanvas } from "@tresjs/core";
 import { OrbitControls } from "@tresjs/cientos";
 import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
 import { onMounted, ref, computed } from "vue";
-import { useFetch, useWindowSize } from '@vueuse/core'
-import EmbeddedLoading from './components/EmbeddedLoading.ce.vue';
-import EmbeddedSceneInfos from "./components/EmbeddedSceneInfos.ce.vue";
-import type { PreviewResponse } from "./types";
+import { useWindowSize } from '@vueuse/core'
+import EmbeddedLoading from './components/EmbeddedLoading.vue';
 import EmbeddedSphere from "./components/EmbeddedSphere.ce.vue";
-import { Suspense } from "vue";
-import EmbeddedMarker from "./components/EmbeddedMarker.ce.vue";
 import { usePreviewState } from "./composables/usePreviewState";
 import { Vector3 } from "three";
-import EmbeddedScenesListCe from "./components/EmbeddedScenesList.ce.vue";
-
+import { usePreviewControls } from "./composables/usePreviewControls";
+import EmbeddedCamera from "./components/EmbeddedCamera.vue";
 
 
 type Props = {
@@ -56,7 +52,8 @@ type Props = {
 }
 
 const props = defineProps<Props>();
-const { isLoading, previewData, cameraPosition, selectedScene } = usePreviewState()
+const { isLoading, projectId, selectedScene } = usePreviewState()
+const { cameraPosition } = usePreviewControls()
 
 const { width, height } = useWindowSize()
 const screenRatio = computed(() => {
@@ -72,23 +69,22 @@ const size = computed(() => {
 });
 
 
-const { isFetching, error, data } = useFetch<PreviewResponse>("http://localhost:3000/api/preview?id=" + props.id, {
-  afterFetch(ctx) {
-    console.log(ctx);
-    previewData.value = ctx.data as PreviewResponse
-    return ctx
-  },
-}).get().json<PreviewResponse>();
 
-if (error.value) {
-  console.error(error.value);
-}
 
 const onCameraPositionChange = ($event: OrbitControlsType) => {
   cameraPosition.x = $event.object.position.x
   cameraPosition.y = $event.object.position.y
   cameraPosition.z = $event.object.position.z
 }
+
+onMounted(() => {
+  if (props.id) {
+    projectId.value = props.id
+  } else {
+    alert('No id provided')
+  }
+
+})
 
 
 </script>

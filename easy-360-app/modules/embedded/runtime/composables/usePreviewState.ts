@@ -1,47 +1,124 @@
 import { createGlobalState } from "@vueuse/core";
 // store.js
-import { ref, watch, computed, reactive } from "vue";
-import type { PreviewResponse } from "../types";
-import type { Camera } from "three";
+import { ref, watch, computed, onWatcherCleanup } from "vue";
+import type { POIResponse, ProjectResponse, SceneResponse } from "../types";
+import { useFetch } from "@vueuse/core";
+
 
 export const usePreviewState = createGlobalState(() => {
 
+    const ApiEndpoint = "http://localhost:3000"
+
     const isLoading = ref(true)
 
-    const cameraContext = ref<Camera>()
-    const cameraPosition = reactive({
-        x: 3,
-        y: 0,
-        z: 0
-    })
-
-    const previewData = ref<PreviewResponse | null>(null)
+    const projectId = ref<string | null>(null)
+    const project = ref<ProjectResponse | null>(null)
 
     const selectedSceneId = ref<string | null>(null)
-    const selectedPoiId = ref<string | null>(null)
+    const scenes = ref<SceneResponse[]>([])
 
-    const scenes = computed(() => {
-        return previewData.value?.scenes ?? null
+    const selectedPoiId = ref<string | null>(null)
+    const pois = ref<POIResponse[]>([])
+
+
+    watch(projectId, async (value) => {
+        if (value) {
+            const controller = new AbortController()
+            isLoading.value = true
+            const { data, error } = await useFetch<ProjectResponse>("http://localhost:3000/api/preview?id=" + value, {
+                afterFetch(ctx) {
+                    isLoading.value = false
+                    return ctx
+                },
+                onFetchError(ctx) {
+                    console.error(ctx.error)
+                    isLoading.value = false
+                    return ctx
+                },
+            }).get().json()
+            if (error.value) {
+                console.error(error.value)
+            }
+            if (!data.value) {
+                console.error("No data")
+                return
+            }
+
+            project.value = data.value
+            await loadScenes()
+        }
     })
 
+    watch(selectedSceneId, async (value) => {
+        if (value) {
+            console.log("Selected Scene ID: ", value)
+            isLoading.value = true
+            const { data, error } = await useFetch<POIResponse[]>("http://localhost:3000/api/preview/pois?scene_id=" + value, {
+                afterFetch(ctx) {
+                    isLoading.value = false
+                    return ctx
+                },
+                onFetchError(ctx) {
+                    console.error(ctx.error)
+                    isLoading.value = false
+                    return ctx
+                }
+            }).get().json()
+
+            console.log(data.value)
+            if (error.value) {
+                console.error(error.value)
+                return
+            }
+            if (!data.value) {
+                console.error("No data")
+                return
+            }
+            pois.value = data.value
+        }
+    })
+
+    async function loadScenes() {
+        const controller = new AbortController()
+        isLoading.value = true
+        const { data, error } = await useFetch<SceneResponse[]>("http://localhost:3000/api/preview/scenes?project_id=" + projectId.value, {
+            afterFetch(ctx) {
+                isLoading.value = false
+                return ctx
+            },
+            onFetchError(ctx) {
+                console.error(ctx.error)
+                isLoading.value = false
+                return ctx
+            },
+        }).get().json()
+        console.log(data.value)
+        if (error.value) {
+            console.error(error)
+            return
+        }
+        if (!data.value) {
+            console.error("No data")
+            return
+        }
+        scenes.value = data.value
+        selectedSceneId.value = data.value[0].id
+        isLoading.value = false
+
+    }
+
+
     const selectedScene = computed(() => {
-        if(!scenes.value) return null
+        if (!scenes.value) return null
         return scenes.value.filter((scene) => scene.id === selectedSceneId.value)[0]
     })
 
     const selectedPoi = computed(() => {
-        if(!selectedScene.value) return null
-        return selectedScene.value.points_of_interest.filter((poi) => poi.id === selectedPoiId.value)[0]
+        if (!selectedScene.value) return null
+        return pois.value.filter((poi) => poi.id === selectedPoiId.value)[0]
     })
 
-    watch(previewData, (value) => {
-        if (value) {
-            selectedSceneId.value = value.scenes[0].id
-        } else {
-            selectedSceneId.value = null
-        }
-    }, { immediate: true})
 
-  
-  return { isLoading, previewData, cameraContext, cameraPosition, selectedScene, selectedSceneId, selectedPoi, selectedPoiId };
+
+    return { isLoading, projectId, project, selectedSceneId, selectedScene, selectedPoiId, selectedPoi };
 });

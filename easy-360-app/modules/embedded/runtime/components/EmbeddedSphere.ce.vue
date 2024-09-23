@@ -14,15 +14,12 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const { isLoading, cameraContext, selectedSceneId } = usePreviewState();
+const { isLoading, selectedSceneId } = usePreviewState();
 const sphereRef = shallowRef<TresInstance | null>();
-
-cameraContext.value = useTresContext().camera.value;
 
 const { isLoading: image_loading } = useImage({ src: props.url });
 
 watch(image_loading, async (value) => {
-  console.log("dsad");
   isLoading.value = value;
   console.log(props.url)
 });

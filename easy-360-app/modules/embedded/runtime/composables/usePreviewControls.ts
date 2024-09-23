@@ -1,10 +1,16 @@
-import { Spherical, Vector3 } from "three";
+import { Camera, PerspectiveCamera, Spherical, Vector3 } from "three";
 import { usePreviewState } from "./usePreviewState";
 import { createGlobalState } from "@vueuse/core";
+import { ref, reactive } from "vue";
 import gsap from "gsap";
 
 export const usePreviewControls = createGlobalState(() => {
-    const { cameraPosition } = usePreviewState()
+    const cameraContext = ref<PerspectiveCamera | null>(null)
+    const cameraPosition = reactive({
+        x: 3,
+        y: 0,
+        z: 0
+    })
     const cameraLookAt = (pos: Vector3) => {
         const spherical = new Spherical();
 
@@ -32,5 +38,5 @@ export const usePreviewControls = createGlobalState(() => {
         });
     }
 
-    return { cameraLookAt }
+    return { cameraLookAt, cameraPosition, cameraContext }
 })
