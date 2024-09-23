@@ -59,7 +59,7 @@
 
     <UDashboardPanel
       :width="250"
-      collapsible
+      
       class="border-l border-gray-200 dark:border-gray-700"
     >
       <div v-show="editPanelState != 'none'">
