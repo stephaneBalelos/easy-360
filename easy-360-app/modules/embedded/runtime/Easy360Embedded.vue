@@ -10,7 +10,7 @@
       />
       
       <Suspense>
-        <EmbeddedSphere :url="selectedScene.url" ></EmbeddedSphere>
+        <EmbeddedSphere v-if="selectedScene" :url="selectedScene.url" ></EmbeddedSphere>
       </Suspense>
 
       <TresDirectionalLight
@@ -92,7 +92,8 @@ onMounted(() => {
 <style lang="scss" scoped>
 .canvas-container {
   width: var(--width);
-  aspect-ratio: var(--screen-ratio);
+  height: var(--height);
+  margin: 0 auto;
   position: relative;
   
 

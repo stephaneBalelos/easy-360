@@ -47,7 +47,6 @@ const actions = [
   {
     label: "New project",
     icon: "i-heroicons-plus-circle",
-    to: "/editor",
   },
   {
     label: "Überblick",

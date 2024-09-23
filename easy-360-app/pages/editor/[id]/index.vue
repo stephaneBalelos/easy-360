@@ -1,4 +1,5 @@
 <template>
+  <App360EditorNavbar />
   <div class="w-full h-full flex">
     <UDashboardPanel
       :width="250"
@@ -29,13 +30,7 @@
     <div class="flex-grow w-full h-full p-0">
         <UDashboardToolbar>
           <template #left>
-            <USelectMenu
-              v-model="currentBreakpoint"
-              icon="i-heroicons-check-circle"
-              placeholder="Status"
-              :options="breakpoints"
-              :ui-menu="{ option: { base: 'capitalize' } }"
-            />
+            <BreakpointsDropdown />
             <!-- <USelectMenu
             v-model="selectedLocations"
             icon="i-heroicons-map-pin"
@@ -83,6 +78,7 @@ import App360PoiEditor from "~/components/App360/App360PoiEditor.vue";
 import App360SceneList from "~/components/App360/App360SceneList.vue";
 import { useEditorState } from "~/composables/useEditorState";
 import ProjectEdit from "~/components/App360/Slideovers/ProjectEdit.vue";
+import BreakpointsDropdown from "~/components/App360/Navbar/BreakpointsDropdown.vue";
 
 definePageMeta({
   layout: "editor",
@@ -90,24 +86,12 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id;
-const { selectedProjectId, selectedSceneId, selectedPOIId, editPanelState } =
-  useEditorState();
+const { selectedProjectId, editPanelState } = useEditorState();
 
 selectedProjectId.value = id as string;
 
-const { breakpoints, currentBreakpoint } = useEditorBreakpoints();
-
 const { createScene } = useScenes();
 
-const slideover = useSlideover();
-function openProjectSettings() {
-  if (!selectedProjectId.value) {
-    return;
-  }
-  slideover.open(ProjectEdit, {
-    project_id: selectedProjectId.value,
-  });
-}
 
 async function AddNewScene() {
   console.log("Add new scene");
