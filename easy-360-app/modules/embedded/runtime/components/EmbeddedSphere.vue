@@ -17,11 +17,10 @@ const props = defineProps<Props>();
 const { isLoading, selectedSceneId } = usePreviewState();
 const sphereRef = shallowRef<TresInstance | null>();
 
-const { isLoading: image_loading } = useImage({ src: props.url });
+const { isLoading:image_loading } = useImage({ src: props.url });
 
 watch(image_loading, async (value) => {
   isLoading.value = value;
-  console.log(props.url)
 });
 
 watch(selectedSceneId, async () => {

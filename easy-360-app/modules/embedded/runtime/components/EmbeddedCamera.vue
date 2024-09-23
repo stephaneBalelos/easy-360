@@ -6,6 +6,8 @@
 import { onMounted, shallowRef } from 'vue';
 import type { PerspectiveCamera } from 'three';
 import { usePreviewControls } from '../composables/usePreviewControls';
+import { useRenderLoop } from '@tresjs/core';
+
 const { onLoop } = useRenderLoop()
 const { cameraPosition, cameraContext } = usePreviewControls()
 

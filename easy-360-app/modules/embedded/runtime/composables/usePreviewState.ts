@@ -25,7 +25,7 @@ export const usePreviewState = createGlobalState(() => {
         if (value) {
             const controller = new AbortController()
             isLoading.value = true
-            const { data, error } = await useFetch<ProjectResponse>("http://localhost:3000/api/preview?id=" + value, {
+            const { data, error } = await useFetch<ProjectResponse>(`${ApiEndpoint}/api/preview?id=${value}`, {
                 afterFetch(ctx) {
                     isLoading.value = false
                     return ctx
@@ -51,7 +51,6 @@ export const usePreviewState = createGlobalState(() => {
 
     watch(selectedSceneId, async (value) => {
         if (value) {
-            console.log("Selected Scene ID: ", value)
             isLoading.value = true
             const { data, error } = await useFetch<POIResponse[]>("http://localhost:3000/api/preview/pois?scene_id=" + value, {
                 afterFetch(ctx) {
@@ -65,7 +64,6 @@ export const usePreviewState = createGlobalState(() => {
                 }
             }).get().json()
 
-            console.log(data.value)
             if (error.value) {
                 console.error(error.value)
                 return
@@ -92,7 +90,6 @@ export const usePreviewState = createGlobalState(() => {
                 return ctx
             },
         }).get().json()
-        console.log(data.value)
         if (error.value) {
             console.error(error)
             return
@@ -120,5 +117,5 @@ export const usePreviewState = createGlobalState(() => {
 
 
 
-    return { isLoading, projectId, project, selectedSceneId, selectedScene, selectedPoiId, selectedPoi };
+    return { isLoading, projectId, project, selectedSceneId, selectedScene, selectedPoiId, selectedPoi, scenes, pois };
 });

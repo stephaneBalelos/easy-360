@@ -20,13 +20,12 @@
       />
     </TresCanvas>
 
-    <!-- <EmbeddedMarker v-if="selectedScene" v-for="poi in selectedScene.points_of_interest" v-bind="poi" :key="poi.id" /> -->
-
+    <EmbeddedMarkersLayers />
     <!-- <EmbeddedScenesListCe></EmbeddedScenesListCe>
 
     <EmbeddedSceneInfos v-if="selectedScene" /> -->
 
-    <!-- <EmbeddedLoading v-if="isLoading" /> -->
+    <EmbeddedLoading v-if="isLoading" />
 
   </div>
 </template>
@@ -38,11 +37,12 @@ import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addo
 import { onMounted, ref, computed } from "vue";
 import { useWindowSize } from '@vueuse/core'
 import EmbeddedLoading from './components/EmbeddedLoading.vue';
-import EmbeddedSphere from "./components/EmbeddedSphere.ce.vue";
+import EmbeddedSphere from "./components/EmbeddedSphere.vue";
 import { usePreviewState } from "./composables/usePreviewState";
 import { Vector3 } from "three";
 import { usePreviewControls } from "./composables/usePreviewControls";
 import EmbeddedCamera from "./components/EmbeddedCamera.vue";
+import EmbeddedMarkersLayers from "./components/EmbeddedMarkersLayers.vue";
 
 
 type Props = {

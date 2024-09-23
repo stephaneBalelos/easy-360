@@ -1,6 +1,6 @@
 <template>
   <div
-    class="marker"
+    class="marker pointer-events-auto"
     v-if="cameraContext && show && screenCoords && !isLoading"
     :style="`--left: ${screenCoords.x}; --top: ${screenCoords.y};`"
   >
@@ -34,16 +34,16 @@ import { usePreviewState } from "../composables/usePreviewState";
 import { Vector2, Vector3 } from "three";
 import { mapRange } from "./../helpers";
 import { usePreviewControls } from "../composables/usePreviewControls";
+import type { POIResponse } from "../types";
 
-const props = defineProps<AppPOI>();
-const { cameraContext, cameraPosition, isLoading, selectedPoiId, selectedPoi } = usePreviewState();
+const props = defineProps<POIResponse>();
+const { isLoading, selectedPoiId, selectedPoi } = usePreviewState();
+const { cameraPosition, cameraContext } = usePreviewControls();
 const { cameraLookAt } = usePreviewControls()
 const show = ref(false);
 const screenCoords = ref<{ x: number; y: number }>();
 
-onMounted(() => {
-  console.log("Mounted");
-});
+
 
 watch(
   [cameraPosition, cameraContext],
@@ -99,7 +99,6 @@ const showMarkerLabel = computed(() => {
 function handleMarkerClick() {
   selectedPoiId.value = props.id
   if (selectedPoi.value) {
-    console.log('clickc ')
     const position = selectedPoi.value.design_data.position
     cameraLookAt(new Vector3(
       position.x,
@@ -109,7 +108,6 @@ function handleMarkerClick() {
   }
 }
 
-// console.log(props)
 </script>
 
 <style lang="scss" scoped>

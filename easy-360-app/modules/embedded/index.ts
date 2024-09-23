@@ -1,4 +1,4 @@
-import { addComponent, createResolver, defineNuxtModule } from "nuxt/kit";
+import { addComponent, addComponentsDir, createResolver, defineNuxtModule } from "nuxt/kit";
 
 export default defineNuxtModule({
     meta: {
@@ -17,6 +17,12 @@ export default defineNuxtModule({
             filePath: resolve("./runtime/Easy360Embedded.vue"),
             mode: "client",
             chunkName: "easy-360-embedded"
+        })
+
+        addComponentsDir({
+          path: resolve("./runtime/components"),
+          isAsync: true,
+          watch: true
         })
     }
   })
