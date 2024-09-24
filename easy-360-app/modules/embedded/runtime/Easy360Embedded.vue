@@ -98,6 +98,7 @@ onMounted(() => {
   height: var(--height);
   margin: 0 auto;
   position: relative;
+  box-sizing: border-box;
   
 
   --color-primary: 34 197 94;
