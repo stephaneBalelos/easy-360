@@ -30,7 +30,6 @@ export const usePreviewControls = createGlobalState(() => {
             z: -p.z,
             duration: 1,
             onUpdate: () => {
-                console.log(position)
                 cameraPosition.x = position.x;
                 cameraPosition.y = position.y;
                 cameraPosition.z = position.z;

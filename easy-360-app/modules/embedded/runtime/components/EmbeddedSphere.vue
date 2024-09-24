@@ -55,6 +55,7 @@ const sphere = new Mesh(geometry, material);
 async function loadTextureMaterial (t: Texture) {
 
   const material = new MeshBasicMaterial({ map: t });
+  const blurMaterial = new Mesh;
 
   return material;
 };
