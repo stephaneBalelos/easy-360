@@ -3,6 +3,9 @@ import { createGlobalState } from "@vueuse/core";
 import { ref, watch, computed, onWatcherCleanup } from "vue";
 import type { POIResponse, ProjectResponse, SceneResponse } from "../types";
 import { useFetch } from "@vueuse/core";
+import type { Texture } from "three";
+import { SRGBColorSpace } from "three";
+import { useTexture } from "@tresjs/core";
 
 
 export const usePreviewState = createGlobalState(() => {
@@ -19,6 +22,8 @@ export const usePreviewState = createGlobalState(() => {
 
     const selectedPoiId = ref<string | null>(null)
     const pois = ref<POIResponse[]>([])
+
+    const scenesTextures = ref<Map<string, Texture>>(new Map())
 
 
     watch(projectId, async (value) => {
@@ -100,8 +105,21 @@ export const usePreviewState = createGlobalState(() => {
         }
         scenes.value = data.value
         selectedSceneId.value = data.value[0].id
+        await loadScenesTextures()
         isLoading.value = false
+    }
 
+    async function loadScenesTextures() {
+        isLoading.value = true
+        for (let i = 0; i < scenes.value.length; i++) {
+            const url = scenes.value[i].url;
+            const texture = await useTexture([url]);
+            texture.colorSpace = SRGBColorSpace;
+
+            scenesTextures.value.set(scenes.value[i].id, texture);
+
+        }
+        isLoading.value = false
     }
 
 
@@ -117,5 +135,5 @@ export const usePreviewState = createGlobalState(() => {
 
 
 
-    return { isLoading, projectId, project, selectedSceneId, selectedScene, selectedPoiId, selectedPoi, scenes, pois };
+    return { isLoading, projectId, project, selectedSceneId, selectedScene, selectedPoiId, selectedPoi, scenes, scenesTextures, pois };
 });

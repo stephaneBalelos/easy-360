@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { Mesh, MeshBasicMaterial, SphereGeometry, SRGBColorSpace } from "three";
+import { Mesh, MeshBasicMaterial, SphereGeometry, SRGBColorSpace, Texture } from "three";
 import { useTexture, useTresContext, type TresInstance } from "@tresjs/core";
 import { useImage } from "@vueuse/core";
 import { usePreviewState } from "../composables/usePreviewState";
@@ -14,40 +14,48 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const { isLoading, selectedSceneId } = usePreviewState();
+const { isLoading, selectedSceneId, scenesTextures } = usePreviewState();
 const sphereRef = shallowRef<TresInstance | null>();
 
 const { isLoading:image_loading } = useImage({ src: props.url });
 
-watch(image_loading, async (value) => {
-  isLoading.value = value;
-});
+watch(scenesTextures.value, async () => {
+  if (!selectedSceneId.value) return;
+  const texture = scenesTextures.value.get(selectedSceneId.value);
+  if (!texture) return;
+  const material = await loadTextureMaterial(texture);
+  if (sphereRef.value) {
+    sphereRef.value.material = material;
+  } else {
+    console.error("sphereRef is null");
+  }
+}, { immediate: true, deep: true });
 
 watch(selectedSceneId, async () => {
-  const material = await loadTextureMaterial(props.url)
+  if (!selectedSceneId.value) return;
+  const texture = scenesTextures.value.get(selectedSceneId.value);
+  if (!texture) return;
+  const material = await loadTextureMaterial(texture)
   if (sphereRef.value) {
     sphereRef.value.material = material;
   } else {
     console.error('sphereRef is null');
   }
-})
+}, { immediate: true });
 
 
 
 const geometry = new SphereGeometry(100, 60, 40);
 geometry.scale(-1, 1, 1);
 
-const material = await loadTextureMaterial(props.url)
+const material = new MeshBasicMaterial({ color: 0xffffff, map: null });
 
 const sphere = new Mesh(geometry, material);
 
-async function loadTextureMaterial (url: string) {
-  const texture = await useTexture([url]);
-  texture.colorSpace = SRGBColorSpace;
+async function loadTextureMaterial (t: Texture) {
 
-  const material = new MeshBasicMaterial({ map: texture });
+  const material = new MeshBasicMaterial({ map: t });
 
-  material.map = texture;
   return material;
 };
 </script>
