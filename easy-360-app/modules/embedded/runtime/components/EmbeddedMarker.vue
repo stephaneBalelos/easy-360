@@ -97,6 +97,7 @@ const showMarkerLabel = computed(() => {
 
 function handleMarkerClick() {
   selectedPoiId.value = props.id
+  
   if (selectedPoi.value) {
     const position = selectedPoi.value.design_data.position
     cameraLookAt(new Vector3(
@@ -104,6 +105,9 @@ function handleMarkerClick() {
       position.y,
       position.z
     ))
+    if (props.linked_scene_id) {
+      changeScene(props.linked_scene_id, true)
+    }
 
   }
 }

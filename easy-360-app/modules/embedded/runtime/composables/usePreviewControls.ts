@@ -50,7 +50,7 @@ export const usePreviewControls = createGlobalState(() => {
         });
     }
 
-    const changeScene = async (sceneId: string) => {
+    const changeScene = async (sceneId: string, forwards = false) => {
         if (isTransitioning.value) {
             return
         }
@@ -69,7 +69,7 @@ export const usePreviewControls = createGlobalState(() => {
 
         tl.to(proxy, {
             blur: 750,
-            fov: 100,
+            fov: forwards ? 50 : 100,
             duration: 1,
             onUpdate: () => {
                 sphereProps.blur = proxy.blur
