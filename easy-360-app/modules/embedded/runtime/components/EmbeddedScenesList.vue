@@ -1,7 +1,7 @@
 <template>
     <div v-if="scenes && scenes.length > 0" class="scene-list-card">
         <div class="scene-list-card-header">
-            <h3 class="scene-list-card-body-title">Scenes</h3>
+            <h3 class="scene-list-card-body-title">{{ selectedScene?.name }}</h3>
             <button @click="toggleCardBody">{{ showCardBody ? 'close': 'open'}}</button>
         </div>
         <div :class="`scene-list-card-body ${showCardBody ? 'show' : ''}`">
@@ -17,12 +17,13 @@
 import { usePreviewState } from '../composables/usePreviewState';
 import { ref } from 'vue';
 
-const { scenes, selectedSceneId } = usePreviewState()
+const { scenes, selectedSceneId, selectedScene } = usePreviewState()
 
 const showCardBody = ref(false)
 
 function changeScene(id: string) {
     selectedSceneId.value = id
+    showCardBody.value = false
 }
 
 function toggleCardBody() {
