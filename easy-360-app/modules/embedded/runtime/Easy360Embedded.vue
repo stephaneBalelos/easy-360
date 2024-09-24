@@ -14,11 +14,11 @@
       </Suspense>
 
       <TresDirectionalLight
-        :position="[0, 2, 4]"
-        :intensity="1.2"
+        :position="[0, 0, 0]"
+        :intensity="4000"
         cast-shadow
       />
-      <EmbeddedDebug />
+      <!-- <EmbeddedDebug /> -->
     </TresCanvas>
 
     <EmbeddedMarkersLayers />

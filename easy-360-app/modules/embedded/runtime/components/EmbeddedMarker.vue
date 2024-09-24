@@ -1,6 +1,6 @@
 <template>
   <div
-    class="marker"
+    :class="`marker ${isTransitioning ? 'marker-transitioning' : ''}`"
     v-if="cameraContext && show && screenCoords && !isLoading"
     :style="`--left: ${screenCoords.x}; --top: ${screenCoords.y};`"
   >
@@ -38,15 +38,14 @@ import type { POIResponse } from "../types";
 
 const props = defineProps<POIResponse>();
 const { isLoading, selectedPoiId, selectedPoi } = usePreviewState();
-const { cameraPosition, cameraContext } = usePreviewControls();
-const { cameraLookAt } = usePreviewControls()
+const { cameraPosition, cameraContext, changeScene, cameraLookAt, isTransitioning, cameraProps } = usePreviewControls();
 const show = ref(false);
 const screenCoords = ref<{ x: number; y: number }>();
 
 
 
 watch(
-  [cameraPosition, cameraContext],
+  [cameraPosition, cameraProps],
   (value) => {
     getMarkerScreenPosition();
   },
@@ -105,6 +104,7 @@ function handleMarkerClick() {
       position.y,
       position.z
     ))
+
   }
 }
 
@@ -118,6 +118,12 @@ function handleMarkerClick() {
   left: calc(var(--left) * 1%);
   transform: translate(-50%, -50%);
   cursor: auto;
+  opacity: 1;
+  transition: opacity .3s;
+
+  &.marker-transitioning {
+    opacity: 0;
+  }
 
   .marker-btn {
     padding: .5rem;

@@ -6,7 +6,7 @@
         </div>
         <div :class="`scene-list-card-body ${showCardBody ? 'show' : ''}`">
             <ul class="scene-list">
-                <li v-for="scene in scenes" @click="() => changeScene(scene.id)" :class="`${scene.id === selectedSceneId ? 'active' : ''}`">
+                <li v-for="scene in scenes" @click="() => handleClick(scene.id)" :class="`${scene.id === selectedSceneId ? 'active' : ''}`">
                     {{ scene.name }}
                 </li>
             </ul>
@@ -16,13 +16,15 @@
 <script setup lang="ts">
 import { usePreviewState } from '../composables/usePreviewState';
 import { ref } from 'vue';
+import { usePreviewControls } from '../composables/usePreviewControls';
 
 const { scenes, selectedSceneId, selectedScene } = usePreviewState()
+const { changeScene } = usePreviewControls()
 
 const showCardBody = ref(false)
 
-function changeScene(id: string) {
-    selectedSceneId.value = id
+function handleClick(id: string) {
+    changeScene(id)
     showCardBody.value = false
 }
 

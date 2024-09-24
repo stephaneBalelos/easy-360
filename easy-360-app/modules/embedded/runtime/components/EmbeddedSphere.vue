@@ -17,10 +17,13 @@ import { useTexture, useTresContext, useRenderLoop, type TresInstance } from "@t
 import { usePreviewState } from "../composables/usePreviewState";
 import { watch, shallowRef, ref, onMounted } from "vue";
 import { HorizontalBlurShader, VerticalBlurShader } from "three/examples/jsm/Addons.js";
+import { usePreviewControls } from "../composables/usePreviewControls";
 
 
 const { selectedSceneId, scenesTextures } = usePreviewState();
+const { sphereProps } = usePreviewControls()
 const sphereRef = shallowRef<TresInstance | null>();
+const { onLoop } = useRenderLoop();
 
 const texture = ref<Texture | null>(null);
 
@@ -42,13 +45,24 @@ watch(selectedSceneId, async () => {
 function applyTexture(t: Texture) {
   if (sphereRef.value) {
     if (sphereRef.value.material.uniforms && t) {
+      texture.value = t;
       sphereRef.value.material.uniforms.tDiffuse.value = t;
-      sphereRef.value.material.uniforms.h.value = 0 / t.image.width;
+      sphereRef.value.material.uniforms.h.value = (sphereProps.blur / 100) / t.image.width;
     }
   } else {
     console.error('sphereRef is null');
   }
 }
+
+onLoop(() => {
+  if (sphereRef.value) {
+    if (sphereRef.value.material.uniforms && texture.value) {
+      sphereRef.value.material.uniforms.h.value = (sphereProps.blur / 100) / texture.value.image.width;
+    }
+  }
+});
+
+
 
 async function loadTextureMaterial (t: Texture) {
 

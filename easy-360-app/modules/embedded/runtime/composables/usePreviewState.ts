@@ -56,7 +56,6 @@ export const usePreviewState = createGlobalState(() => {
 
     watch(selectedSceneId, async (value) => {
         if (value) {
-            isLoading.value = true
             const { data, error } = await useFetch<POIResponse[]>("http://localhost:3000/api/preview/pois?scene_id=" + value, {
                 afterFetch(ctx) {
                     isLoading.value = false

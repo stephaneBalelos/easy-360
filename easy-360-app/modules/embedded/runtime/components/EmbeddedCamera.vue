@@ -9,7 +9,7 @@ import { usePreviewControls } from '../composables/usePreviewControls';
 import { useRenderLoop } from '@tresjs/core';
 
 const { onLoop } = useRenderLoop()
-const { cameraPosition, cameraContext } = usePreviewControls()
+const { cameraPosition, cameraProps, cameraContext } = usePreviewControls()
 
 const camera = shallowRef<PerspectiveCamera | null>(null)
 
@@ -18,7 +18,8 @@ onMounted(() => {
 })
 
 onLoop(() => {
-    if (camera.value) {
+    if (camera.value && cameraContext.value) {
+        cameraContext.value.fov = cameraProps.fov
         camera.value.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z)
         camera.value.lookAt(0, 0, 0)
     }
