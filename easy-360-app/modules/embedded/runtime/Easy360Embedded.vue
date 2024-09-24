@@ -18,6 +18,7 @@
         :intensity="1.2"
         cast-shadow
       />
+      <EmbeddedDebug />
     </TresCanvas>
 
     <EmbeddedMarkersLayers />
@@ -44,6 +45,7 @@ import { usePreviewControls } from "./composables/usePreviewControls";
 import EmbeddedCamera from "./components/EmbeddedCamera.vue";
 import EmbeddedMarkersLayers from "./components/EmbeddedMarkersLayers.vue";
 import EmbeddedScenesList from "./components/EmbeddedScenesList.vue";
+import EmbeddedDebug from "./components/EmbeddedDebug.vue";
 
 
 type Props = {
