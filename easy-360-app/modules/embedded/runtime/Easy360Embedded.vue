@@ -10,7 +10,7 @@
       />
       
       <Suspense>
-        <EmbeddedSphere v-if="selectedScene" :url="selectedScene.url" ></EmbeddedSphere>
+        <EmbeddedSphere v-if="selectedScene"></EmbeddedSphere>
       </Suspense>
 
       <TresDirectionalLight
