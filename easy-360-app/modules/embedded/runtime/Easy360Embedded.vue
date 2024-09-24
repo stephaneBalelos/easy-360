@@ -21,9 +21,9 @@
     </TresCanvas>
 
     <EmbeddedMarkersLayers />
-    <!-- <EmbeddedScenesListCe></EmbeddedScenesListCe>
+    <EmbeddedScenesList />
 
-    <EmbeddedSceneInfos v-if="selectedScene" /> -->
+    <!-- <EmbeddedSceneInfos v-if="selectedScene" /> -->
 
     <EmbeddedLoading v-if="isLoading" />
 
@@ -43,6 +43,7 @@ import { Vector3 } from "three";
 import { usePreviewControls } from "./composables/usePreviewControls";
 import EmbeddedCamera from "./components/EmbeddedCamera.vue";
 import EmbeddedMarkersLayers from "./components/EmbeddedMarkersLayers.vue";
+import EmbeddedScenesList from "./components/EmbeddedScenesList.vue";
 
 
 type Props = {
