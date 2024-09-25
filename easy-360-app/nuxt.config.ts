@@ -1,5 +1,5 @@
 import * as pjson from './package.json'
-
+import glsl from 'vite-plugin-glsl';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -39,5 +39,15 @@ export default defineNuxtConfig({
     '/editor/**': { ssr: false },
     '/api/**': { cors: true },
     '/docs': { redirect: '/docs/getting-started', prerender: false }
+  },
+  vite: {
+    plugins: [glsl()],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler"
+        }
+      }
+    }
   }
 })
