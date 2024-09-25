@@ -6,13 +6,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   extends: ['@nuxt/ui-pro'],
-  modules: [
-    '@tresjs/nuxt',
-    '@nuxt/ui',
-    '@nuxt/content',
-    '@vueuse/nuxt',
-    '@nuxtjs/supabase'
-  ],
+  modules: ['@tresjs/nuxt', '@nuxt/ui', '@vueuse/nuxt', '@nuxtjs/supabase', '@nuxt/content', '@nuxt/image'],
   icon: {
     serverBundle: {
       collections: ['heroicons'] // <!--- this
@@ -29,8 +23,8 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      include: undefined,
-      exclude: ['/', '/confirm', '/signup', '/forgot-password', '/reset-password', '/preview/*', '/api/*'],
+      include: ['/app(/*)?', '/editor(/*)?'],
+      exclude: ['/', '/docs(/*)?', '/blog(/*)?', '/confirm', '/signup', '/forgot-password', '/reset-password', '/preview/*', '/api(/*)?'],
       cookieRedirect: true,
     },
     cookieOptions: {
@@ -44,5 +38,6 @@ export default defineNuxtConfig({
     '/app/**': { ssr: false },
     '/editor/**': { ssr: false },
     '/api/**': { cors: true },
+    '/docs': { redirect: '/docs/getting-started', prerender: false }
   }
 })

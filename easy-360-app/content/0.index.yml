@@ -1,9 +1,9 @@
-title: Easy 360 - Easily Create 360° Panoramas & 3D Product showcase to share with the world!
-description: Easy 360 let you create 360° Panoramas & 3D Product showcase to share with the world! It's easy, fast and affordable.
+title: Easy 360 - Easily Create 360° Panoramas to share with the world!
+description: Easy 360 let you create 360° Panoramas to share with the world! It's easy, fast and affordable.
 navigation: false
 hero:
-  title: Easily Create 360° Panoramas & 3D Product showcase to share with the world!
-  description: Easy 360 let you create 360° Panoramas & 3D Product showcase to share with the world! It's easy, fast and affordable.
+  title: Easily Create 360° Beautiful Panoramas to share with the world!
+  description: Easy 360 let you create 360° Panoramas to share with the world! It's easy, fast and affordable.
   # headline:
   #   label: Made with Nuxt UI Pro
   #   to: https://ui.nuxt.com/pro
@@ -15,77 +15,75 @@ hero:
       color: black
       icon: i-heroicons-arrow-right-20-solid
       trailing: true
-    - label: View Demo
-      size: xl
-      color: gray
-      to: 
-      target: _blank
+    # - label: View Demo
+    #   size: xl
+    #   color: gray
 sections:
-  - title: The power of our service
-    description: Aliqua labore laboris fugiat. Reprehenderit exercitation eu commodo. Officia nostrud sit et aliqua ea ex sunt minim incididunt sunt.
+  - title: How it works
+    description: Easy 360 let you use your 360° Panorama Images to create beautiful and interactive 3D Showcase.
     id: features
     align: left
     features:
-      - name: Easy to use
-        description: Id laborum laboris duis nostrud excepteur ut velit.
-        icon: i-heroicons-cog
-      - name: Reliable
-        description: Magna Lorem ex cillum fugiat ad enim aute irure sit duis minim.
-        icon: i-heroicons-check
-      - name: Secure
-        description: Proident nostrud excepteur sint ut culpa consectetur aute adipisicing.
-        icon: i-heroicons-lock-closed
-    links:
-      - label: Explore components
-        to: /pro/components
-        color: gray
-        icon: i-heroicons-arrow-right-20-solid
-        trailing: true
-        size: md
-        class: ml-8
-  - title: The speed of our service
-    description: Cillum sint enim excepteur ut deserunt qui nisi in deserunt in. Deserunt aliquip quis aliquip eu quis ex velit velit nostrud sit.
-    align: right
-    features:
-      - name: Fast
-        description: Qui reprehenderit nostrud dolore nisi ad fugiat labore eiusmod.
-        icon: i-heroicons-rocket-launch
-      - name: Affordable
-        description: Reprehenderit fugiat elit in do ipsum ut pariatur.
-        icon: i-heroicons-currency-dollar
-      - name: Scalable
-        description: Lorem deserunt et eiusmod. Ea in consectetur minim officia.
-        icon: i-heroicons-chart-bar
+      - name: Upload your 360° Panorama
+        description: Upload your 360° Panorama to your scenes.
+        icon: i-heroicons-photo-solid
+      - name: Add Hotspots
+        description: Make it interactive by adding hotspots to your scenes.
+        icon: i-heroicons-map-pin-20-solid
+      - name: Custumize your the look and feel
+        description: With always more customization options, make your 3D Showcase unique.
+        icon: i-heroicons-paint-brush-solid
     links:
       - label: Learn more
-        to: /pro/guide/content
+        to: /docs/introduction
         color: gray
         icon: i-heroicons-arrow-right-20-solid
         trailing: true
         size: md
         class: ml-8
+  # - title: The speed of our service
+  #   description: Cillum sint enim excepteur ut deserunt qui nisi in deserunt in. Deserunt aliquip quis aliquip eu quis ex velit velit nostrud sit.
+  #   align: right
+  #   features:
+  #     - name: Fast
+  #       description: Qui reprehenderit nostrud dolore nisi ad fugiat labore eiusmod.
+  #       icon: i-heroicons-rocket-launch
+  #     - name: Affordable
+  #       description: Reprehenderit fugiat elit in do ipsum ut pariatur.
+  #       icon: i-heroicons-currency-dollar
+  #     - name: Scalable
+  #       description: Lorem deserunt et eiusmod. Ea in consectetur minim officia.
+  #       icon: i-heroicons-chart-bar
+  #   links:
+  #     - label: Learn more
+  #       to: /pro/guide/content
+  #       color: gray
+  #       icon: i-heroicons-arrow-right-20-solid
+  #       trailing: true
+  #       size: md
+  #       class: ml-8
 features:
-  title: Why choose our service?
-  description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+  title: Features
+  description: What you get with Easy 360.
   items:
     - title: Easy to use
-      description: Id laborum laboris duis nostrud excepteur ut velit nulla magna Lorem proident non.
+      description: Straightforward and easy to use, no need to be a pro.
       icon: i-heroicons-cog
-    - title: Reliable
-      description: Magna Lorem ex cillum fugiat ad enim aute irure sit duis minim.
-      icon: i-heroicons-check
-    - title: Secure
-      description: Proident nostrud excepteur sint ut culpa consectetur aute adipisicing non anim ullamco.
-      icon: i-heroicons-lock-closed
+    - title: Style in focus
+      description: Customize your 3D Showcase to match your brand.
+      icon: i-heroicons-paint-brush
+    - title: Interactive
+      description: Make your 3D Showcase interactive with hotspots, place them anywhere.
+      icon: i-heroicons-map-pin
     - title: Fast
-      description: Qui reprehenderit nostrud dolore nisi ad fugiat labore eiusmod sint aliquip nisi voluptate.
-      icon: i-heroicons-rocket-launch
+      description: Performant and fast, your 3D Showcase will load in no time.
+      icon: i-heroicons-rocket
+    - title: Integrate easily
+      description: Easily integrate your 3D Showcase on your website.
+      icon: i-heroicons-code-bracket
     - title: Affordable
-      description: Reprehenderit fugiat elit in do ipsum ut pariatur.
+      description: Free for most users, and affordable for power users.
       icon: i-heroicons-currency-dollar
-    - title: Scalable
-      description: Lorem deserunt et eiusmod. Ea in consectetur minim officia ullamco enim deserunt est.
-      icon: i-heroicons-chart-bar
 testimonials:
   headline: Testimonials
   title: What our customers are saying.

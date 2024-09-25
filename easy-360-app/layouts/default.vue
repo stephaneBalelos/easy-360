@@ -19,6 +19,9 @@
 
 <script setup lang="ts">
 import AppHeader from '~/components/AppHeader.vue';
+const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
+
+provide('navigation', navigation)
 </script>
 
 <style scoped></style>
