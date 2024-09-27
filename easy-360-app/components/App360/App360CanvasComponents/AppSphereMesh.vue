@@ -25,13 +25,8 @@ import {
 } from "three";
 import AddPOIModal from "../Modals/AddPOIModal.vue";
 import { useSceneControl } from "~/composables/useSceneControl";
-import { projectFilesBucketId } from "~/constants";
 import type { ShallowRef } from "vue";
 import type { TresInstance } from "@tresjs/core";
-import { HorizontalBlurShader, VerticalBlurShader } from "three/examples/jsm/Addons.js";
-import {
-  CustomShaderMaterial,
-} from '@tresjs/cientos'
 
 const modal = useModal();
 const sceneControl = useSceneControl();
@@ -126,36 +121,13 @@ async function loadTextureMaterial(url: string) {
 
   material.map = texture;
 
-  const hBlurMaterial = new ShaderMaterial({
-    vertexShader: HorizontalBlurShader.vertexShader,
-    fragmentShader: HorizontalBlurShader.fragmentShader,
-    uniforms: UniformsUtils.clone(HorizontalBlurShader.uniforms),
-  });
-
-  hBlurMaterial.uniforms.tDiffuse.value = texture;
-  hBlurMaterial.uniforms["h"].value = sceneControl.sphereBlur.horizontal / viewportSize.value.width;
-
-  const vBlurMaterial = new ShaderMaterial({
-    vertexShader: VerticalBlurShader.vertexShader,
-    fragmentShader: VerticalBlurShader.fragmentShader,
-    uniforms: UniformsUtils.clone(VerticalBlurShader.uniforms)
-  });
-
-  vBlurMaterial.uniforms.tDiffuse.value = texture;
-  vBlurMaterial.uniforms["v"].value = sceneControl.sphereBlur.vertical / viewportSize.value.height;
-
-
-
-
-  return hBlurMaterial;
+  return material;
 }
 
 onLoop(() => {
   if (sceneControl.sphereBlur.horizontal > 0 || sceneControl.sphereBlur.vertical > 0) {
     if (sphereRef.value) {
-      // TODO - Fix this
-      sphereRef.value.material.uniforms["h"].value = sceneControl.sphereBlur.horizontal / viewportSize.value.width;
-      // sphereRef.value.material.uniforms["v"].value = sceneControl.sphereBlur.vertical / viewportSize.value.height;
+      // Do something
     }
   }
 });
