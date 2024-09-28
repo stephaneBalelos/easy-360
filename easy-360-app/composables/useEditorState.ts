@@ -2,7 +2,7 @@ import type { TresContext } from "@tresjs/core";
 import type { Camera, Intersection } from "three";
 import type { AppProject } from "~/types/app.types";
 import type { Database } from "~/types/database.types";
-type EditPanelState = "none" | "scene" | "poi";
+type EditPanelState = "global" | "scene" | "poi";
 
 export const useEditorState = createGlobalState(() => {
   const selectedProjectId = ref<string | null>(null);
@@ -11,7 +11,7 @@ export const useEditorState = createGlobalState(() => {
   const selectedSceneId = ref<string | null>(null);
   const selectedPOIId = ref<string | null>(null);
 
-  const editPanelState = ref<EditPanelState>("none");
+  const editPanelState = ref<EditPanelState>("global");
 
   const isSceneLoading = ref(false);
 
@@ -50,7 +50,7 @@ export const useEditorState = createGlobalState(() => {
   watch(selectedProjectId, () => {
     selectedSceneId.value = null;
     selectedPOIId.value = null;
-    editPanelState.value = "none";
+    editPanelState.value = "global";
   });
 
   watch(selectedSceneId, () => {

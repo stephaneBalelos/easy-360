@@ -61,10 +61,16 @@
       :width="250"
       
       class="border-l border-gray-200 dark:border-gray-700"
+      :ui="{
+        wrapper: 'flex flex-col justify-between',
+      }"
     >
-      <div v-show="editPanelState != 'none'">
+      <div v-show="editPanelState != 'global'">
         <App360SceneEditor v-if="editPanelState == 'scene'" />
         <App360PoiEditor v-if="editPanelState == 'poi'" />
+      </div>
+      <div class="styles-editor">
+        <App360GlobalEditor />
       </div>
     </UDashboardPanel>
   </div>
@@ -79,6 +85,7 @@ import App360SceneList from "~/components/App360/App360SceneList.vue";
 import { useEditorState } from "~/composables/useEditorState";
 import ProjectEdit from "~/components/App360/Slideovers/ProjectEdit.vue";
 import BreakpointsDropdown from "~/components/App360/Navbar/BreakpointsDropdown.vue";
+import App360GlobalEditor from "~/components/App360/App360GlobalEditor.vue";
 
 definePageMeta({
   layout: "editor",
