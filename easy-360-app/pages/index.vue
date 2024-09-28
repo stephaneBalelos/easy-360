@@ -58,7 +58,7 @@ useSeoMeta({
     </ULandingHero>
 
     <ULandingSection class="!pt-0">
-      <ImagePlaceholder />
+      Placeholder
     </ULandingSection>
 
     <ULandingSection
