@@ -31,7 +31,7 @@
 import type { Vector3 } from "three";
 import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
-import { usePOIs } from "~/composables/usePOIs";
+import { usePOIs, type POIBase } from "~/composables/usePOIs";
 import { useEditorState } from "~/composables/useEditorState";
 
 type Props = {
@@ -39,7 +39,7 @@ type Props = {
 };
 
 type Payload = {
-  payload: POI;
+  payload: POIBase;
 };
 
 const props = defineProps<Props>();
@@ -66,11 +66,15 @@ const state = reactive<Schema>({
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   if(!selectedSceneId.value) return;
   // Do something with data
-  const poi: POI = {
-    id: Math.random().toString(36).substring(7),
+  const poi: POIBase = {
     name: event.data.name,
     description: event.data.description,
-    position: props.position,
+    position: {
+      x: props.position.x,
+      y: props.position.y,
+      z: props.position.z,
+    },
+    linked_scene_id: null,
   };
 
   const res = await createPOI(selectedSceneId.value, poi);

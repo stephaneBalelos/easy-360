@@ -62,8 +62,12 @@ export const usePOIs = createGlobalState(() => {
     }
 
     const createPOI = async (scene_id: string, p: POIBase) => {
+        if (!editorState.selectedProjectId.value) {
+            throw new Error('No project selected')
+        }
         const {data, error} = await client.from('points_of_interest').insert({
             scene_id,
+            project_id: editorState.selectedProjectId.value,
             name: p.name,
             description: p.description,
             design_data: {
