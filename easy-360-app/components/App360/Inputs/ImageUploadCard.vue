@@ -70,7 +70,6 @@ const { uppy } = useTusUplaoder(props.bucketId, props.path, {
 });
 
 onMounted(() => {
-  console.log('props.fileUrl', props.fileUrl);
   if(props.fileUrl) {
     file.value = props.fileUrl;
   }
