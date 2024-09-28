@@ -37,7 +37,12 @@ export const useEditorState = createGlobalState(() => {
         .eq("id", selectedProjectId.value)
         .single();
       if (error) {
+        navigateTo("/app");
         throw error;
+      }
+      if (!data) {
+        navigateTo("/app");
+        throw new Error("Project not found");
       }
       return data;
     },

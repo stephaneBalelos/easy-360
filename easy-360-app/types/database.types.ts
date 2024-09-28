@@ -43,6 +43,7 @@ export type Database = {
           last_updated: string
           linked_scene_id: string | null
           name: string
+          project_id: string
           scene_id: string
           visible: boolean
         }
@@ -54,6 +55,7 @@ export type Database = {
           last_updated?: string
           linked_scene_id?: string | null
           name: string
+          project_id: string
           scene_id: string
           visible?: boolean
         }
@@ -65,6 +67,7 @@ export type Database = {
           last_updated?: string
           linked_scene_id?: string | null
           name?: string
+          project_id?: string
           scene_id?: string
           visible?: boolean
         }
@@ -74,6 +77,13 @@ export type Database = {
             columns: ["linked_scene_id"]
             isOneToOne: false
             referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "points_of_interest_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
           {
@@ -166,6 +176,7 @@ export type Database = {
       }
       users: {
         Row: {
+          auth_id: string
           created_at: string
           email: string
           id: string
@@ -173,6 +184,7 @@ export type Database = {
           role: string
         }
         Insert: {
+          auth_id: string
           created_at?: string
           email: string
           id: string
@@ -180,6 +192,7 @@ export type Database = {
           role?: string
         }
         Update: {
+          auth_id?: string
           created_at?: string
           email?: string
           id?: string
@@ -188,9 +201,9 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
+            foreignKeyName: "users_auth_id_fkey"
+            columns: ["auth_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
