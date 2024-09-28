@@ -5,12 +5,13 @@
     @context-menu="handleSphereClick"
     @pointer-move="handlePointerMove"
   >
-  <!-- <CustomShaderMaterial v-bind="material" :baseMaterial="'MeshBasicMaterial'"/> -->
+  <TresShaderMaterial :vertex-shader="SphereVertexShader" :fragment-shader="SphereFragmentShader" :uniforms="uniforms" :glsl-version="GLSL3" />
   </primitive>
 </template>
 
 <script setup lang="ts">
 import {
+  GLSL3,
   Mesh,
   MeshBasicMaterial,
   Scene,
@@ -18,7 +19,9 @@ import {
   SphereGeometry,
   Spherical,
   SRGBColorSpace,
+  Texture,
   UniformsUtils,
+  Vector2,
   Vector3,
   WebGLRenderTarget,
   type Intersection,
@@ -27,6 +30,8 @@ import AddPOIModal from "../Modals/AddPOIModal.vue";
 import { useSceneControl } from "~/composables/useSceneControl";
 import type { ShallowRef } from "vue";
 import type { TresInstance } from "@tresjs/core";
+import SphereVertexShader from "@/assets/shader/sphereVertex.glsl";
+import SphereFragmentShader from "@/assets/shader/sphereFragment.glsl";
 
 const modal = useModal();
 const sceneControl = useSceneControl();
@@ -41,6 +46,8 @@ const { getSceneFileUrl } = useScenes();
 const { onLoop } = useRenderLoop();
 const { renderer, scene, camera } = useTresContext();
 
+const { viewportSize } = useEditorBreakpoints();
+
 const geometry = new SphereGeometry(100, 128, 64);
 geometry.scale(-1, 1, 1);
 const material = new MeshBasicMaterial();
@@ -49,7 +56,12 @@ const sphere = new Mesh(geometry, material);
 
 const sphereRef: ShallowRef<TresInstance | null> = shallowRef(null);
 
-const { viewportSize } = useEditorBreakpoints();
+const uniforms = {
+  uTexture: { value: null },
+  uResolution: { value: new Vector2(viewportSize.value.width, viewportSize.value.height) },
+  uTime: { value: 0.0 },
+  uTextureSize: { value: null},
+}
 
 watch(
   () => selectedSceneId.value,
@@ -65,14 +77,15 @@ watch(
 
     if (!url) {
       sceneError.value = "Scene file not found";
-      await loadDefaultMaterial();
       return;
     }
 
-    const material = await loadTextureMaterial(url);
+    const texture = await useTexture([url]);
 
     if (sphereRef.value) {
-      sphereRef.value.material = material;
+      sphereRef.value.material.uniforms.uTexture.value = texture;
+      sphereRef.value.material.uniforms.uTextureSize.value = new Vector2(texture.image.width, texture.image.height);
+      sphereRef.value.material.needsUpdate = true;
     } else {
       console.error("sphereRef is null");
     }
@@ -103,45 +116,14 @@ function handlePointerMove($event: Intersection) {
   pointerIntersectionWithSphere.value = $event;
 }
 
-async function loadTextureMaterial(url: string) {
-
-  if (!renderer.value) {
-    console.error("Renderer is null");
-    return;
-  }
-  if(!camera.value) {
-    console.error("Camera is null");
-    return;
-  }
-
-  const texture = await useTexture([url]);
-  texture.colorSpace = SRGBColorSpace;
-  // texture.mapping = EquirectangularReflectionMapping
-  const material = new MeshBasicMaterial({ map: texture });
-
-  material.map = texture;
-
-  return material;
-}
-
-onLoop(() => {
+onLoop(({elapsed}) => {
   if (sceneControl.sphereBlur.horizontal > 0 || sceneControl.sphereBlur.vertical > 0) {
     if (sphereRef.value) {
       // Do something
+      sphereRef.value.material.uniforms.uTime.value = elapsed;
     }
   }
 });
-
-async function loadDefaultMaterial() {
-  const material = await loadTextureMaterial(
-    "/textures/TCom_JapanParkingGarageB_4K_hdri_sphere_tone.jpg"
-  );
-  if (sphereRef.value) {
-    sphereRef.value.material = material;
-  } else {
-    console.error("sphereRef is null");
-  }
-}
 </script>
 
 <style scoped></style>
