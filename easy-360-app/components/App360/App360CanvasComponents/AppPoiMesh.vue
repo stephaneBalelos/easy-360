@@ -15,7 +15,6 @@ import type { Intersection } from "@tresjs/core";
 import { Vector3 } from "three";
 import type { DesignProps, POIBase } from "~/composables/usePOIs";
 import type { AppPOI } from "~/types/app.types";
-import CursorFragmentShader from '@/assets/shader/cursorFragment.glsl'
 
 
 type Props = {
@@ -37,7 +36,6 @@ const poi_design = computed(() => {
 const position = ref<DesignProps["position"]>()
 
 onMounted(() => {
-  console.log(CursorFragmentShader)
   position.value = props.design_data.position
 })
 
