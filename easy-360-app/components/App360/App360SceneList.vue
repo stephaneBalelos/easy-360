@@ -20,6 +20,7 @@ import { useScenes } from "~/composables/useScenes";
         active: isCurrentScene,
         click: () => {
             editorState.selectedSceneId.value = scene.id;
+            editorState.editPanelState.value = "scene";
             if (isCurrentScene) {
               editorState.selectedPOIId.value = null;
             }

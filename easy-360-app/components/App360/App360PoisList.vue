@@ -6,7 +6,7 @@
 import { useEditorState } from "~/composables/useEditorState";
 import { usePOIs } from "~/composables/usePOIs";
 
-const { selectedPOIId } = useEditorState();
+const { selectedPOIId, editPanelState } = useEditorState();
 const { pois } = usePOIs();
 
 const items = computed(() => {
@@ -19,6 +19,7 @@ const items = computed(() => {
       active: selectedPOIId.value === poi.id,
       click: () => {
         selectedPOIId.value = poi.id;
+        editPanelState.value = "poi";
       },
     };
   });
