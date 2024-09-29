@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pg_jsonschema SCHEMA extensions;
+
 create table public.users (
     id            uuid not null primary key,
     auth_id       uuid not null references auth.users(id) on delete cascade,
@@ -16,10 +18,39 @@ create table public.projects (
     created_at    timestamp with time zone default now() not null,
     last_updated  timestamp with time zone default now() not null,
     owner        uuid not null references public.users(id) on delete cascade,
-    published     boolean not null default false
+    published     boolean not null default false,
+    settings      jsonb not null
 );
 comment on table public.projects is 'PROJECT DATA';
+alter table public.projects add constraint check_settings check(
+      extensions.jsonb_matches_schema(
+    '{
+        "type": "object",
+        "properties": {
+            "colors": {
+                "type": "object",
+                "properties": {
+                    "primary": {
+                        "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                    },
+                    "secondary": {
+                        "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                    },
+                    "body": {
+                        "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                    }
+                }
+            }
+        }
+    }',
+    settings
+  )
+);
 alter table public.projects enable row level security;
+
 
 create table public.scenes (
     id            uuid default uuid_generate_v4() primary key,

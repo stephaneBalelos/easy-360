@@ -7,6 +7,14 @@ export type ProjectBase = {
     description: string;
 }
 
+export type ProjectSettings = {
+    colors: {
+        primary: string;
+        secondary: string;
+        body: string;
+    }
+}
+
 export const useProjects = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
     const { refreshProject } = useEditorState()
@@ -21,15 +29,39 @@ export const useProjects = createGlobalState(() => {
             throw error
         }
         return data
+    }, {
+        transform: (data) => {
+            return data as AppProject[]
+        }
     })
+
+    const getProject = async (id: string) => {
+        const cached = projects.value?.find(p => p.id === id)
+        if (cached) {
+            return cached
+        }
+        const {data, error} = await client.from('projects').select('*').eq('id', id).single()
+        if (error) {
+            throw error
+        }
+        return data as AppProject
+    }
 
     const createProject = async (p: ProjectBase) => {
         if (user.value === null) {
             throw new Error('User not logged in')
         }
+        const defaultSettings: ProjectSettings = {
+            colors: {
+                primary: '#082a1c',
+                secondary: '#6a9e50',
+                body: '#fbefdd'
+            }       
+        }
         const {data, error} = await client.from('projects').insert({
             ...p,
-            owner: user.value.id
+            owner: user.value.id,
+            settings: defaultSettings
         }).select('id')
         if (error) {
             throw error
@@ -57,12 +89,23 @@ export const useProjects = createGlobalState(() => {
         return data
     }
 
+    const updateProjectSettings = async (id: string, settings: ProjectSettings) => {
+        const {data, error} = await client.from('projects').update({settings}).eq('id', id)
+        if (error) {
+            throw error
+        }
+        refreshProject()
+        return data
+    }
+
 
 
     return {
         projects,
+        getProject,
         createProject,
         updateProject,
-        deleteProject
+        deleteProject,
+        updateProjectSettings
     }
 })

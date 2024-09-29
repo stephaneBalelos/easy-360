@@ -52,6 +52,10 @@
               Display
             </template>
           </USelectMenu> -->
+
+          <UTooltip text="Global Settings">
+            <UButton color="gray" variant="ghost" icon="i-heroicons-cog" @click="editPanelState = 'global'"></UButton>
+          </UTooltip>
           </template>
         </UDashboardToolbar>
       <App360Viewport />
@@ -65,12 +69,10 @@
         wrapper: 'flex flex-col justify-between',
       }"
     >
-      <div v-show="editPanelState != 'global'">
+      <div>
+        <App360GlobalEditor v-if="editPanelState == 'global'" />
         <App360SceneEditor v-if="editPanelState == 'scene'" />
         <App360PoiEditor v-if="editPanelState == 'poi'" />
-      </div>
-      <div class="styles-editor">
-        <App360GlobalEditor />
       </div>
     </UDashboardPanel>
   </div>

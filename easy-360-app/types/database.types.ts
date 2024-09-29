@@ -104,6 +104,7 @@ export type Database = {
           name: string
           owner: string
           published: boolean
+          settings: Json
         }
         Insert: {
           created_at?: string
@@ -113,6 +114,7 @@ export type Database = {
           name: string
           owner: string
           published?: boolean
+          settings: Json
         }
         Update: {
           created_at?: string
@@ -122,6 +124,7 @@ export type Database = {
           name?: string
           owner?: string
           published?: boolean
+          settings?: Json
         }
         Relationships: [
           {
