@@ -69,11 +69,12 @@
         wrapper: 'flex flex-col justify-between',
       }"
     >
-      <div>
-        <App360GlobalEditor v-if="editPanelState == 'global'" />
-        <App360SceneEditor v-if="editPanelState == 'scene'" />
-        <App360PoiEditor v-if="editPanelState == 'poi'" />
-      </div>
+    <UDashboardSidebar>
+      <App360GlobalEditor v-if="editPanelState == 'global'" />
+      <App360SceneEditor v-if="editPanelState == 'scene'" />
+      <App360PoiEditor v-if="editPanelState == 'poi'" />
+    </UDashboardSidebar>
+
     </UDashboardPanel>
   </div>
 </template>
