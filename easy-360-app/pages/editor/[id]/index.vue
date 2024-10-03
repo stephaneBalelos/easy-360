@@ -1,6 +1,6 @@
 <template>
   <App360EditorNavbar />
-  <div class="w-full h-full flex">
+  <div class="flex flex-grow">
     <UDashboardPanel
       :width="250"
       :resizable="{ min: 200, max: 300 }"
@@ -27,54 +27,86 @@
         </template>
       </UDashboardSidebar>
     </UDashboardPanel>
-    <div class="flex-grow w-full h-full p-0">
-        <UDashboardToolbar>
+
+    <UDashboardPanel grow>
+      <UDashboardToolbar>
           <template #left>
             <BreakpointsDropdown />
+            <div>
+              {{ currentBreakpoint.width }} x {{ currentBreakpoint.height }}
+            </div>
             <!-- <USelectMenu
-            v-model="selectedLocations"
-            icon="i-heroicons-map-pin"
-            placeholder="Location"
-            :options="defaultLocations"
-            multiple
-          /> -->
+              v-model="selectedLocations"
+              icon="i-heroicons-map-pin"
+              placeholder="Location"
+              :options="defaultLocations"
+              multiple
+            /> -->
           </template>
-
           <template #right>
             <!-- <USelectMenu
-            v-model="selectedColumns"
-            icon="i-heroicons-adjustments-horizontal-solid"
-            :options="defaultColumns"
-            multiple
-            class="hidden lg:block"
-          >
-            <template #label>
-              Display
-            </template>
-          </USelectMenu> -->
-
-          <UTooltip text="Global Settings">
-            <UButton color="gray" variant="ghost" icon="i-heroicons-cog" @click="editPanelState = 'global'"></UButton>
-          </UTooltip>
+              v-model="selectedColumns"
+              icon="i-heroicons-adjustments-horizontal-solid"
+              :options="defaultColumns"
+              multiple
+              class="hidden lg:block"
+            >
+              <template #label>
+                Display
+              </template>
+            </USelectMenu> -->
+            <UTooltip text="Global Settings">
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-cog"
+                @click="editPanelState = 'global'"
+              ></UButton>
+            </UTooltip>
           </template>
         </UDashboardToolbar>
-      <App360Viewport />
-    </div>
+        <div class="flex-grow p-4 relative">
+          <App360Viewport />
+        </div>
+        <UDashboardToolbar>
+          <template #left>
+            {{ viewportSize.width }} x {{ viewportSize.height }}
+            <!-- <USelectMenu
+              v-model="selectedLocations"
+              icon="i-heroicons-map-pin"
+              placeholder="Location"
+              :options="defaultLocations"
+              multiple
+            /> -->
+          </template>
+          <template #right>
+            <!-- <USelectMenu
+              v-model="selectedColumns"
+              icon="i-heroicons-adjustments-horizontal-solid"
+              :options="defaultColumns"
+              multiple
+              class="hidden lg:block"
+            >
+              <template #label>
+                Display
+              </template>
+            </USelectMenu> -->
+          </template>
+        </UDashboardToolbar>
+    </UDashboardPanel>
 
     <UDashboardPanel
       :width="250"
-      
       class="border-l border-gray-200 dark:border-gray-700"
       :ui="{
         wrapper: 'flex flex-col justify-between',
       }"
     >
-    <UDashboardSidebar>
-      <App360GlobalEditor v-if="editPanelState == 'global'" />
-      <App360SceneEditor v-if="editPanelState == 'scene'" />
-      <App360PoiEditor v-if="editPanelState == 'poi'" />
-    </UDashboardSidebar>
-
+      <UDashboardSidebar>
+        <App360GlobalEditor v-if="editPanelState == 'global'" />
+        <App360SceneEditor v-if="editPanelState == 'scene'" />
+        <App360PoiEditor v-if="editPanelState == 'poi'" />
+      </UDashboardSidebar>
     </UDashboardPanel>
   </div>
 </template>
@@ -99,9 +131,10 @@ const id = route.params.id;
 const { selectedProjectId, editPanelState } = useEditorState();
 
 selectedProjectId.value = id as string;
+const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
+
 
 const { createScene } = useScenes();
-
 
 async function AddNewScene() {
   console.log("Add new scene");

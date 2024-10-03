@@ -1,5 +1,5 @@
 <template>
-  <div class="app-360-canvas" :style="`--width: ${size.width}; --height: ${size.height}; --screen-ratio: ${screenRatio};`">
+  <div class="app-360-canvas" :style="`width: ${props.width}px; height: ${props.height}px;`">
     <TresCanvas>
       <AppSceneCamera ref="camera" />
       <OrbitControls
@@ -82,12 +82,16 @@ function onChange($event: OrbitControlsType) {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .app-360-canvas {
-  width: var(--width);
-  aspect-ratio: var(--screen-ratio);
+
   margin: 0 auto;
   position: relative;
+
+  #canvas {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .app-360-canvas .viewport-loading-indicator .loading-icon {
