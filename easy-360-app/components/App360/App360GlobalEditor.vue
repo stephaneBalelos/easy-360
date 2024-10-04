@@ -3,7 +3,7 @@
     title="Global Options"
     description="Customize the global options for your project"
     orientation="vertical"
-    class="px-4 mt-6"
+    class=""
   >
     <UForm
       :schema="schema"
@@ -15,10 +15,10 @@
       <UFormGroup label="Primary Color" name="primaryColor" description="Chose the main Color for your project" >
         <EditorColorInput v-model="state.primaryColor" />
       </UFormGroup>
-      <UFormGroup label="Primary Color" name="primaryColor" description="Chose the main Color for your project" >
+      <UFormGroup label="Secondary Color" name="primaryColor" description="Chose the secondary Color for your project" >
         <EditorColorInput v-model="state.secondaryColor" />
       </UFormGroup>
-      <UFormGroup label="Primary Color" name="primaryColor" description="Chose the main Color for your project" >
+      <UFormGroup label="Body Color" name="primaryColor" description="Chose the text for your project" >
         <EditorColorInput v-model="state.bodyColor" />
       </UFormGroup>
     </UForm>
@@ -28,9 +28,23 @@
 <script setup lang="ts">
 import { z } from "zod";
 import EditorColorInput from "./Inputs/EditorColorInput.vue";
+import { projectKey } from "~/constants";
 
-const { selectedProjectId, selectedProject } = useEditorState()
+const { selectedProjectId } = useEditorState()
 const { updateProjectSettings } = useProjects()
+const client = useSupabaseClient()
+
+const { data:selectedProject, error, status } = await useAsyncData(`${projectKey}/${selectedProjectId.value}`, async () => {
+  if (!selectedProjectId.value) return null;
+  const { data, error } = await client.from(projectKey).select('*').eq('id', selectedProjectId.value).single();
+  if (error) {
+    throw error;
+  }
+  return data ?? null;
+}, {
+  lazy: true,
+  watch: [selectedProjectId],})
+
 const schema = z.object({
   primaryColor: z.string().length(7, "Please enter a valid color"),
   secondaryColor: z.string().length(7, "Please enter a valid color"),
@@ -45,12 +59,21 @@ const state = reactive({
   bodyColor: "#0f172a",
 });
 
+onMounted(() => {
+  if (selectedProject.value) {
+    const propjectSettings = selectedProject.value.settings as ProjectSettings
+    state.primaryColor = propjectSettings.colors.primary
+    state.secondaryColor = propjectSettings.colors.secondary
+    state.bodyColor = propjectSettings.colors.body
+  }
+})
+
 
 async function handleChange() {
-  
   try {
     const res = schema.parse(state)
     if (selectedProject.value) {
+      console.log(state)
       const propjectSettings = selectedProject.value.settings as ProjectSettings
       await updateProjectSettings(selectedProject.value.id, {
         ...propjectSettings,
@@ -66,16 +89,6 @@ async function handleChange() {
   }
 }
 
-
-watch(selectedProjectId, async() => {
-    await nextTick()
-    if (selectedProject.value) {
-        const settings = selectedProject.value.settings as ProjectSettings
-        state.primaryColor = settings.colors.primary
-        state.secondaryColor = settings.colors.secondary
-        state.bodyColor = settings.colors.body
-    }
-}, { immediate: true });
 </script>
 
 <style scoped></style>

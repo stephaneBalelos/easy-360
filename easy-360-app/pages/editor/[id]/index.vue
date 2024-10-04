@@ -64,11 +64,11 @@
         wrapper: 'flex flex-col justify-between',
       }"
     >
-      <!-- <UDashboardSidebar>
+      <UDashboardSidebar>
         <App360GlobalEditor v-if="editPanelState == 'global'" />
         <App360SceneEditor v-if="editPanelState == 'scene'" />
         <App360PoiEditor v-if="editPanelState == 'poi'" />
-      </UDashboardSidebar> -->
+      </UDashboardSidebar>
     </UDashboardPanel>
   </div>
 </template>
