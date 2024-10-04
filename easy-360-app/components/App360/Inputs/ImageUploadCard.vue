@@ -12,7 +12,7 @@
         @change="onFileChange"
       />
       <div class="w-full h-full" v-if="file">
-        <img :src="file" class="w-full h-full object-cover" />
+        <NuxtImg :src="file" class="w-full h-full object-cover" />
       </div>
       <div
         v-else
@@ -28,13 +28,14 @@
 <script setup lang="ts">
 import { useTusUplaoder } from "~/composables/useTusUploader";
 import type { Database } from "~/types/database.types";
+import { useImage } from '@vueuse/core'
+
 
 type ImageUploadCardProps = {
     bucketId: string;
     path: string;
     fileUrl?: string | null;
 };
-
 
 
 const props = defineProps<ImageUploadCardProps>();

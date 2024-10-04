@@ -37,7 +37,7 @@ export const useScenes = createGlobalState(() => {
         const {data, error} = await client.from('scenes').insert({
             ...s,
             project_id: editorState.selectedProjectId.value
-        }).select('id')
+        }).select('id').single()
         if (error) {
             throw error
         }

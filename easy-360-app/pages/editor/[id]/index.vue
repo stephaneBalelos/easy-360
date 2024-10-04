@@ -27,48 +27,40 @@
 
     <UDashboardPanel grow>
       <UDashboardToolbar>
-          <template #left>
-            <BreakpointsDropdown />
-            <div>
-              {{ currentBreakpoint.width }} x {{ currentBreakpoint.height }}
-            </div>
-          </template>
-          <template #right>
-            <UTooltip text="Global Settings">
-              <UButton
-                color="gray"
-                variant="ghost"
-                icon="i-heroicons-cog"
-                @click="editPanelState = 'global'"
-              ></UButton>
-            </UTooltip>
-          </template>
-        </UDashboardToolbar>
-        <div class="flex-grow p-4 relative">
-          <!-- <App360Viewport /> -->
-        </div>
-        <UDashboardToolbar>
-          <template #left>
-            {{ viewportSize.width }} x {{ viewportSize.height }}
-
-          </template>
-          <template #right>
-          </template>
-        </UDashboardToolbar>
+        <template #left>
+          <BreakpointsDropdown />
+          <div>
+            {{ currentBreakpoint.width }} x {{ currentBreakpoint.height }}
+          </div>
+        </template>
+        <template #right>
+          <UTooltip text="Global Settings">
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-cog"
+              @click="editPanelState = 'global'"
+            ></UButton>
+          </UTooltip>
+        </template>
+      </UDashboardToolbar>
+      <div class="flex-grow p-4 relative">
+        <!-- <App360Viewport /> -->
+      </div>
+      <UDashboardToolbar>
+        <template #left>
+          {{ viewportSize.width }} x {{ viewportSize.height }}
+        </template>
+        <template #right> </template>
+      </UDashboardToolbar>
     </UDashboardPanel>
 
     <UDashboardPanel
       :width="250"
-      class="border-l border-gray-200 dark:border-gray-700"
-      :ui="{
-        wrapper: 'flex flex-col justify-between',
-      }"
-    >
-      <UDashboardSidebar>
-        <App360GlobalEditor v-if="editPanelState == 'global'" />
-        <App360SceneEditor v-if="editPanelState == 'scene'" />
-        <App360PoiEditor v-if="editPanelState == 'poi'" />
-      </UDashboardSidebar>
+      class="border-l border-gray-200 dark:border-gray-700">
+      <App360GlobalEditor v-if="editPanelState == 'global'" />
+      <App360SceneEditor v-if="editPanelState == 'scene'" />
+      <App360PoiEditor v-if="editPanelState == 'poi'" />
     </UDashboardPanel>
   </div>
 </template>
@@ -94,8 +86,6 @@ const { selectedProjectId, editPanelState } = useEditorState();
 
 selectedProjectId.value = id as string;
 const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
-
-
 </script>
 
 <style scoped></style>

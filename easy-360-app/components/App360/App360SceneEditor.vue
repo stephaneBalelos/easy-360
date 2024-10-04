@@ -1,28 +1,11 @@
 <template>
-  <div class="flex flex-col h-full">
-    <UTabs v-if="editorState.selectedSceneId" :items="tabs" @change="onChange" :ui="{
-      list: {
-        rounded: '',
-      }
-    }">
-        <template #default="{ item, index, selected }">
-          <span
-            class="truncate"
-            :class="[selected && 'text-primary-500 dark:text-primary-400']"
-            >{{ index + 1 }}. {{ item.label }}</span
-          >
-        </template>
-        <template #item="{ item }">
-          <div class="flex flex-col px-4">
-            <div v-if="item.key === 'content-tab'" class="space-y-3">
-              <SceneEditorContent />
-            </div>
-            <div v-else-if="item.key === 'settings-tab'" class="space-y-3">
-              <SceneEditorSettings />
-            </div>
-          </div>
-        </template>
-      </UTabs>
+  <UDashboardToolbar class="py-0 px-2 overflow-x-auto">
+    <UHorizontalNavigation :links="tabs" />
+  </UDashboardToolbar>
+
+  <div class="p-4">
+    <SceneEditorContent v-if="selectedTab === 0" />
+    <SceneEditorSettings v-if="selectedTab === 1"  />
   </div>
 </template>
 
@@ -33,28 +16,25 @@ import SceneEditorSettings from "./App360SceneEditorComponents/SceneEditorSettin
 
 const editorState = useEditorState();
 
-const tabs = [
+const selectedTab = ref(0);
+
+const tabs = computed(() => [
   {
     key: "content-tab",
     label: "Content",
-    icon: "i-heroicons-arrow-down-tray",
+    active: selectedTab.value === 0,
+    click: () => onChange(0),
   },
   {
     key: "settings-tab",
     label: "Settings",
-    icon: "i-heroicons-eye-dropper",
+    active: selectedTab.value === 1,
+    click: () => onChange(1),
   },
-];
-
-watch(() => editorState.selectedSceneId.value, (newVal) => {
-  console.log('selectedSceneId', newVal);
-}, { immediate: true });
-
-function onChange(key: string) {
-  console.log(key);
+]);
+function onChange(index: number) {
+  selectedTab.value = index;
 }
-
-
 </script>
 
 <style scoped></style>
