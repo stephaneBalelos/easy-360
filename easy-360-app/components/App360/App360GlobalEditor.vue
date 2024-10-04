@@ -3,7 +3,7 @@
     title="Global Options"
     description="Customize the global options for your project"
     orientation="vertical"
-    class=""
+    class="p-4"
   >
     <UForm
       :schema="schema"
