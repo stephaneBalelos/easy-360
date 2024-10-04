@@ -20,6 +20,7 @@
         <UDivider />
 
         <template #footer>
+          <PartialsAppVersionBadge />
         </template>
       </UDashboardSidebar>
     </UDashboardPanel>
@@ -94,8 +95,6 @@ const { selectedProjectId, editPanelState } = useEditorState();
 selectedProjectId.value = id as string;
 const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
 
-
-const { createScene } = useScenes();
 
 </script>
 
