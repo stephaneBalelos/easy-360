@@ -37,7 +37,6 @@ const { data: scenes, error, status, refresh } = useAsyncData(`${projectKey}/${s
     .eq('project_id', editorState.selectedProjectId.value)
     .order("created_at", { ascending: false });
   if (error) {
-    console.error("Error fetching scenes", error);
     throw error;
   }
   return data ?? [];

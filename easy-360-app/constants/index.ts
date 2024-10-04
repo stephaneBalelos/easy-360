@@ -6,4 +6,4 @@ export const gltfModelPath = '/models';
 
 export const projectKey = 'projects';
 export const sceneKey = 'scenes';
-export const poiKey = 'pois';
+export const poiKey = 'points_of_interest';
