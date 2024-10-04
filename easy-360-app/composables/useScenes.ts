@@ -60,6 +60,7 @@ export const useScenes = createGlobalState(() => {
             throw error
         }
         refresh()
+        editorState.selectedSceneId.value = null
         return data
     }
 

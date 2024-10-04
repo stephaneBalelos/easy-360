@@ -51,7 +51,7 @@ import { projectKey, sceneKey } from "~/constants";
 import ConfirmActionModal from "../Modals/ConfirmActionModal.vue";
 
 const { selectedProjectId, selectedSceneId } = useEditorState();
-const { updateScene, getSceneFilePath, getSceneFileUrl, deleteScene } =
+const { updateScene, deleteScene } =
   useScenes();
 const client = useSupabaseClient<Database>();
 

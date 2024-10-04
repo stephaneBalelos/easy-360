@@ -33,7 +33,7 @@ const client = useSupabaseClient();
 
 const { data: scenes, error, status, refresh } = useAsyncData(`${projectKey}/${sceneKey}`, async () => {
   if (!editorState.selectedProjectId.value) return null;
-  const { data, error } = await client.from(sceneKey).select("id, name")
+  const { data, error } = await client.from(sceneKey).select('*')
     .eq('project_id', editorState.selectedProjectId.value)
     .order("created_at", { ascending: false });
   if (error) {
@@ -42,7 +42,7 @@ const { data: scenes, error, status, refresh } = useAsyncData(`${projectKey}/${s
   return data ?? [];
 }, {
   lazy: true,
-  watch: [editorState.selectedProjectId],
+  watch: [editorState.selectedProjectId, editorState.selectedSceneId],
 });
 
 const items = computed(() => {
@@ -78,7 +78,7 @@ async function AddNewScene() {
       name: "New Scene",
       description: "New Scene Description",
     });
-    console.log("New Scene", res);
+    refresh();
   } catch (error) {
     console.log("Error creating scene", error);
   }
