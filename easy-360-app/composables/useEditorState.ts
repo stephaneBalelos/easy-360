@@ -21,35 +21,6 @@ export const useEditorState = createGlobalState(() => {
 
   const sceneError = ref<string | null>(null);
 
-  const {
-    data: selectedProject,
-    error,
-    status,
-    refresh,
-  } = useAsyncData(
-    async () => {
-      if (!selectedProjectId.value) {
-        return null;
-      }
-      const { data, error } = await client
-        .from("projects")
-        .select("*")
-        .eq("id", selectedProjectId.value)
-        .single();
-      if (error) {
-        navigateTo("/app");
-        throw error;
-      }
-      if (!data) {
-        navigateTo("/app");
-        throw new Error("Project not found");
-      }
-      return data;
-    },
-    {
-      watch: [selectedProjectId],
-    }
-  );
 
 
   watch(selectedProjectId, () => {
@@ -81,10 +52,8 @@ export const useEditorState = createGlobalState(() => {
   return {
     tresCameraContext,
     selectedProjectId,
-    selectedProject,
     selectedSceneId,
     selectedPOIId,
-    refreshProject: refresh,
     editPanelState,
     isSceneLoading,
     pointerIntersectionWithSphere,
