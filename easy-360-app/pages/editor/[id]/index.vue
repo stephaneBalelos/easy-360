@@ -1,6 +1,75 @@
 <template>
   <App360EditorNavbar />
+  <div class="flex flex-grow">
+    <UDashboardPanel
+      :width="250"
+      :resizable="{ min: 200, max: 300 }"
+      collapsible
+    >
+      <UDashboardSidebar>
+        <template #header>
+          <UDashboardSearchButton />
+        </template>
 
+        <App360SceneList />
+
+        <UDivider />
+
+        <!-- <App360PoisList /> -->
+
+        <UDivider />
+
+        <template #footer>
+        </template>
+      </UDashboardSidebar>
+    </UDashboardPanel>
+
+    <UDashboardPanel grow>
+      <UDashboardToolbar>
+          <template #left>
+            <BreakpointsDropdown />
+            <div>
+              {{ currentBreakpoint.width }} x {{ currentBreakpoint.height }}
+            </div>
+          </template>
+          <template #right>
+            <UTooltip text="Global Settings">
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-cog"
+                @click="editPanelState = 'global'"
+              ></UButton>
+            </UTooltip>
+          </template>
+        </UDashboardToolbar>
+        <div class="flex-grow p-4 relative">
+          <!-- <App360Viewport /> -->
+        </div>
+        <UDashboardToolbar>
+          <template #left>
+            {{ viewportSize.width }} x {{ viewportSize.height }}
+
+          </template>
+          <template #right>
+          </template>
+        </UDashboardToolbar>
+    </UDashboardPanel>
+
+    <UDashboardPanel
+      :width="250"
+      class="border-l border-gray-200 dark:border-gray-700"
+      :ui="{
+        wrapper: 'flex flex-col justify-between',
+      }"
+    >
+      <UDashboardSidebar>
+        <App360GlobalEditor v-if="editPanelState == 'global'" />
+        <App360SceneEditor v-if="editPanelState == 'scene'" />
+        <App360PoiEditor v-if="editPanelState == 'poi'" />
+      </UDashboardSidebar>
+    </UDashboardPanel>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -28,18 +97,6 @@ const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
 
 const { createScene } = useScenes();
 
-async function AddNewScene() {
-  console.log("Add new scene");
-  try {
-    const res = await createScene({
-      name: "New Scene",
-      description: "New Scene Description",
-    });
-    console.log("New Scene", res);
-  } catch (error) {
-    console.log("Error creating scene", error);
-  }
-}
 </script>
 
 <style scoped></style>
