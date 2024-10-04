@@ -57,6 +57,7 @@
 import { z } from "zod";
 import type { Database } from "~/types/database.types";
 import type { FormSubmitEvent } from "#ui/types";
+import { poiKey, projectKey } from "~/constants";
 
 const { selectedPOIId, selectedSceneId } = useEditorState();
 const { pois, updatePOI } = usePOIs();
@@ -94,12 +95,13 @@ const {
   error,
   status,
 } = await useAsyncData(
+  `${selectedPOIId.value}`,
   async () => {
     if (!selectedPOIId.value) {
       throw new Error("No POI selected");
     }
     const { data, error } = await client
-      .from("points_of_interest")
+      .from(poiKey)
       .select()
       .eq("id", selectedPOIId.value)
       .single();

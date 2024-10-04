@@ -90,7 +90,10 @@ export const usePOIs = createGlobalState(() => {
         if (error) {
             throw error
         }
-        refresh()
+        const i = editorState.selectedPOIId.value
+        editorState.selectedPOIId.value = null
+        await nextTick()
+        editorState.selectedPOIId.value = i
         return data
     }
 
