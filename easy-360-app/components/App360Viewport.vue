@@ -16,6 +16,7 @@
 import { useParentElement, useElementSize } from "@vueuse/core";
 
 import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
+import { projectFilesBucketId } from "~/constants";
 
 type Props = {
   viewportRatio?: number;
@@ -66,7 +67,7 @@ const { data, error, status } = await useAsyncData(
             id: scene.id,
             title: scene.name,
             description: scene.description,
-            url:  `${runtimeConfig.supabaseStorageEndpoint}/${getSceneFilePath(data.id, scene.id)}`
+            url:  `${runtimeConfig.supabaseStorageEndpoint}/object/public/${projectFilesBucketId}/${getSceneFilePath(data.id, scene.id)}`
           };
         }),
         pois: data.points_of_interest.map((poi) => {
@@ -94,14 +95,6 @@ onMounted(() => {
   });
   viewportSize.value = getViewportSize();
 });
-
-watch(
-  [width, height],
-  () => {
-    viewportSize.value = getViewportSize();
-  },
-  { immediate: true }
-);
 
 watch(
   currentBreakpoint,

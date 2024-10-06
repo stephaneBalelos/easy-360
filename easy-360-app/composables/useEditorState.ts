@@ -21,6 +21,8 @@ export const useEditorState = createGlobalState(() => {
 
   const sceneError = ref<string | null>(null);
 
+  const preview = usePreview();
+
 
 
   watch(selectedProjectId, () => {
@@ -32,10 +34,16 @@ export const useEditorState = createGlobalState(() => {
   watch(selectedSceneId, () => {
     selectedPOIId.value = null;
     editPanelState.value = "scene";
+    if (selectedSceneId.value) {
+      preview.selectedSceneId.value = selectedSceneId.value;
+    }
   }, { immediate: true });
 
   watch(selectedPOIId, (value) => {
     editPanelState.value = value ? "poi" : "scene";
+    if (value) {
+      preview.selectedPOIId.value = value;
+    }
   }, { immediate: true });
 
 

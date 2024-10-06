@@ -1,12 +1,12 @@
 <template>
   <div class="app-360-canvas" :style="`width: ${props.width}px; height: ${props.height}px;`">
-    <TresCanvas>
+    <TresCanvas :clearColor="preview.theme.colors.primary">
       <AppSceneCamera ref="camera" />
       <OrbitControls
         @change="onChange"
         ref="orbitsControls"
         :target="new Vector3(0, 0, 0)"
-        :maxDistance="100"
+        :maxDistance="400"
       />
       <TresAmbientLight :intensity="sceneControl.light.intensity" />
       <TresGridHelper />
@@ -56,14 +56,17 @@ const props = defineProps<Props>();
 
 const preview = usePreview();
 
-
+const { selectedProjectId } = useEditorState();
+const client = useSupabaseClient();
 
 onMounted(() => {
-  preview.project.id = props.data.project.id;
-  preview.project.title = props.data.project.title;
+  preview.project = {
+    id: props.data.project.id,
+    title: props.data.project.title
+  }
   preview.theme = props.data.theme;
-  preview.scenes = props.data.scenes;
-  preview.pois = props.data.pois;
+  preview.scenes.value = props.data.scenes;
+  preview.pois.value = props.data.pois;
 });
 
 

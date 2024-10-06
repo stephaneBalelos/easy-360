@@ -39,7 +39,13 @@ export const usePreview = createGlobalState(() => {
 
     const runtimeConfig = useRuntimeConfig().public
 
-    const state = reactive<PreviewState>({
+    const projectId = ref<string | null>(null);
+
+    const selectedSceneId = ref<string | null>(null);
+
+    const selectedPOIId = ref<string | null>(null);
+
+    const state = ref<PreviewState>({
         loading: true,
         selectedScene: '',
         selectedPoi: ''
@@ -47,7 +53,7 @@ export const usePreview = createGlobalState(() => {
 
     const project = reactive<PreviewData['project']>({
         id: '',
-        title: ''
+        title: '',
     });
 
     const theme = reactive<PreviewData['theme']>({
@@ -58,8 +64,8 @@ export const usePreview = createGlobalState(() => {
         }
     });
 
-    const scenes = reactive<PreviewData['scenes']>([]);
-    const pois = reactive<PreviewData['pois']>([]);
+    const scenes = ref<PreviewData['scenes']>([]);
+    const pois = ref<PreviewData['pois']>([]);
 
     async function load(id: string, isLive: boolean = false) {
         if(isLive) {
@@ -69,7 +75,9 @@ export const usePreview = createGlobalState(() => {
 
 
     return {
-        state,
+        projectId,
+        selectedSceneId,
+        selectedPOIId,
         project,
         theme,
         scenes,
