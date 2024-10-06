@@ -29,9 +29,6 @@
       <UDashboardToolbar>
         <template #left>
           <BreakpointsDropdown />
-          <div>
-            {{ currentBreakpoint.width }} x {{ currentBreakpoint.height }}
-          </div>
         </template>
         <template #right>
           <UTooltip text="Global Settings">
@@ -45,7 +42,7 @@
         </template>
       </UDashboardToolbar>
       <div class="flex-grow p-4 relative">
-        <!-- <App360Viewport /> -->
+        <App360Viewport />
       </div>
       <UDashboardToolbar>
         <template #left>

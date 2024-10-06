@@ -45,6 +45,8 @@ const { data: scenes, error, status, refresh } = useAsyncData(`${projectKey}/${s
   watch: [editorState.selectedProjectId, editorState.selectedSceneId],
 });
 
+
+
 const items = computed(() => {
   if (!scenes.value) return [];
   return scenes.value.map((scene) => {

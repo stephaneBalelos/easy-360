@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePOIs } from "~/composables/usePOIs";
+import { usePOIs, type DesignProps } from "~/composables/usePOIs";
 import { OrbitControls } from "@tresjs/cientos";
 import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
 import { Camera, Vector3 } from "three";
@@ -42,15 +42,30 @@ import AppPoiMarker from "./App360CanvasComponents/AppPoiMarker.vue";
 import SceneErrorCard from "./App360CanvasComponents/SceneErrorCard.vue";
 import { useSceneControl } from "~/composables/useSceneControl";
 import AppSceneCamera from "./App360CanvasComponents/AppSceneCamera.vue";
+import { projectKey } from "~/constants";
 
 const { pois } = usePOIs();
 
 type Props = {
   width?: number;
   height?: number;
+  data: PreviewData;
 }
 
 const props = defineProps<Props>();
+
+const preview = usePreview();
+
+
+
+onMounted(() => {
+  preview.project.id = props.data.project.id;
+  preview.project.title = props.data.project.title;
+  preview.theme = props.data.theme;
+  preview.scenes = props.data.scenes;
+  preview.pois = props.data.pois;
+});
+
 
 const size = computed(() => {
   return {
