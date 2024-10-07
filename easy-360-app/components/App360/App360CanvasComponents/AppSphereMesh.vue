@@ -55,6 +55,8 @@ const sphere = new Mesh(geometry, material);
 
 const sphereRef: ShallowRef<TresInstance | null> = shallowRef(null);
 
+const canAddPOI = ref(false);
+
 const uniforms = {
   uTexture: { value: null },
   uResolution: {
@@ -91,19 +93,25 @@ watch(
         texture.image.height
       );
       sphereRef.value.material.needsUpdate = true;
+      canAddPOI.value = true;
       textures.value.set(newVal.url, texture);
     } else {
       sphereRef.value.material.uniforms.uTexture.value = null;
+      canAddPOI.value = false;
     }
   } catch (error) {
       sphereRef.value.material.uniforms.uTexture.value = null;
       console.log(error);
+      canAddPOI.value = false;
     }
   },
   { immediate: true }
 );
 
 function handleSphereClick(event: Intersection) {
+  if (!canAddPOI.value) {
+    return;
+  }
   openAddPOIModal(event.point);
   sceneControl.cameraLookAtAnimated(event.point);
 }
