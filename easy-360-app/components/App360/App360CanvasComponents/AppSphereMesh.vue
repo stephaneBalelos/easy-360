@@ -77,6 +77,7 @@ const selectedScene = computed(() => {
 watch(
   selectedScene,
   async (newVal) => {
+    console.log("selectedScene", newVal);
     if (!newVal) {
       return;
     }

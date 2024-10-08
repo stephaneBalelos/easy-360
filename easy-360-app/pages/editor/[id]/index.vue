@@ -42,7 +42,7 @@
         </template>
       </UDashboardToolbar>
       <div class="flex-grow p-4 relative">
-        <!-- <App360Viewport /> -->
+        <App360Viewport />
       </div>
       <UDashboardToolbar>
         <template #left>
@@ -80,7 +80,7 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id;
-const { selectedProjectId, selectedSceneId, editPanelState } = useEditorState();
+const { selectedProjectId, selectedProject, selectedSceneId, editPanelState } = useEditorState();
 
 selectedProjectId.value = id as string;
 const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
@@ -107,6 +107,14 @@ const { data: project, error } = useAsyncData(`${projectKey}/${selectedProjectId
     throw new Error('Project not found');
   }
 
+  const {scenes:s, points_of_interest:p, ...project} = data;
+
+  selectedProject.value = {
+    ...project,
+    settings: project.settings as ProjectSettings
+  };
+
+
   scenes.items = data.scenes.map((scene) => {
     return {
       data: scene,
@@ -118,7 +126,10 @@ const { data: project, error } = useAsyncData(`${projectKey}/${selectedProjectId
 
   pois.items = data.points_of_interest.map((poi) => {
     return {
-      data: poi,
+      data: {
+        ...poi,
+        design_data: poi.design_data as DesignProps,
+      },
       loading: false,
     };
   });

@@ -13,12 +13,17 @@
       <Suspense>
         <AppSphereMesh />
       </Suspense>
-      <Suspense>
-        <AppPoiMesh v-for="poi in pois" v-bind="poi" :key="poi.id" />
-      </Suspense>
+
     </TresCanvas>
 
-    <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in pois" v-bind="poi" :key="poi.id" />
+    <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in data.pois"
+     :key="poi.id" 
+      :id="poi.id"
+      :title="poi.title"
+      :description="poi.description"
+      :linked_scene_id="null"
+      :design_data="{ position: poi.position }"
+    />
 
     <SceneErrorCard v-if="editorState.sceneError.value" />
 
@@ -36,15 +41,12 @@ import { usePOIs, type DesignProps } from "~/composables/usePOIs";
 import { OrbitControls } from "@tresjs/cientos";
 import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
 import { Camera, Vector3 } from "three";
-import AppPoiMesh from "./App360CanvasComponents/AppPoiMesh.vue";
 import AppSphereMesh from "./App360CanvasComponents/AppSphereMesh.vue";
 import AppPoiMarker from "./App360CanvasComponents/AppPoiMarker.vue";
 import SceneErrorCard from "./App360CanvasComponents/SceneErrorCard.vue";
 import { useSceneControl } from "~/composables/useSceneControl";
 import AppSceneCamera from "./App360CanvasComponents/AppSceneCamera.vue";
 import { projectKey } from "~/constants";
-
-const { pois } = usePOIs();
 
 type Props = {
   width?: number;
@@ -67,6 +69,8 @@ onMounted(() => {
   preview.theme = props.data.theme;
   preview.scenes.value = props.data.scenes;
   preview.pois.value = props.data.pois;
+
+  preview.selectedSceneId.value = preview.scenes.value[0].id;
 });
 
 

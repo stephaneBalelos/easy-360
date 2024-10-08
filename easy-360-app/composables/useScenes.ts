@@ -21,6 +21,7 @@ export type ScenesState = {
 export const useScenes = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
     const editorState = useEditorState()
+    const runtimeConfig = useRuntimeConfig().public
 
     const scenes = reactive<ScenesState>({
         loading: true,
@@ -71,6 +72,10 @@ export const useScenes = createGlobalState(() => {
         return `projects/${project_id}/scenes/${scene_id}/panorama.jpg`
     }
 
+    const getSceneFileUrlPublic = (project_id: string, scene_id: string) => {
+        return `${runtimeConfig.supabaseStorageEndpoint}/object/public/${projectFilesBucketId}/${getSceneFilePath(project_id, scene_id)}`
+    }
+
     const getSceneFileUrl = async (project_id: string, scene_id: string) => {
         const path = getSceneFilePath(project_id, scene_id)
         try {
@@ -88,8 +93,6 @@ export const useScenes = createGlobalState(() => {
 
     }
 
-
-
     return {
         scenes,
         loadingStatus: status,
@@ -97,6 +100,7 @@ export const useScenes = createGlobalState(() => {
         updateScene,
         deleteScene,
         getSceneFilePath,
-        getSceneFileUrl
+        getSceneFileUrl,
+        getSceneFileUrlPublic
     }
 })

@@ -1,7 +1,7 @@
 <template>
   <div ref="canvasViewport" class="canvas-viewport">
     <App360Canvas
-      v-if="status === 'success' && data"
+      v-if="data"
       :width="viewportSize.width"
       :height="viewportSize.height"
       :data="data"
@@ -27,8 +27,11 @@ const props = defineProps<Props>();
 const preview = usePreview();
 const runtimeConfig = useRuntimeConfig().public
 
-const { selectedProjectId } = useEditorState();
+const { selectedProjectId, selectedProject } = useEditorState();
 const client = useSupabaseClient();
+
+const { scenes, getSceneFileUrlPublic } = useScenes();
+const { pois } = usePOIs();
 
 const canvasViewport = ref<HTMLDivElement | null>(null);
 
@@ -37,57 +40,35 @@ const { width, height } = useElementSize(parentEl);
 
 const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
 
-const { data, error, status } = await useAsyncData(
-  `preview_${selectedProjectId.value}`,
-  async () => {
-    if (!selectedProjectId.value) throw new Error("No project selected");
-
-    const { data, error } = await client
-      .from("projects")
-      .select("id, name, settings, scenes(*), points_of_interest(*)")
-      .eq("id", selectedProjectId.value)
-      .single();
-    if (error) throw error;
-
-    if (!data) throw new Error("Project not found");
-    return data;
-  },
-  {
-    lazy: true,
-    watch: [selectedProjectId],
-    transform: (data) => {
-      const d: PreviewData = {
-        project: {
-          id: data.id,
-          title: data.name
-        },
-        theme: data.settings as ProjectSettings,
-        scenes: data.scenes.map((scene) => {
-          return {
-            id: scene.id,
-            title: scene.name,
-            description: scene.description,
-            url:  `${runtimeConfig.supabaseStorageEndpoint}/object/public/${projectFilesBucketId}/${getSceneFilePath(data.id, scene.id)}`
-          };
-        }),
-        pois: data.points_of_interest.map((poi) => {
-          return {
-            id: poi.id,
-            title: poi.name,
-            description: poi.description,
-            sceneId: poi.scene_id,
-            position: {
-              x: (poi.design_data as DesignProps).position.x,
-              y: (poi.design_data as DesignProps).position.y,
-              z: (poi.design_data as DesignProps).position.z,
-            },
-          };
-        }),
-      }
-      return d;
+const data = computed(() => {
+  if(!selectedProject.value) return null;
+  const previewData: PreviewData = {
+    project: {
+      id: selectedProject.value.id,
+      title: selectedProject.value.name,
     },
-  }
-);
+    theme: selectedProject.value.settings,
+    scenes: scenes.items.map((s) => {
+      return {
+        id: s.data.id,
+        title: s.data.name,
+        description: s.data.description,
+        url: getSceneFileUrlPublic(s.data.project_id, s.data.id),
+      }
+    }),
+    pois: pois.items.map((p) => {
+      return {
+        id: p.data.id,
+        sceneId: p.data.scene_id,
+        title: p.data.name,
+        description: p.data.description,
+        position: (p.data.design_data as DesignProps).position,
+      }
+    }),
+
+  };
+  return previewData;
+})
 
 onMounted(() => {
   window.addEventListener("resize", () => {

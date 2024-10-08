@@ -5,4 +5,6 @@ export type AppProject = Omit<Database['public']['Tables']['projects']['Row'], "
     settings: ProjectSettings
 }
 export type AppScene = Database['public']['Tables']['scenes']['Row']
-export type AppPOI = Omit<Database['public']['Tables']['points_of_interest']['Row'], "design_data">
+export type AppPOI = Omit<Database['public']['Tables']['points_of_interest']['Row'], "design_data"> & {
+    design_data: DesignProps
+}

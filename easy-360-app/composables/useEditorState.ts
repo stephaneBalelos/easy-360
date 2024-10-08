@@ -2,6 +2,7 @@ import type { TresContext } from "@tresjs/core";
 import type { Camera, Intersection } from "three";
 import type { AppProject } from "~/types/app.types";
 import type { Database } from "~/types/database.types";
+
 type EditPanelState = "global" | "scene" | "poi";
 
 export const useEditorState = createGlobalState(() => {
@@ -21,8 +22,10 @@ export const useEditorState = createGlobalState(() => {
 
   const sceneError = ref<string | null>(null);
 
+  const selectedProject = ref<AppProject | null>(null);
 
-  watch(selectedProjectId, (value) => {
+
+  watch(selectedProjectId, async (value) => {
     selectedSceneId.value = null;
     selectedPOIId.value = null;
     if (value) {
@@ -52,6 +55,7 @@ export const useEditorState = createGlobalState(() => {
   }
 
   return {
+    selectedProject,
     tresCameraContext,
     selectedProjectId,
     selectedSceneId,

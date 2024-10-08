@@ -12,7 +12,7 @@
   </button>
 
   <div v-if="showLabel" class="poi-label font-medium text-xl absolute top-full left-2/4 -translate-x-2/4 p-2 w-auto whitespace-nowrap	max-w-60 line-clamp-1">
-    {{ props.name }}
+    {{ props.title }}
   </div>
 
 </div>
@@ -25,7 +25,7 @@ import type { AppPOI } from "~/types/app.types";
 
 type Props = {
   id: string;
-  name: string;
+  title: string;
   description: string;
   linked_scene_id: string | null;
   design_data: {
@@ -81,7 +81,7 @@ function setMarkerPosition(camera: Camera) {
     return;
   }
 
-  const position = new Vector3(
+  const position = new Vector3( 
     props.design_data.position.x,
     props.design_data.position.y,
     props.design_data.position.z
