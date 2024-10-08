@@ -26,7 +26,7 @@ export const useTusUplaoder = (
   uppy.use(Tus, {
     endpoint: tusEndpoint,
     headers: {
-      authorization: `Bearer ${session.value.access_token}`,
+      authorization: `Bearer ${session.value?.access_token}`,
       apikey: supabase.key,
       'x-upsert': 'true',
     },
