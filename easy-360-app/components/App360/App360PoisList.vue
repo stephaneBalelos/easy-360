@@ -1,21 +1,12 @@
 <template>
-  <div v-if="status === 'success'">
+  <div v-if="!pois.loading">
     <UDashboardSidebarLinks :links="links" />
   </div>
-  <div v-else-if="status === 'pending'">
+  <div v-else-if="pois.loading">
     <USkeleton class="h-8 w-full mb-2" />
     <USkeleton class="h-6 w-full mb-1" />
     <USkeleton class="h-6 w-full mb-1" />
     <USkeleton class="h-6 w-full mb-1" />
-  </div>
-  <div v-else-if="status === 'error'">
-    <UAlert
-    color="red"
-    variant="soft"
-    title="Opps! Something went wrong"
-    description="Error fetching Points of Interest"
-    :actions="[{ label: 'Retry', click: () => refresh(), variant: 'solid', color: 'red' }]"
-  />
   </div>
 </template>
 
@@ -26,30 +17,20 @@ import { poiKey, projectKey, sceneKey } from "~/constants";
 const editorState = useEditorState();
 const client = useSupabaseClient();
 
-const { data: pois, error, status, refresh } = useAsyncData(`${projectKey}/${sceneKey}/${poiKey}`, async () => {
-  if (!editorState.selectedSceneId.value) return null;
-  const { data, error } = await client.from(poiKey).select("id, name, linked_scene_id")
-    .eq('scene_id', editorState.selectedSceneId.value)
-    .order("created_at", { ascending: false });
-  if (error) {
-    throw error;
-  }
-  return data ?? [];
-}, {
-  lazy: true,
-  watch: [editorState.selectedSceneId],
-});
+const { pois } = usePOIs();
 
 const items = computed(() => {
-  if (!pois.value) return [];
-  return pois.value.map((poi) => {
+  if (!pois.items) return [];
+  return pois.items.filter((poi) => {
+    return poi.data.scene_id === editorState.selectedSceneId.value;
+  }).map((poi) => {
     return {
-      label: poi.name,
+      label: poi.data.name,
       chip: "green",
-      badge: poi.linked_scene_id ? "Linked" : "",
-      active: editorState.selectedPOIId.value === poi.id,
+      badge: poi.data.linked_scene_id ? "Linked" : "",
+      active: editorState.selectedPOIId.value === poi.data.id,
       click: () => {
-        editorState.selectedPOIId.value = poi.id;
+        editorState.selectedPOIId.value = poi.data.id;
         editorState.editPanelState.value = "poi";
       },
     };

@@ -42,7 +42,7 @@
         </template>
       </UDashboardToolbar>
       <div class="flex-grow p-4 relative">
-        <App360Viewport />
+        <!-- <App360Viewport /> -->
       </div>
       <UDashboardToolbar>
         <template #left>
@@ -72,6 +72,7 @@ import { useEditorState } from "~/composables/useEditorState";
 import ProjectEdit from "~/components/App360/Slideovers/ProjectEdit.vue";
 import BreakpointsDropdown from "~/components/App360/Navbar/BreakpointsDropdown.vue";
 import App360GlobalEditor from "~/components/App360/App360GlobalEditor.vue";
+import { projectKey } from "~/constants";
 
 definePageMeta({
   layout: "editor",
@@ -79,10 +80,52 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id;
-const { selectedProjectId, editPanelState } = useEditorState();
+const { selectedProjectId, selectedSceneId, editPanelState } = useEditorState();
 
 selectedProjectId.value = id as string;
 const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
+const client = useSupabaseClient();
+
+const { scenes } = useScenes();
+const { pois } = usePOIs();
+
+const { data: project, error } = useAsyncData(`${projectKey}/${selectedProjectId.value}`, async () => {
+  if (!selectedProjectId.value) return;
+  const { data, error } = await client.from(projectKey).select('*, scenes(*), points_of_interest(*)').eq('id', selectedProjectId.value).single();
+  if (error) {
+    createError({
+      statusCode: 400,
+      message: 'Project not found',
+    })
+    throw error;
+  }
+  if (!data) {
+    createError({
+      statusCode: 400,
+      message: 'Project not found',
+    })
+    throw new Error('Project not found');
+  }
+
+  scenes.items = data.scenes.map((scene) => {
+    return {
+      data: scene,
+      loading: false,
+    };
+  });
+  scenes.loading = false;
+  selectedSceneId.value = scenes.items[0].data.id;
+
+  pois.items = data.points_of_interest.map((poi) => {
+    return {
+      data: poi,
+      loading: false,
+    };
+  });
+  pois.loading = false;
+
+  return data;
+});
 </script>
 
 <style scoped></style>

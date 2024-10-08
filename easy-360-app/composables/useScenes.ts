@@ -8,26 +8,23 @@ export type SceneBase = {
     description: string;
 }
 
+export type SceneState = {
+    data: AppScene;
+    loading: boolean;
+}
+
+export type ScenesState = {
+    items: SceneState[];
+    loading: boolean;
+}
+
 export const useScenes = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
     const editorState = useEditorState()
 
-     
-
-    const { data:scenes, error, status, refresh} = useAsyncData(async () => {
-        if (!editorState.selectedProjectId.value) {
-            return []
-        }
-        const {data, error }= await client.from('scenes').select('*').eq('project_id', editorState.selectedProjectId.value)
-        if (error) {
-            throw error
-        }
-        if(data && !editorState.selectedSceneId.value) {
-            editorState.selectedSceneId.value = data[0].id  
-        }
-        return data
-    }, {
-        watch: [editorState.selectedProjectId]
+    const scenes = reactive<ScenesState>({
+        loading: true,
+        items: []
     })
 
     const createScene = async (s: SceneBase) => {
@@ -41,7 +38,6 @@ export const useScenes = createGlobalState(() => {
         if (error) {
             throw error
         }
-        refresh()
         return data
     }
 
@@ -50,7 +46,6 @@ export const useScenes = createGlobalState(() => {
         if (error) {
             throw error
         }
-        refresh()
         return data
     }
 
@@ -59,7 +54,6 @@ export const useScenes = createGlobalState(() => {
         if (error) {
             throw error
         }
-        refresh()
         editorState.selectedSceneId.value = null
         return data
     }
