@@ -3,11 +3,11 @@
     :class="`poi-container absolute -translate-x-2/4 -translate-y-2/4`"
     v-if="show"
     :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%; 
-    --primary-color: ${preview.theme.colors.primary};
-    --secondary-color: ${preview.theme.colors.secondary};
-    --body-color: ${preview.theme.colors.body};`"
+    --primary-color: ${theme.colors.primary};
+    --secondary-color: ${theme.colors.secondary};
+    --body-color: ${theme.colors.body};`"
   >
-  <button class="poi-btn relative size-16 rounded-full grid place-items-center">
+  <button class="poi-btn relative size-16 rounded-full grid place-items-center" @click="handleMarkerClick">
     <UIcon name="i-heroicons-light-bulb" class="w-5 h-5" />
   </button>
 
@@ -38,9 +38,8 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const { tresCameraContext, selectedPOIId } = useEditorState();
 const sceneControl = useSceneControl();
-const preview = usePreview();
+const { state, cameraContext, theme }= usePreview();
 const show = ref(false);
 
 const screenCoords = ref({ x: 0, y: 0 });
@@ -57,19 +56,19 @@ onMounted(() => {
     return;
   }
 
-  if (!tresCameraContext.value) {
+  if (!cameraContext.value) {
     console.error("No camera");
     return;
   }
 
-  setMarkerPosition(tresCameraContext.value);
+  setMarkerPosition(cameraContext.value);
 });
 
 watch(
   () => [sceneControl.camera, sceneControl.cameraProps.fov],
   (newVal) => {
-    if (tresCameraContext.value) {
-      setMarkerPosition(tresCameraContext.value);
+    if (cameraContext.value) {
+      setMarkerPosition(cameraContext.value);
     } else {
       console.error("No camera");
     }
@@ -77,7 +76,7 @@ watch(
   { immediate: true, deep: true }
 );
 
-watch(() => tresCameraContext.value, (newVal) => {
+watch(() => cameraContext.value, (newVal) => {
   if (newVal) {
     setMarkerPosition(newVal);
   }
@@ -153,7 +152,10 @@ function goToScene() {
 }
 
 function handleMarkerClick() {
-  selectedPOIId.value = props.id;
+  const s = state.value;
+  s.selectedPoiId = props.id;
+  state.value = s;
+  console.log(state)
   sceneControl.cameraLookAtAnimated(
     new Vector3(
       props.design_data.position.x,

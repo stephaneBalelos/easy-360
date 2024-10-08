@@ -2,9 +2,7 @@ import { Spherical, Vector3 } from "three";
 import gsap from "gsap";
 
 export const useSceneControl = createGlobalState(() => {
-
-    const editorState = useEditorState();
-    const { scenes } = useScenes()
+    const { state, scenes } = usePreview();
 
     const camera = reactive({
         position: [3, 0, 0],
@@ -102,7 +100,7 @@ export const useSceneControl = createGlobalState(() => {
             hBlur: 100,
             duration: 1,
             onComplete: () => {
-                editorState.selectedSceneId.value = sceneId;
+                state.value.selectedSceneId = sceneId;
             }
         })
         tl.to(props, {

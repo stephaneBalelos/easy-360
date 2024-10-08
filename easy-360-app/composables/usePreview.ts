@@ -1,3 +1,5 @@
+import { Camera, PerspectiveCamera } from "three";
+
 export type PreviewData = {
     project: {
         id: string;
@@ -41,6 +43,8 @@ export const usePreview = createGlobalState(() => {
 
     const projectId = ref<string | null>(null);
 
+    const cameraContext = ref<Camera>()
+
     const state = ref<PreviewState>({
         loading: true,
         selectedSceneId: '',
@@ -72,6 +76,7 @@ export const usePreview = createGlobalState(() => {
 
     return {
         projectId,
+        cameraContext,
         state,
         project,
         theme,
