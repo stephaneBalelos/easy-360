@@ -1,7 +1,7 @@
 <template>
   <div
     :class="`poi-container absolute -translate-x-2/4 -translate-y-2/4`"
-    v-if="show && !sceneControl.isTransitioning.value"
+    v-if="show"
     :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%; 
     --primary-color: ${preview.theme.colors.primary};
     --secondary-color: ${preview.theme.colors.secondary};
@@ -70,10 +70,18 @@ watch(
   (newVal) => {
     if (tresCameraContext.value) {
       setMarkerPosition(tresCameraContext.value);
+    } else {
+      console.error("No camera");
     }
   },
   { immediate: true, deep: true }
 );
+
+watch(() => tresCameraContext.value, (newVal) => {
+  if (newVal) {
+    setMarkerPosition(newVal);
+  }
+});
 
 function setMarkerPosition(camera: Camera) {
   if (!props.design_data.position) {
