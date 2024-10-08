@@ -74,7 +74,6 @@ watch(() => props.data, () => {
 }, { immediate: true });
 
 watch(() => props.state, () => {
-  console.log('state', props.state)
   preview.state.value = props.state;
 }, { immediate: true });
 

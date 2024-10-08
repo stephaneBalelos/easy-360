@@ -66,7 +66,6 @@ const state = reactive({
 
 const createNewProject = async ($event: FormSubmitEvent<Schema>) => {
 
-  console.log($event);
   loading.value = true;
   try {
     const res = await createProject({

@@ -12,8 +12,6 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.log("scene_id", scene_id);
-
     const client = await serverSupabaseClient<Database>(event);
 
     const { data, error } = await client.from("points_of_interest").select("*").eq("scene_id", scene_id).eq("visible", true);

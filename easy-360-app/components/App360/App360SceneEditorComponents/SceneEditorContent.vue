@@ -28,7 +28,6 @@ const { data:url, error, status } = await useAsyncData(async () => {
 }, { immediate: true, watch: [selectedProjectId, selectedSceneId] });
 
 function onUploaded() {
-    console.log('uploaded');
     // Todo: update scene image
     reloadSelectedScene();
 
