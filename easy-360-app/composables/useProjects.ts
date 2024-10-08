@@ -19,6 +19,7 @@ export const useProjects = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
     const user = useSupabaseUser()
 
+
     const { data:projects, error, status, refresh} = useAsyncData(`app_projects`, async () => {
         if (user.value === null) {
             throw new Error('User not logged in')

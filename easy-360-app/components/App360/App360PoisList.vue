@@ -37,7 +37,7 @@ const { data: pois, error, status, refresh } = useAsyncData(`${projectKey}/${sce
   return data ?? [];
 }, {
   lazy: true,
-  watch: [editorState.selectedSceneId, editorState.selectedSceneId, editorState.selectedPOIId],
+  watch: [editorState.selectedSceneId],
 });
 
 const items = computed(() => {

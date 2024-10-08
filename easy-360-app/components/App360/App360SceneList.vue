@@ -42,7 +42,7 @@ const { data: scenes, error, status, refresh } = useAsyncData(`${projectKey}/${s
   return data ?? [];
 }, {
   lazy: true,
-  watch: [editorState.selectedProjectId, editorState.selectedSceneId],
+  watch: [editorState.selectedProjectId],
 });
 
 

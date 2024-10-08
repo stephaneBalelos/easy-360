@@ -5,9 +5,9 @@ import type { Database } from "~/types/database.types";
 type EditPanelState = "global" | "scene" | "poi";
 
 export const useEditorState = createGlobalState(() => {
-  const selectedProjectId = ref<string | null>(null);
   const client = useSupabaseClient<Database>();
-
+  
+  const selectedProjectId = ref<string | null>(null);
   const selectedSceneId = ref<string | null>(null);
   const selectedPOIId = ref<string | null>(null);
 
