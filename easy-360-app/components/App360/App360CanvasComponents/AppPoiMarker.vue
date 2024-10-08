@@ -120,7 +120,6 @@ function setMarkerPosition(camera: Camera) {
   
   const center = new Vector2(50, 50);
   const distance = center.distanceTo(new Vector2(screenPos.x, screenPos.y));
-  console.log(distance);
   if (distance > 40) {
     showLabel.value = false;
   } else {
