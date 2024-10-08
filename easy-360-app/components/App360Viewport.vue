@@ -5,6 +5,7 @@
       :width="viewportSize.width"
       :height="viewportSize.height"
       :data="data"
+      :state="state"
     />
     <div v-else>Loading...</div>
     <!-- <div class="w-full h-full bg-slate-700">
@@ -27,7 +28,7 @@ const props = defineProps<Props>();
 const preview = usePreview();
 const runtimeConfig = useRuntimeConfig().public
 
-const { selectedProjectId, selectedProject } = useEditorState();
+const { selectedProjectId, selectedSceneId, selectedPOIId, selectedProject } = useEditorState();
 const client = useSupabaseClient();
 
 const { scenes, getSceneFileUrlPublic } = useScenes();
@@ -68,6 +69,15 @@ const data = computed(() => {
 
   };
   return previewData;
+})
+
+const state = computed(() => {
+  const state: PreviewState = {
+    loading: false,
+    selectedSceneId: selectedSceneId.value ?? '',
+    selectedPoiId: selectedPOIId.value ?? '',
+  }
+  return state;
 })
 
 onMounted(() => {

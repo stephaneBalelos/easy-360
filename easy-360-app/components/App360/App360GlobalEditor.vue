@@ -33,7 +33,6 @@ import { projectKey } from "~/constants";
 const { selectedProjectId } = useEditorState()
 const { updateProjectSettings } = useProjects()
 const client = useSupabaseClient()
-const preview = usePreview()
 
 const { data:selectedProject, error, status } = await useAsyncData(`${projectKey}/${selectedProjectId.value}`, async () => {
   if (!selectedProjectId.value) return null;
@@ -74,10 +73,9 @@ async function handleChange() {
   try {
     const res = schema.parse(state)
     if (selectedProject.value) {
-      console.log(state)
-      preview.theme.colors.primary = state.primaryColor
-      preview.theme.colors.secondary = state.secondaryColor
-      preview.theme.colors.body = state.bodyColor
+      // preview.theme.colors.primary = state.primaryColor
+      // preview.theme.colors.secondary = state.secondaryColor
+      // preview.theme.colors.body = state.bodyColor
       const propjectSettings = selectedProject.value.settings as ProjectSettings
       await updateProjectSettings(selectedProject.value.id, {
         ...propjectSettings,

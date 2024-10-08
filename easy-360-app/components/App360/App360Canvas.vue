@@ -52,6 +52,7 @@ type Props = {
   width?: number;
   height?: number;
   data: PreviewData;
+  state: PreviewState;
 }
 
 const props = defineProps<Props>();
@@ -61,7 +62,7 @@ const preview = usePreview();
 const { selectedProjectId } = useEditorState();
 const client = useSupabaseClient();
 
-onMounted(() => {
+watch(() => props.data, () => {
   preview.project = {
     id: props.data.project.id,
     title: props.data.project.title
@@ -70,9 +71,12 @@ onMounted(() => {
   preview.scenes.value = props.data.scenes;
   preview.pois.value = props.data.pois;
 
-  preview.selectedSceneId.value = preview.scenes.value[0].id;
-});
+}, { immediate: true });
 
+watch(() => props.state, () => {
+  console.log('state', props.state)
+  preview.state.value = props.state;
+}, { immediate: true });
 
 const size = computed(() => {
   return {

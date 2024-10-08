@@ -70,14 +70,14 @@ const textures = ref<Map<string, Texture>>(new Map());
 
 const selectedScene = computed(() => {
   return preview.scenes.value.find(
-    (scene) => scene.id === preview.selectedSceneId.value
+    (scene) => scene.id === preview.state.value.selectedSceneId
   );
 });
 
-watch(
-  selectedScene,
+watch(() => preview.state.value.selectedSceneId,
   async (newVal) => {
-    console.log("selectedScene", newVal);
+    await nextTick();
+
     if (!newVal) {
       return;
     }
@@ -85,8 +85,12 @@ watch(
       console.error("sphereRef is null");
       return;
     }
+    if (!selectedScene.value) {
+      console.error("No selected scene");
+      return;
+    }
     try {
-      const texture = await useTexture([newVal.url]);
+      const texture = await useTexture([selectedScene.value.url]);
       if (texture) {
       sphereRef.value.material.uniforms.uTexture.value = texture;
       sphereRef.value.material.uniforms.uTextureSize.value = new Vector2(
@@ -95,7 +99,7 @@ watch(
       );
       sphereRef.value.material.needsUpdate = true;
       canAddPOI.value = true;
-      textures.value.set(newVal.url, texture);
+      textures.value.set(selectedScene.value.url, texture);
     } else {
       sphereRef.value.material.uniforms.uTexture.value = null;
       canAddPOI.value = false;

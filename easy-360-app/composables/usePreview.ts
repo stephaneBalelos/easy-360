@@ -31,8 +31,8 @@ export type PreviewData = {
 
 export type PreviewState = {
     loading: boolean;
-    selectedScene: string;
-    selectedPoi: string;
+    selectedSceneId: string;
+    selectedPoiId: string;
 }
 
 export const usePreview = createGlobalState(() => {
@@ -41,14 +41,10 @@ export const usePreview = createGlobalState(() => {
 
     const projectId = ref<string | null>(null);
 
-    const selectedSceneId = ref<string | null>(null);
-
-    const selectedPOIId = ref<string | null>(null);
-
     const state = ref<PreviewState>({
         loading: true,
-        selectedScene: '',
-        selectedPoi: ''
+        selectedSceneId: '',
+        selectedPoiId: ''
     });
 
     const project = reactive<PreviewData['project']>({
@@ -76,8 +72,7 @@ export const usePreview = createGlobalState(() => {
 
     return {
         projectId,
-        selectedSceneId,
-        selectedPOIId,
+        state,
         project,
         theme,
         scenes,
