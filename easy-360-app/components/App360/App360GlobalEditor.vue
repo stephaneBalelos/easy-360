@@ -30,20 +30,9 @@ import { z } from "zod";
 import EditorColorInput from "./Inputs/EditorColorInput.vue";
 import { projectKey } from "~/constants";
 
-const { selectedProjectId } = useEditorState()
+const { selectedProjectId, selectedProject } = useEditorState()
 const { updateProjectSettings } = useProjects()
 const client = useSupabaseClient()
-
-const { data:selectedProject, error, status } = await useAsyncData(`${projectKey}/${selectedProjectId.value}`, async () => {
-  if (!selectedProjectId.value) return null;
-  const { data, error } = await client.from(projectKey).select('*').eq('id', selectedProjectId.value).single();
-  if (error) {
-    throw error;
-  }
-  return data ?? null;
-}, {
-  lazy: true,
-  watch: [selectedProjectId],})
 
 const schema = z.object({
   primaryColor: z.string().length(7, "Please enter a valid color"),
@@ -77,7 +66,7 @@ async function handleChange() {
       // preview.theme.colors.secondary = state.secondaryColor
       // preview.theme.colors.body = state.bodyColor
       const propjectSettings = selectedProject.value.settings as ProjectSettings
-      await updateProjectSettings(selectedProject.value.id, {
+      const res = await updateProjectSettings(selectedProject.value.id, {
         ...propjectSettings,
         colors: {
           primary: state.primaryColor,
@@ -85,6 +74,7 @@ async function handleChange() {
           body: state.bodyColor
         }
       })
+      selectedProject.value.settings = res
     }
   } catch (error) {
     console.log(error)

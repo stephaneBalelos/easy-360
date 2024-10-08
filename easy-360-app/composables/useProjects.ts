@@ -89,12 +89,11 @@ export const useProjects = createGlobalState(() => {
     }
 
     const updateProjectSettings = async (id: string, settings: ProjectSettings) => {
-        const {data, error} = await client.from('projects').update({settings}).eq('id', id)
+        const {data, error} = await client.from('projects').update({settings}).eq('id', id).select('settings').single()
         if (error) {
             throw error
         }
-        console.log(data)
-        return data
+        return data.settings as ProjectSettings
     }
 
 
