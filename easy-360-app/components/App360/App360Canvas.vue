@@ -16,7 +16,7 @@
 
     </TresCanvas>
 
-    <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in data.pois"
+    <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in data.pois.filter(poi => poi.sceneId == editorState.selectedSceneId.value)"
      :key="poi.id" 
       :id="poi.id"
       :title="poi.title"
