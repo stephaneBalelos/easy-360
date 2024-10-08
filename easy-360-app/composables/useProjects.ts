@@ -17,8 +17,8 @@ export type ProjectSettings = {
 
 export const useProjects = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
-    const { refreshProject } = useEditorState()
     const user = useSupabaseUser()
+
 
     const { data:projects, error, status, refresh} = useAsyncData(`app_projects`, async () => {
         if (user.value === null) {
@@ -76,7 +76,6 @@ export const useProjects = createGlobalState(() => {
             throw error
         }
         refresh()
-        refreshProject()
         return data
     }
 
@@ -90,12 +89,11 @@ export const useProjects = createGlobalState(() => {
     }
 
     const updateProjectSettings = async (id: string, settings: ProjectSettings) => {
-        const {data, error} = await client.from('projects').update({settings}).eq('id', id)
+        const {data, error} = await client.from('projects').update({settings}).eq('id', id).select('settings').single()
         if (error) {
             throw error
         }
-        refreshProject()
-        return data
+        return data.settings as ProjectSettings
     }
 
 

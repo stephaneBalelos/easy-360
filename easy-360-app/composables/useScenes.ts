@@ -8,26 +8,24 @@ export type SceneBase = {
     description: string;
 }
 
+export type SceneState = {
+    data: AppScene;
+    loading: boolean;
+}
+
+export type ScenesState = {
+    items: SceneState[];
+    loading: boolean;
+}
+
 export const useScenes = createGlobalState(() => {
     const client = useSupabaseClient<Database>()
     const editorState = useEditorState()
+    const runtimeConfig = useRuntimeConfig().public
 
-     
-
-    const { data:scenes, error, status, refresh} = useAsyncData(async () => {
-        if (!editorState.selectedProjectId.value) {
-            return []
-        }
-        const {data, error }= await client.from('scenes').select('*').eq('project_id', editorState.selectedProjectId.value)
-        if (error) {
-            throw error
-        }
-        if(data && !editorState.selectedSceneId.value) {
-            editorState.selectedSceneId.value = data[0].id  
-        }
-        return data
-    }, {
-        watch: [editorState.selectedProjectId]
+    const scenes = reactive<ScenesState>({
+        loading: true,
+        items: []
     })
 
     const createScene = async (s: SceneBase) => {
@@ -37,34 +35,45 @@ export const useScenes = createGlobalState(() => {
         const {data, error} = await client.from('scenes').insert({
             ...s,
             project_id: editorState.selectedProjectId.value
-        }).select('id')
+        }).select('*').single()
         if (error) {
             throw error
         }
-        refresh()
+        scenes.items.push({
+            loading: false,
+            data: data
+        })
         return data
     }
 
     const updateScene = async (id: string, s: SceneBase) => {
-        const {data, error} = await client.from('scenes').update(s).eq('id', id)
+        const {data, error} = await client.from('scenes').update(s).eq('id', id).select('*').single()
         if (error) {
             throw error
         }
-        refresh()
         return data
     }
 
     const deleteScene = async (id: string) => {
+        if (!editorState.selectedSceneId.value) {
+            throw new Error('No scene selected')
+        }
         const {data, error} = await client.from('scenes').delete().eq('id', id)
         if (error) {
             throw error
         }
-        refresh()
+        editorState.selectedSceneId.value = null
+        scenes.items = scenes.items.filter(s => s.data.id !== id)
+        editorState.selectedSceneId.value = scenes.items[0]?.data.id
         return data
     }
 
     const getSceneFilePath = (project_id: string, scene_id: string) => {
         return `projects/${project_id}/scenes/${scene_id}/panorama.jpg`
+    }
+
+    const getSceneFileUrlPublic = (project_id: string, scene_id: string) => {
+        return `${runtimeConfig.supabaseStorageEndpoint}/object/public/${projectFilesBucketId}/${getSceneFilePath(project_id, scene_id)}`
     }
 
     const getSceneFileUrl = async (project_id: string, scene_id: string) => {
@@ -84,8 +93,6 @@ export const useScenes = createGlobalState(() => {
 
     }
 
-
-
     return {
         scenes,
         loadingStatus: status,
@@ -93,6 +100,7 @@ export const useScenes = createGlobalState(() => {
         updateScene,
         deleteScene,
         getSceneFilePath,
-        getSceneFileUrl
+        getSceneFileUrl,
+        getSceneFileUrlPublic
     }
 })

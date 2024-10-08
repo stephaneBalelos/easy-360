@@ -1,62 +1,31 @@
 <template>
-  <UPopover
-    mode="click"
-    :open="open"
-    :class="`absolute -translate-x-2/4 -translate-y-2/4 ${open ? 'z-50' : 'z-0'}`"
-    v-if="show && !sceneControl.isTransitioning.value"
-    :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%;`"
+  <div
+    :class="`poi-container absolute -translate-x-2/4 -translate-y-2/4`"
+    v-if="show"
+    :style="`top: ${screenCoords.y}%; left: ${screenCoords.x}%; 
+    --primary-color: ${theme.colors.primary};
+    --secondary-color: ${theme.colors.secondary};
+    --body-color: ${theme.colors.body};`"
   >
-    <UButton
-      variant="soft"
-      icon="i-heroicons-eye-20-solid"
-      size="lg"
-      square
-      :ui="{ rounded: 'rounded-full' }"
-      @click="handleMarkerClick"
-    />
+  <button class="poi-btn relative size-16 rounded-full grid place-items-center" @click="handleMarkerClick">
+    <UIcon name="i-heroicons-light-bulb" class="w-5 h-5" />
+  </button>
 
-    <template #panel>
-      <UCard class="min-w-96">
-        <template #header>
-          <div class="flex justify-between">
-            <div>{{ props.name }}</div>
-            <UButton
-              v-if="props.linked_scene_id"
-              icon="i-heroicons-arrow-right"
-              size="sm"
-              color="primary"
-              variant="solid"
-              label="To Scene"
-              trailing
-              @click="goToScene"
-            />
-          </div>
-        </template>
+  <div v-if="showLabel" class="poi-label font-medium text-xl absolute top-full left-2/4 -translate-x-2/4 p-2 w-auto whitespace-nowrap	max-w-60 line-clamp-1">
+    {{ props.title }}
+  </div>
 
-        {{ props.description }}
-
-        <template #footer>
-          <UButton
-            size="sm"
-            color="red"
-            variant="soft"
-            label="Button"
-            trailing
-          />
-        </template>
-      </UCard>
-    </template>
-  </UPopover>
+</div>
 </template>
 
 <script setup lang="ts">
-import { Camera, Vector3 } from "three";
+import { Camera, Vector2, Vector3 } from "three";
 import { mapRange } from "~/helpers";
 import type { AppPOI } from "~/types/app.types";
 
 type Props = {
   id: string;
-  name: string;
+  title: string;
   description: string;
   linked_scene_id: string | null;
   design_data: {
@@ -69,18 +38,17 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const { tresCameraContext, selectedPOIId } = useEditorState();
 const sceneControl = useSceneControl();
-const { pois } = usePOIs();
-
+const { state, cameraContext, theme }= usePreview();
 const show = ref(false);
 
 const screenCoords = ref({ x: 0, y: 0 });
 const projectionCoords = ref({ x: 0, y: 0, z: 0 });
 
-const open = computed(() => {
-  return selectedPOIId.value === props.id;
-});
+const { viewportSize } = useEditorBreakpoints();
+
+
+const showLabel = ref(false);
 
 onMounted(() => {
   if (!props.design_data.position) {
@@ -88,23 +56,31 @@ onMounted(() => {
     return;
   }
 
-  if (!tresCameraContext.value) {
+  if (!cameraContext.value) {
     console.error("No camera");
     return;
   }
 
-  setMarkerPosition(tresCameraContext.value);
+  setMarkerPosition(cameraContext.value);
 });
 
 watch(
   () => [sceneControl.camera, sceneControl.cameraProps.fov],
   (newVal) => {
-    if (tresCameraContext.value) {
-      setMarkerPosition(tresCameraContext.value);
+    if (cameraContext.value) {
+      setMarkerPosition(cameraContext.value);
+    } else {
+      console.error("No camera");
     }
   },
   { immediate: true, deep: true }
 );
+
+watch(() => cameraContext.value, (newVal) => {
+  if (newVal) {
+    setMarkerPosition(newVal);
+  }
+});
 
 function setMarkerPosition(camera: Camera) {
   if (!props.design_data.position) {
@@ -112,7 +88,7 @@ function setMarkerPosition(camera: Camera) {
     return;
   }
 
-  const position = new Vector3(
+  const position = new Vector3( 
     props.design_data.position.x,
     props.design_data.position.y,
     props.design_data.position.z
@@ -146,6 +122,17 @@ function setMarkerPosition(camera: Camera) {
     screenCoords.value = screenPos;
   }
 
+  const w = viewportSize.value.width;
+  const h = viewportSize.value.height;
+  
+  const center = new Vector2(50, 50);
+  const distance = center.distanceTo(new Vector2(screenPos.x, screenPos.y));
+  if (distance > 40) {
+    showLabel.value = false;
+  } else {
+    showLabel.value = true;
+  }
+
   return position;
 }
 
@@ -165,7 +152,7 @@ function goToScene() {
 }
 
 function handleMarkerClick() {
-  selectedPOIId.value = props.id;
+  state.value.selectedPoiId = props.id;
   sceneControl.cameraLookAtAnimated(
     new Vector3(
       props.design_data.position.x,
@@ -176,4 +163,27 @@ function handleMarkerClick() {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+@import "@/assets/styles/animations.scss";
+
+.poi-container {
+  &::before {
+    content: "";
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    -webkit-animation: ping-animation 1s ease-in-out infinite both;
+    animation: ping-animation 1s ease-in-out infinite both;
+  }
+  .poi-btn {
+    background-color: var(--primary-color);
+    color: var(--body-color);
+  }
+
+  .poi-label {
+    color: var(--body-color);
+  }
+}
+</style>

@@ -11,10 +11,10 @@
       :class="[open && 'bg-gray-50 dark:bg-gray-800']"
       class="w-full"
     >
-      <UAvatar size="2xs" :alt="editorState.selectedProject.value?.name" />
+      <UAvatar size="2xs" :alt="selectedProject?.name" />
 
       <span class="truncate text-gray-900 dark:text-white font-semibold">{{
-        editorState.selectedProject.value?.name
+        selectedProject?.name
       }}</span>
     </UButton>
   </UDropdown>
@@ -22,10 +22,23 @@
 
 <script setup lang="ts">
 import { useEditorState } from "~/composables/useEditorState";
+import { projectKey } from "~/constants";
 
-const { projects } = useProjects();
 const editorState = useEditorState();
+const client = useSupabaseClient();
 
+const { data:projects } = useAsyncData(`${projectKey}`, async () => {
+
+  const { data, error } = await client.from(projectKey).select('id, name').order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching project", error);
+    return null;
+  }
+  return data ?? [];
+}, {
+  lazy: true,
+});
 
 const items = computed(() => {
   if (!projects.value) return [];
@@ -42,6 +55,11 @@ const items = computed(() => {
   });
 });
 
+const selectedProject = computed(() => {
+  if (!projects.value) return null;
+  const p = projects.value.find((project) => project.id === editorState.selectedProjectId.value);
+  return p ?? null
+});
 
 const actions = [
   {

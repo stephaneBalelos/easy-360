@@ -19,7 +19,6 @@ const loading = ref(false);
 
 const onChange = () => {
     loading.value = true;
-  console.log("onChanges");
 };
 </script>
 

@@ -1,24 +1,29 @@
 <template>
-  <div class="app-360-canvas" :style="`--width: ${size.width}; --height: ${size.height}; --screen-ratio: ${screenRatio};`">
-    <TresCanvas>
+  <div class="app-360-canvas" :style="`width: ${props.width}px; height: ${props.height}px;`">
+    <TresCanvas :clearColor="preview.theme.colors.primary">
       <AppSceneCamera ref="camera" />
       <OrbitControls
         @change="onChange"
         ref="orbitsControls"
         :target="new Vector3(0, 0, 0)"
-        :maxDistance="100"
+        :maxDistance="400"
       />
       <TresAmbientLight :intensity="sceneControl.light.intensity" />
       <TresGridHelper />
       <Suspense>
         <AppSphereMesh />
       </Suspense>
-      <Suspense>
-        <AppPoiMesh v-for="poi in pois" v-bind="poi" :key="poi.id" />
-      </Suspense>
+
     </TresCanvas>
 
-    <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in pois" v-bind="poi" :key="poi.id" />
+    <AppPoiMarker v-if="editorState.tresCameraContext && !editorState.isSceneLoading.value" v-for="poi in data.pois.filter(poi => poi.sceneId == editorState.selectedSceneId.value)"
+     :key="poi.id" 
+      :id="poi.id"
+      :title="poi.title"
+      :description="poi.description"
+      :linked_scene_id="null"
+      :design_data="{ position: poi.position }"
+    />
 
     <SceneErrorCard v-if="editorState.sceneError.value" />
 
@@ -32,25 +37,45 @@
 </template>
 
 <script setup lang="ts">
-import { usePOIs } from "~/composables/usePOIs";
+import { usePOIs, type DesignProps } from "~/composables/usePOIs";
 import { OrbitControls } from "@tresjs/cientos";
 import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
 import { Camera, Vector3 } from "three";
-import AppPoiMesh from "./App360CanvasComponents/AppPoiMesh.vue";
 import AppSphereMesh from "./App360CanvasComponents/AppSphereMesh.vue";
 import AppPoiMarker from "./App360CanvasComponents/AppPoiMarker.vue";
 import SceneErrorCard from "./App360CanvasComponents/SceneErrorCard.vue";
 import { useSceneControl } from "~/composables/useSceneControl";
 import AppSceneCamera from "./App360CanvasComponents/AppSceneCamera.vue";
-
-const { pois } = usePOIs();
+import { projectKey } from "~/constants";
 
 type Props = {
   width?: number;
   height?: number;
+  data: PreviewData;
+  state: PreviewState;
 }
 
 const props = defineProps<Props>();
+
+const preview = usePreview();
+
+const { selectedProjectId } = useEditorState();
+const client = useSupabaseClient();
+
+watch(() => props.data, () => {
+  preview.project = {
+    id: props.data.project.id,
+    title: props.data.project.title
+  }
+  preview.theme = props.data.theme;
+  preview.scenes.value = props.data.scenes;
+  preview.pois.value = props.data.pois;
+
+}, { immediate: true });
+
+watch(() => props.state, () => {
+  preview.state.value = props.state;
+}, { immediate: true });
 
 const size = computed(() => {
   return {
@@ -82,12 +107,16 @@ function onChange($event: OrbitControlsType) {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .app-360-canvas {
-  width: var(--width);
-  aspect-ratio: var(--screen-ratio);
+
   margin: 0 auto;
   position: relative;
+
+  #canvas {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .app-360-canvas .viewport-loading-indicator .loading-icon {

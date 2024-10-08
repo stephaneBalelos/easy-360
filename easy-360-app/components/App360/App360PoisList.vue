@@ -1,25 +1,37 @@
 <template>
-  <UDashboardSidebarLinks :links="links" />
+  <div v-if="!pois.loading">
+    <UDashboardSidebarLinks :links="links" />
+  </div>
+  <div v-else-if="pois.loading">
+    <USkeleton class="h-8 w-full mb-2" />
+    <USkeleton class="h-6 w-full mb-1" />
+    <USkeleton class="h-6 w-full mb-1" />
+    <USkeleton class="h-6 w-full mb-1" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useEditorState } from "~/composables/useEditorState";
-import { usePOIs } from "~/composables/usePOIs";
+import { poiKey, projectKey, sceneKey } from "~/constants";
 
-const { selectedPOIId, editPanelState } = useEditorState();
+const editorState = useEditorState();
+const client = useSupabaseClient();
+
 const { pois } = usePOIs();
 
 const items = computed(() => {
-  if (!pois.value) return [];
-  return pois.value.map((poi) => {
+  if (!pois.items) return [];
+  return pois.items.filter((poi) => {
+    return poi.data.scene_id === editorState.selectedSceneId.value;
+  }).map((poi) => {
     return {
-      label: poi.name,
+      label: poi.data.name,
       chip: "green",
-      badge: poi.linked_scene_id ? "Linked" : "",
-      active: selectedPOIId.value === poi.id,
+      badge: poi.data.linked_scene_id ? "Linked" : "",
+      active: editorState.selectedPOIId.value === poi.data.id,
       click: () => {
-        selectedPOIId.value = poi.id;
-        editPanelState.value = "poi";
+        editorState.selectedPOIId.value = poi.data.id;
+        editorState.editPanelState.value = "poi";
       },
     };
   });

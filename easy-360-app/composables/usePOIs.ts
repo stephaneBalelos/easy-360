@@ -21,45 +21,27 @@ export type DesignProps = {
     }
 }
 
+export type PoiState = {
+    data: AppPOI;
+    loading: boolean;
+}
+
+export type PoisState = {
+    items: PoiState[];
+    loading: boolean;
+}
+
 
 export const usePOIs = createGlobalState(() => {
     const sceneControl = useSceneControl()
     const client = useSupabaseClient<Database>()
     const editorState = useEditorState()
 
-    const {data:pois, error, status, refresh} = useAsyncData('', async () => {
-        if (!editorState.selectedSceneId.value) {
-            return []
-        }
-        const {data, error }= await client.from('points_of_interest').select('*').eq('scene_id', editorState.selectedSceneId.value)
-        if (error) {
-            throw error
-        }
-        return data as AppPOI[]
-        
-    }, {
-        watch: [editorState.selectedSceneId],
-        transform: (data: AppPOI[]) => {
-            return data.map(p => {
-                const { design_data } = p
-                const design = design_data as DesignProps
-                return {
-                    ...p,
-                    design_data: design
-                }
-            })
-        }
+    const pois = reactive<PoisState>({
+        loading: true,
+        items: []
     })
 
-    const getPOI = async (poi_id: string) => {
-        const local = pois.value?.filter((poi) => poi.id === poi_id)[0]
-        if (local) return local
-        const { data:poi, error } = await client.from('points_of_interest').select('*').eq('id', poi_id).single()
-        if (error) {
-            throw error
-        }
-        return poi
-    }
 
     const createPOI = async (scene_id: string, p: POIBase) => {
         if (!editorState.selectedProjectId.value) {
@@ -77,7 +59,6 @@ export const usePOIs = createGlobalState(() => {
         if (error) {
             throw error
         }
-        refresh()
         return data
     }
 
@@ -86,11 +67,10 @@ export const usePOIs = createGlobalState(() => {
             name: p.name,
             description: p.description,
             linked_scene_id: p.linked_scene_id
-        }).eq('id', id)
+        }).eq('id', id).select('*').single()
         if (error) {
             throw error
         }
-        refresh()
         return data
     }
 
@@ -109,29 +89,15 @@ export const usePOIs = createGlobalState(() => {
         if (error) {
             throw error
         }
-        refresh()
         return data
     }
 
 
 
-    watch(() => editorState.selectedPOIId.value, (value) => {
-        if (!value) {
-            return
-        }
-        if (!pois.value) {
-            return
-        }
-        const poi = pois.value.find(p => p.id === value)
-        if (poi) {
-            const { design_data } = poi
-            sceneControl.cameraLookAtAnimated(new Vector3(design_data.position.x, design_data.position.y, design_data.position.z))
-        }
-    })
+    // Todo: Camera Lookat
 
     return {
         pois,
-        getPOI,
         createPOI,
         updatePOI,
         updatePOIDesignProps,

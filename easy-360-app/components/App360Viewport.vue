@@ -1,15 +1,15 @@
 <template>
-  <div
-    ref="canvasViewport"
-    class="canvas-viewport h-full w-full"
-  >
-  <UDashboardToolbar class="py-0 px-1.5 overflow-x-auto">
-    {{ viewport.width }} x {{ viewport.height }}
-  </UDashboardToolbar>
-    <div class="w-full flex-1">
-      <App360Canvas :width="viewport.width" :height="viewport.height" ></App360Canvas>
-    </div>
-
+  <div ref="canvasViewport" class="canvas-viewport">
+    <App360Canvas
+      v-if="data"
+      :width="viewportSize.width"
+      :height="viewportSize.height"
+      :data="data"
+      :state="state"
+    />
+    <div v-else>Loading...</div>
+    <!-- <div class="w-full h-full bg-slate-700">
+    </div> -->
   </div>
 </template>
 
@@ -17,6 +17,7 @@
 import { useParentElement, useElementSize } from "@vueuse/core";
 
 import { useEditorBreakpoints } from "~/composables/useEditorBreakpoints";
+import { projectFilesBucketId } from "~/constants";
 
 type Props = {
   viewportRatio?: number;
@@ -24,20 +25,77 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const canvasViewport = ref<HTMLDivElement | null>(null);
+const preview = usePreview();
+const runtimeConfig = useRuntimeConfig().public
 
+const { selectedProjectId, selectedSceneId, selectedPOIId, selectedProject } = useEditorState();
+const client = useSupabaseClient();
+
+const { scenes, getSceneFileUrlPublic } = useScenes();
+const { pois } = usePOIs();
+
+const canvasViewport = ref<HTMLDivElement | null>(null);
 
 const parentEl = useParentElement();
 const { width, height } = useElementSize(parentEl);
 
 const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
-const sceneControl = useSceneControl();
 
-const editorState = useEditorState();
+const data = computed(() => {
+  if(!selectedProject.value) return null;
+  const previewData: PreviewData = {
+    project: {
+      id: selectedProject.value.id,
+      title: selectedProject.value.name,
+    },
+    theme: selectedProject.value.settings,
+    scenes: scenes.items.map((s) => {
+      return {
+        id: s.data.id,
+        title: s.data.name,
+        description: s.data.description,
+        url: getSceneFileUrlPublic(s.data.project_id, s.data.id),
+      }
+    }),
+    pois: pois.items.map((p) => {
+      return {
+        id: p.data.id,
+        sceneId: p.data.scene_id,
+        title: p.data.name,
+        description: p.data.description,
+        position: (p.data.design_data as DesignProps).position,
+      }
+    }),
 
+  };
+  return previewData;
+})
 
+const state = computed(() => {
+  const state: PreviewState = {
+    loading: false,
+    selectedSceneId: selectedSceneId.value ?? '',
+    selectedPoiId: selectedPOIId.value ?? '',
+  }
+  return state;
+})
 
-const viewport = computed(() => {
+onMounted(() => {
+  window.addEventListener("resize", () => {
+    viewportSize.value = getViewportSize();
+  });
+  viewportSize.value = getViewportSize();
+});
+
+watch(
+  currentBreakpoint,
+  () => {
+    viewportSize.value = getViewportSize();
+  },
+  { immediate: true }
+);
+
+function getViewportSize() {
   const size = {
     width: currentBreakpoint.value.width,
     height: currentBreakpoint.value.height,
@@ -45,34 +103,36 @@ const viewport = computed(() => {
 
   const ratio = size.width / size.height;
 
-  if (size.width > width.value && size.width >= size.height) {
-    size.width = width.value;
-    size.height = width.value * ratio;
+  if (ratio > 1) {
+    size.width = size.width > width.value ? width.value : size.width;
+    size.height = size.width / ratio;
+
     if (size.height > height.value) {
-      size.height = size.width / ratio;
+      size.height = height.value;
+      size.width = size.height * ratio;
     }
   } else {
-    size.height = height.value;
-    size.width = height.value * ratio;
+    size.height = size.height > height.value ? height.value : size.height;
+    size.width = size.height * ratio;
+
+    if (size.width > width.value) {
+      size.width = width.value;
+      size.height = size.width / ratio;
+    }
   }
 
   return {
     width: Math.round(size.width),
     height: Math.round(size.height),
   };
-});
-
-watch(viewport, (value) => {
-  viewportSize.value = value;
-});
+}
 </script>
 
 <style scoped>
 .canvas-viewport {
-  margin: 0 auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
 }
-
 </style>

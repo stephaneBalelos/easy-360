@@ -5,7 +5,6 @@
       <UDivider orientation="vertical" class="mx-1.5 lg:hidden" />
     </template>
     <template #left>
-      <PartialsAppVersionBadge />
       <ProjectDropdown />
       <UTooltip text="Settings">
         <UButton

@@ -14,14 +14,14 @@
 import type { Camera, PerspectiveCamera } from 'three';
 
     const sceneControl = useSceneControl();
-    const { tresCameraContext } = useEditorState();
     const { onLoop } = useRenderLoop()
+    const preview = usePreview();
 
 
     const camera = shallowRef<PerspectiveCamera | null>(null);
     
     onMounted(() => {
-        tresCameraContext.value = useTresContext().camera.value
+        preview.cameraContext.value = useTresContext().camera.value
     });
 
 

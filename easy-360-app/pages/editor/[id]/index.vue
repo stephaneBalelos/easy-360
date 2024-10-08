@@ -1,6 +1,6 @@
 <template>
   <App360EditorNavbar />
-  <div class="w-full h-full flex">
+  <div class="flex flex-grow">
     <UDashboardPanel
       :width="250"
       :resizable="{ min: 200, max: 300 }"
@@ -8,14 +8,11 @@
     >
       <UDashboardSidebar>
         <template #header>
-          <!-- Place anything you like here -->
           <UDashboardSearchButton />
         </template>
 
         <App360SceneList />
-        <UButton size="xs" variant="ghost" block @click="AddNewScene"
-          >Add New Scene</UButton
-        >
+
         <UDivider />
 
         <App360PoisList />
@@ -23,57 +20,44 @@
         <UDivider />
 
         <template #footer>
-          <!-- Place anything you like here -->
+          <PartialsAppVersionBadge />
         </template>
       </UDashboardSidebar>
     </UDashboardPanel>
-    <div class="flex-grow w-full h-full p-0">
-        <UDashboardToolbar>
-          <template #left>
-            <BreakpointsDropdown />
-            <!-- <USelectMenu
-            v-model="selectedLocations"
-            icon="i-heroicons-map-pin"
-            placeholder="Location"
-            :options="defaultLocations"
-            multiple
-          /> -->
-          </template>
 
-          <template #right>
-            <!-- <USelectMenu
-            v-model="selectedColumns"
-            icon="i-heroicons-adjustments-horizontal-solid"
-            :options="defaultColumns"
-            multiple
-            class="hidden lg:block"
-          >
-            <template #label>
-              Display
-            </template>
-          </USelectMenu> -->
-
+    <UDashboardPanel grow>
+      <UDashboardToolbar>
+        <template #left>
+          <BreakpointsDropdown />
+        </template>
+        <template #right>
           <UTooltip text="Global Settings">
-            <UButton color="gray" variant="ghost" icon="i-heroicons-cog" @click="editPanelState = 'global'"></UButton>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-cog"
+              @click="editPanelState = 'global'"
+            ></UButton>
           </UTooltip>
-          </template>
-        </UDashboardToolbar>
-      <App360Viewport />
-    </div>
+        </template>
+      </UDashboardToolbar>
+      <div class="flex-grow p-4 relative">
+        <App360Viewport />
+      </div>
+      <UDashboardToolbar>
+        <template #left>
+          {{ viewportSize.width }} x {{ viewportSize.height }}
+        </template>
+        <template #right> </template>
+      </UDashboardToolbar>
+    </UDashboardPanel>
 
     <UDashboardPanel
       :width="250"
-      
-      class="border-l border-gray-200 dark:border-gray-700"
-      :ui="{
-        wrapper: 'flex flex-col justify-between',
-      }"
-    >
-      <div>
-        <App360GlobalEditor v-if="editPanelState == 'global'" />
-        <App360SceneEditor v-if="editPanelState == 'scene'" />
-        <App360PoiEditor v-if="editPanelState == 'poi'" />
-      </div>
+      class="border-l border-gray-200 dark:border-gray-700">
+      <App360GlobalEditor v-if="editPanelState == 'global'" />
+      <App360SceneEditor v-if="editPanelState == 'scene'" />
+      <App360PoiEditor v-if="editPanelState == 'poi'" />
     </UDashboardPanel>
   </div>
 </template>
@@ -88,6 +72,7 @@ import { useEditorState } from "~/composables/useEditorState";
 import ProjectEdit from "~/components/App360/Slideovers/ProjectEdit.vue";
 import BreakpointsDropdown from "~/components/App360/Navbar/BreakpointsDropdown.vue";
 import App360GlobalEditor from "~/components/App360/App360GlobalEditor.vue";
+import { projectKey } from "~/constants";
 
 definePageMeta({
   layout: "editor",
@@ -95,25 +80,63 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id;
-const { selectedProjectId, editPanelState } = useEditorState();
+const { selectedProjectId, selectedProject, selectedSceneId, editPanelState } = useEditorState();
 
 selectedProjectId.value = id as string;
+const { currentBreakpoint, viewportSize } = useEditorBreakpoints();
+const client = useSupabaseClient();
 
-const { createScene } = useScenes();
+const { scenes } = useScenes();
+const { pois } = usePOIs();
 
-
-async function AddNewScene() {
-  console.log("Add new scene");
-  try {
-    const res = await createScene({
-      name: "New Scene",
-      description: "New Scene Description",
-    });
-    console.log("New Scene", res);
-  } catch (error) {
-    console.log("Error creating scene", error);
+const { data: project, error } = useAsyncData(`${projectKey}/${selectedProjectId.value}`, async () => {
+  if (!selectedProjectId.value) return;
+  const { data, error } = await client.from(projectKey).select('*, scenes(*), points_of_interest(*)').eq('id', selectedProjectId.value).single();
+  if (error) {
+    createError({
+      statusCode: 400,
+      message: 'Project not found',
+    })
+    throw error;
   }
-}
+  if (!data) {
+    createError({
+      statusCode: 400,
+      message: 'Project not found',
+    })
+    throw new Error('Project not found');
+  }
+
+  const {scenes:s, points_of_interest:p, ...project} = data;
+
+  selectedProject.value = {
+    ...project,
+    settings: project.settings as ProjectSettings
+  };
+
+
+  scenes.items = data.scenes.map((scene) => {
+    return {
+      data: scene,
+      loading: false,
+    };
+  });
+  scenes.loading = false;
+  selectedSceneId.value = scenes.items[0].data.id;
+
+  pois.items = data.points_of_interest.map((poi) => {
+    return {
+      data: {
+        ...poi,
+        design_data: poi.design_data as DesignProps,
+      },
+      loading: false,
+    };
+  });
+  pois.loading = false;
+
+  return data;
+});
 </script>
 
 <style scoped></style>

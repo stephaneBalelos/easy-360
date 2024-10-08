@@ -22,7 +22,6 @@ const colorInput = ref<HTMLInputElement | null>(null);
 
 
 function handleChange($event: Event) {
-    console.log($event);
   const target = $event.target as HTMLInputElement;
   model.value = target.value;
 }

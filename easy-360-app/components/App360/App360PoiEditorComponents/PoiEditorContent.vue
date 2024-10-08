@@ -34,7 +34,14 @@
         </template>
 
         <template #hint>
-          <UButton v-if="state.linked_scene_id" size="2xs" color="gray" variant="link" @click="clearLink">Clear</UButton>
+          <UButton
+            v-if="state.linked_scene_id"
+            size="2xs"
+            color="gray"
+            variant="link"
+            @click="clearLink"
+            >Clear</UButton
+          >
         </template>
         <template #default>
           <USelectMenu
@@ -57,6 +64,7 @@
 import { z } from "zod";
 import type { Database } from "~/types/database.types";
 import type { FormSubmitEvent } from "#ui/types";
+import { poiKey, projectKey } from "~/constants";
 
 const { selectedPOIId, selectedSceneId } = useEditorState();
 const { pois, updatePOI } = usePOIs();
@@ -66,13 +74,15 @@ const client = useSupabaseClient<Database>();
 const form = ref();
 
 const scenesOptions = computed(() => {
-  if (!scenes.value) {
+  if (!scenes.items) {
     return [];
   }
-  return scenes.value.filter((scene) => scene.id !== selectedSceneId.value).map((scene) => ({
-    label: scene.name,
-    value: scene.id,
-  }));
+  return scenes.items
+    .filter((scene) => scene.data.id !== selectedSceneId.value)
+    .map((scene) => ({
+      label: scene.data.name,
+      value: scene.data.id,
+    }));
 });
 
 const schema = z.object({
@@ -94,12 +104,13 @@ const {
   error,
   status,
 } = await useAsyncData(
+  `${selectedPOIId.value}`,
   async () => {
     if (!selectedPOIId.value) {
       throw new Error("No POI selected");
     }
     const { data, error } = await client
-      .from("points_of_interest")
+      .from(poiKey)
       .select()
       .eq("id", selectedPOIId.value)
       .single();
@@ -117,20 +128,24 @@ const {
 );
 
 async function saveChanges(state: POIBase) {
-  if (!selectedPOIId.value) {
-    return;
-  }
-  try {
-    schema.parse(state);
-    state.linked_scene_id = state.linked_scene_id || null;
-    await updatePOI(selectedPOIId.value, state);
-  } catch (error) {
-    console.log(error);
+  if (schema.parse(state) && selectedPOIId.value) {
+    const index = pois.items.findIndex((poi) => poi.data.id === selectedPOIId.value);
+    try {
+      schema.parse(state);
+
+      state.linked_scene_id = state.linked_scene_id || null;
+      pois.items[index].loading = true;
+      const res = await updatePOI(selectedPOIId.value, state);
+
+      pois.items[index].data = res;
+      pois.items[index].loading = false;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
 async function onChange($event: FormSubmitEvent<Schema>) {
-
   const data: POIBase = {
     name: state.name,
     description: state.description,
@@ -138,7 +153,6 @@ async function onChange($event: FormSubmitEvent<Schema>) {
   };
 
   await saveChanges(data);
-
 }
 
 async function clearLink() {
@@ -149,7 +163,7 @@ async function clearLink() {
       description: state.description,
       linked_scene_id: "",
     };
-    await saveChanges(data)
+    await saveChanges(data);
   }
 }
 </script>

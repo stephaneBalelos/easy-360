@@ -1,48 +1,11 @@
 <template>
-  <div class="flex flex-col h-full">
-    <UTabs v-if="selectedPOIId" :items="tabs" @change="onChange">
-      <template #default="{ item, index, selected }">
-        <span
-          class="truncate"
-          :class="[selected && 'text-primary-500 dark:text-primary-400']"
-          >{{ index + 1 }}. {{ item.label }}</span
-        >
-      </template>
-      <template #item="{ item }">
-        <UCard>
-          <!-- <template #header>
-          <p class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-            {{ item.label }}
-          </p>
-          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {{ item.description }}
-          </p>
-        </template> -->
-
-          <div v-if="item.key === 'design-tab'" class="space-y-3">
-            <PoiEditorDesign />
-          </div>
-          <div v-else-if="item.key === 'content-tab'" class="space-y-3">
-            <PoiEditorContent />
-          </div>
-          <div v-else-if="item.key === 'settings-tab'" class="space-y-3">
-            <PoiEditorSettings />
-          </div>
-
-          <!-- <template #footer>
-          <UButton type="submit" color="black">
-            Save {{ item.key === 'account' ? 'account' : 'password' }}
-          </UButton>
-        </template> -->
-        </UCard>
-      </template>
-    </UTabs>
-    <UPageCard
-      v-else
-      title="Add a POI"
-      description="Add a new Point of Interest to your 360 view"
-      icon="i-heroicons-squares-plus"
-    />
+  <UDashboardToolbar class="py-0 px-2 overflow-x-auto">
+    <UHorizontalNavigation :links="tabs" />
+  </UDashboardToolbar>
+  <div class="p-4">
+    <!-- <PoiEditorDesign v-if="selectedTab === 0"/> -->
+    <PoiEditorContent v-if="selectedTab === 1" />
+    <PoiEditorSettings v-if="selectedTab === 2"/>
   </div>
 </template>
 
@@ -55,29 +18,32 @@ import { useEditorState } from "~/composables/useEditorState";
 
 const { selectedPOIId } = useEditorState();
 
-const tabs = [
-  {
-    key: "design-tab",
-    label: "Tab1",
-    icon: "i-heroicons-information-circle",
-    content: "This is the content shown for Tab1",
-  },
+const selectedTab = ref(1);
+
+
+const tabs = computed(() => [
+  // {
+  //   key: "design-tab",
+  //   label: "Design",
+  //   active: selectedTab.value === 0,
+  //   click: () => onChange(0),
+  // },
   {
     key: "content-tab",
-    label: "Tab2",
-    icon: "i-heroicons-arrow-down-tray",
-    content: "And, this is the content for Tab2",
+    label: "Content",
+    active: selectedTab.value === 1,
+    click: () => onChange(1),
   },
   {
     key: "settings-tab",
-    label: "Tab3",
-    icon: "i-heroicons-eye-dropper",
-    content: "Finally, this is the content for Tab3",
+    label: "Settings",
+    active: selectedTab.value === 2,
+    click: () => onChange(2),
   },
-];
+]);
 
-function onChange(key: string) {
-  console.log(key);
+function onChange(index: number) {
+  selectedTab.value = index;
 }
 </script>
 

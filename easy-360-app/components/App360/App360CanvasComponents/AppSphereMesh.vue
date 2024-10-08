@@ -5,7 +5,12 @@
     @context-menu="handleSphereClick"
     @pointer-move="handlePointerMove"
   >
-  <TresShaderMaterial :vertex-shader="SphereVertexShader" :fragment-shader="SphereFragmentShader" :uniforms="uniforms" :glsl-version="GLSL3" />
+    <TresShaderMaterial
+      :vertex-shader="SphereVertexShader"
+      :fragment-shader="SphereFragmentShader"
+      :uniforms="uniforms"
+      :glsl-version="GLSL3"
+    />
   </primitive>
 </template>
 
@@ -35,13 +40,7 @@ import SphereFragmentShader from "@/assets/shader/sphereFragment.glsl";
 
 const modal = useModal();
 const sceneControl = useSceneControl();
-const {
-  selectedProjectId,
-  selectedSceneId,
-  isSceneLoading,
-  pointerIntersectionWithSphere,
-  sceneError,
-} = useEditorState();
+const preview = usePreview();
 const { getSceneFileUrl } = useScenes();
 const { onLoop } = useRenderLoop();
 const { renderer, scene, camera } = useTresContext();
@@ -56,46 +55,68 @@ const sphere = new Mesh(geometry, material);
 
 const sphereRef: ShallowRef<TresInstance | null> = shallowRef(null);
 
+const canAddPOI = ref(false);
+
 const uniforms = {
   uTexture: { value: null },
-  uResolution: { value: new Vector2(viewportSize.value.width, viewportSize.value.height) },
+  uResolution: {
+    value: new Vector2(viewportSize.value.width, viewportSize.value.height),
+  },
   uTime: { value: 0.0 },
-  uTextureSize: { value: null},
-}
+  uTextureSize: { value: null },
+};
 
-watch(
-  () => selectedSceneId.value,
+const textures = ref<Map<string, Texture>>(new Map());
+
+const selectedScene = computed(() => {
+  return preview.scenes.value.find(
+    (scene) => scene.id === preview.state.value.selectedSceneId
+  );
+});
+
+watch(() => preview.state.value.selectedSceneId,
   async (newVal) => {
-    if (!selectedProjectId.value || !selectedSceneId.value) {
+    await nextTick();
+
+    if (!newVal) {
       return;
     }
-
-    const url = await getSceneFileUrl(
-      selectedProjectId.value,
-      selectedSceneId.value
-    );
-
-    if (!url) {
-      sceneError.value = "Scene file not found";
-      return;
-    }
-
-    const texture = await useTexture([url]);
-
-    if (sphereRef.value) {
-      sphereRef.value.material.uniforms.uTexture.value = texture;
-      sphereRef.value.material.uniforms.uTextureSize.value = new Vector2(texture.image.width, texture.image.height);
-      sphereRef.value.material.needsUpdate = true;
-    } else {
+    if(sphereRef.value === null) {
       console.error("sphereRef is null");
+      return;
     }
-
-    isSceneLoading.value = false;
+    if (!selectedScene.value) {
+      console.error("No selected scene");
+      return;
+    }
+    try {
+      const texture = await useTexture([selectedScene.value.url]);
+      if (texture) {
+      sphereRef.value.material.uniforms.uTexture.value = texture;
+      sphereRef.value.material.uniforms.uTextureSize.value = new Vector2(
+        texture.image.width,
+        texture.image.height
+      );
+      sphereRef.value.material.needsUpdate = true;
+      canAddPOI.value = true;
+      textures.value.set(selectedScene.value.url, texture);
+    } else {
+      sphereRef.value.material.uniforms.uTexture.value = null;
+      canAddPOI.value = false;
+    }
+  } catch (error) {
+      sphereRef.value.material.uniforms.uTexture.value = null;
+      console.log(error);
+      canAddPOI.value = false;
+    }
   },
   { immediate: true }
 );
 
 function handleSphereClick(event: Intersection) {
+  if (!canAddPOI.value) {
+    return;
+  }
   openAddPOIModal(event.point);
   sceneControl.cameraLookAtAnimated(event.point);
 }
@@ -113,11 +134,14 @@ function openAddPOIModal(pos: Vector3) {
 }
 
 function handlePointerMove($event: Intersection) {
-  pointerIntersectionWithSphere.value = $event;
+  // pointerIntersectionWithSphere.value = $event;
 }
 
-onLoop(({elapsed}) => {
-  if (sceneControl.sphereBlur.horizontal > 0 || sceneControl.sphereBlur.vertical > 0) {
+onLoop(({ elapsed }) => {
+  if (
+    sceneControl.sphereBlur.horizontal > 0 ||
+    sceneControl.sphereBlur.vertical > 0
+  ) {
     if (sphereRef.value) {
       // Do something
       sphereRef.value.material.uniforms.uTime.value = elapsed;

@@ -78,7 +78,6 @@ const state = reactive<FormState>({
 });
 
 onMounted(() => {
-    console.log(props.project_id);
     if (project.value) {
     state.name = project.value.name;
     state.description = project.value.description ?? "";

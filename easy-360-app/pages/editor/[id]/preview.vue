@@ -1,8 +1,7 @@
 <template>
   <App360PreviewNavbar></App360PreviewNavbar>
   <div ref="viewportEl" class="preview-viewport relative flex-1">
-    <Easy360Embedded :id="id" :width="viewport.width" :height="viewport.height"></Easy360Embedded>
-    <!-- <div class="bg-gray-700 h-full w-full">{{ width }} X {{ height}}</div> -->
+   <App360Viewport />
   </div>
   <UDashboardToolbar class="py-0 px-1.5 overflow-x-auto">
     {{ viewport.width }} x {{ viewport.height }}

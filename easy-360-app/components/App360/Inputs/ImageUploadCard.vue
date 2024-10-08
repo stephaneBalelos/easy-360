@@ -12,7 +12,7 @@
         @change="onFileChange"
       />
       <div class="w-full h-full" v-if="file">
-        <img :src="file" class="w-full h-full object-cover" />
+        <NuxtImg :src="file" class="w-full h-full object-cover" />
       </div>
       <div
         v-else
@@ -28,13 +28,14 @@
 <script setup lang="ts">
 import { useTusUplaoder } from "~/composables/useTusUploader";
 import type { Database } from "~/types/database.types";
+import { useImage } from '@vueuse/core'
+
 
 type ImageUploadCardProps = {
     bucketId: string;
     path: string;
     fileUrl?: string | null;
 };
-
 
 
 const props = defineProps<ImageUploadCardProps>();
@@ -54,9 +55,8 @@ watch(() => props.fileUrl, (newVal) => {
 
 const { uppy } = useTusUplaoder(props.bucketId, props.path, {
   maxNumberOfFiles: 1,
-  onError: () => {
+  onError: (err) => {
     uploadState.value = "idle";
-    console.log("error");
   },
   onProgress: (bytesUploaded, bytesTotal) => {
     uploadState.value = "uploading";
@@ -72,6 +72,7 @@ const { uppy } = useTusUplaoder(props.bucketId, props.path, {
 onMounted(() => {
   if(props.fileUrl) {
     file.value = props.fileUrl;
+    console.log(props.path);
   }
 })
 
@@ -85,8 +86,9 @@ function onFileChange($event: Event) {
   }
 
   file.value = URL.createObjectURL(files[0]);
+  const filename = files[0].name;
   uppy.addFile({
-    name: files[0].name,
+    name: `panorama.${filename.split(".")[1]}`,
     type: files[0].type,
     data: files[0],
   });
