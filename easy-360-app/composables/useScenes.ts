@@ -34,15 +34,19 @@ export const useScenes = createGlobalState(() => {
         const {data, error} = await client.from('scenes').insert({
             ...s,
             project_id: editorState.selectedProjectId.value
-        }).select('id').single()
+        }).select('*').single()
         if (error) {
             throw error
         }
+        scenes.items.push({
+            loading: false,
+            data: data
+        })
         return data
     }
 
     const updateScene = async (id: string, s: SceneBase) => {
-        const {data, error} = await client.from('scenes').update(s).eq('id', id)
+        const {data, error} = await client.from('scenes').update(s).eq('id', id).select('*').single()
         if (error) {
             throw error
         }
@@ -55,6 +59,7 @@ export const useScenes = createGlobalState(() => {
             throw error
         }
         editorState.selectedSceneId.value = null
+        scenes.items = scenes.items.filter(s => s.data.id !== id)
         return data
     }
 

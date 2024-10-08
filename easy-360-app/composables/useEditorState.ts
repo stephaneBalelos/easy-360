@@ -22,9 +22,12 @@ export const useEditorState = createGlobalState(() => {
   const sceneError = ref<string | null>(null);
 
 
-  watch(selectedProjectId, () => {
+  watch(selectedProjectId, (value) => {
     selectedSceneId.value = null;
     selectedPOIId.value = null;
+    if (value) {
+      navigateTo(`/editor/${value}`);
+    }
     editPanelState.value = "global";
   });
 

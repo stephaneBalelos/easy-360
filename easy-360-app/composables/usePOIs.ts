@@ -67,14 +67,10 @@ export const usePOIs = createGlobalState(() => {
             name: p.name,
             description: p.description,
             linked_scene_id: p.linked_scene_id
-        }).eq('id', id)
+        }).eq('id', id).select('*').single()
         if (error) {
             throw error
         }
-        const i = editorState.selectedPOIId.value
-        editorState.selectedPOIId.value = null
-        await nextTick()
-        editorState.selectedPOIId.value = i
         return data
     }
 

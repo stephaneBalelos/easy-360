@@ -1,6 +1,6 @@
 <template>
   <UForm
-    v-if="status === 'success'"
+    v-if="!scenes.loading"
     ref="form"
     :state="state"
     :schema="schema"
@@ -51,8 +51,7 @@ import { projectKey, sceneKey } from "~/constants";
 import ConfirmActionModal from "../Modals/ConfirmActionModal.vue";
 
 const { selectedProjectId, selectedSceneId } = useEditorState();
-const { updateScene, deleteScene } =
-  useScenes();
+const { updateScene, deleteScene, scenes } = useScenes();
 const client = useSupabaseClient<Database>();
 
 const form = ref();
@@ -69,36 +68,29 @@ const state = reactive<Schema>({
   description: "",
 });
 
-const {
-  data: scene,
-  error,
-  status,
-  refresh,
-} = await useAsyncData(
-  `${projectKey}/${selectedProjectId.value}/${sceneKey}/${selectedSceneId.value}`,
-  async () => {
-    if (!selectedSceneId.value) {
-      throw new Error("No scene selected");
-    }
-    const { data, error } = await client
-      .from(sceneKey)
-      .select()
-      .eq("id", selectedSceneId.value)
-      .single();
+const data = computed(() => {
+  if (selectedSceneId.value) {
+    return scenes.items.find((scene) => scene.data.id === selectedSceneId.value);
+  }
+})
 
-    if (error) {
-      throw error;
-    }
-    state.name = data.name;
-    state.description = data.description;
-    return data;
-  },
-  { immediate: true, watch: [selectedProjectId, selectedSceneId] }
-);
+watch(data, (value) => {
+  if (value) {
+    state.name = value.data.name;
+    state.description = value.data.description;
+  }
+}, { immediate: true });
 
 async function onChange($event: FormSubmitEvent<Schema>) {
   if (schema.parse(state) && selectedSceneId.value) {
-    await updateScene(selectedSceneId.value, state);
+    const index = scenes.items.findIndex((scene) => scene.data.id === selectedSceneId.value);
+    try {
+      const res = await updateScene(selectedSceneId.value, state);
+      scenes.items[index].data = res;
+    } catch (error) {
+      throw error;
+    } 
+
   }
 }
 
