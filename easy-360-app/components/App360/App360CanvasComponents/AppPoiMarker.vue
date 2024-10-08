@@ -152,10 +152,7 @@ function goToScene() {
 }
 
 function handleMarkerClick() {
-  const s = state.value;
-  s.selectedPoiId = props.id;
-  state.value = s;
-  console.log(state)
+  state.value.selectedPoiId = props.id;
   sceneControl.cameraLookAtAnimated(
     new Vector3(
       props.design_data.position.x,
