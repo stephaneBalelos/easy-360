@@ -54,12 +54,16 @@ export const useScenes = createGlobalState(() => {
     }
 
     const deleteScene = async (id: string) => {
+        if (!editorState.selectedSceneId.value) {
+            throw new Error('No scene selected')
+        }
         const {data, error} = await client.from('scenes').delete().eq('id', id)
         if (error) {
             throw error
         }
         editorState.selectedSceneId.value = null
         scenes.items = scenes.items.filter(s => s.data.id !== id)
+        editorState.selectedSceneId.value = scenes.items[0]?.data.id
         return data
     }
 
