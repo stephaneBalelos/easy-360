@@ -16,34 +16,39 @@
 <script setup lang="ts">
 import { useEditorState } from "~/composables/useEditorState";
 import { useScenes } from "~/composables/useScenes";
-import { projectKey, sceneKey } from "~/constants";
+import { projectFilesBucketId, projectKey, sceneKey } from "~/constants";
+import { useImage } from '@vueuse/core'
+
 
 const { createScene } = useScenes();
 const editorState = useEditorState();
 const client = useSupabaseClient();
-const { scenes } = useScenes();
+const { scenes, getSceneFileUrlPublic } = useScenes();
 
-
-
-const items = computed(() => {
+const items = computedAsync(async () => {
   if (!scenes.items) return [];
-  return scenes.items.filter((scene) => {
-    return scene.data.project_id === editorState.selectedProjectId.value;
-  }).map((scene) => {
-    const isCurrentScene = editorState.selectedSceneId.value === scene.data.id;
-    return {
-      label: scene.data.name,
-      chip: "green",
-      active: isCurrentScene,
-      click: () => {
-        editorState.selectedSceneId.value = scene.data.id;
-        editorState.editPanelState.value = "scene";
-        if (isCurrentScene) {
-          editorState.selectedPOIId.value = null;
-        }
-      },
-    };
-  });
+  return await Promise.all(scenes.items
+    .filter((scene) => {
+      return scene.data.project_id === editorState.selectedProjectId.value;
+    })
+    .map(async (scene) => {
+      const isCurrentScene =
+        editorState.selectedSceneId.value === scene.data.id;
+        const filePath = getSceneFileUrlPublic(scene.data.project_id, scene.data.id);
+      const {error} = await useImage({src: filePath});
+      return {
+        label: scene.data.name,
+        chip: error.value ? "red" : "green",
+        active: isCurrentScene,
+        click: () => {
+          editorState.selectedSceneId.value = scene.data.id;
+          editorState.editPanelState.value = "scene";
+          if (isCurrentScene) {
+            editorState.selectedPOIId.value = null;
+          }
+        },
+      };
+    }));
 });
 
 const links = computed(() => [
